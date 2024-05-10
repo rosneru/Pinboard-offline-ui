@@ -13,9 +13,6 @@
         <DataTemplate DataType="{x:Type PageViewModels:ConnectionViewModel}">
             <PageViews:ConnectionView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type PageViewModels:SettingsViewModel}">
-            <PageViews:SettingsView />
-        </DataTemplate>
 
         <!--  Define the converters  -->
         <Converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter" />

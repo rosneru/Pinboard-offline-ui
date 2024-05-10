@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace UI.Desktop.WPF.Dialogs
 {
   /// <summary>
-  /// Interaction logic for OpenDeviceDialog.xaml
+  /// Interaction logic for SettingsDialog.xaml
   /// </summary>
-  public partial class OpenDeviceDialog : Window
+  public partial class SettingsDialog : Window
   {
-    public OpenDeviceDialog()
+    public SettingsDialog()
     {
       InitializeComponent();
     }

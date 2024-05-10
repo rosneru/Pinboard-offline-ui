@@ -1,11 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Config.Net;
 using Logic.UI.DialogViewModels;
+using Logic.UI.Model;
 using Logic.UI.PageViewModels;
 using Logic.UI.Tools;
 using MvvmDialogs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -13,7 +17,7 @@ namespace Logic.UI.ViewModels
 {
   public class MainViewModel : ObservableObject
   {
-    public ICommand CmdOpen { get; }
+    public ICommand CmdSettings { get; }
     public ICommand CmdExit { get; }
 
 
@@ -24,38 +28,46 @@ namespace Logic.UI.ViewModels
 
     public MainViewModel(IDialogService dialogService)
     {
+      var app_data_dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      var developer_name = "tysw";
+      var app_name = "Pinboard-offline-ui";
+      var app_settings_path = Path.Combine(app_data_dir, developer_name, app_name);
+
+      if (!Directory.Exists(app_settings_path))
+      {
+        Directory.CreateDirectory(app_settings_path);
+      }
+
+      app_settings_path = Path.Combine(app_settings_path, "settings.json");
+      IAppSettings settings = new ConfigurationBuilder<IAppSettings>()
+        .UseJsonFile(app_settings_path)
+        .Build();
+
       UiTools = new UITools(dialogService);
 
       // Create the PageViewModels
       var connectionViewModel = new ConnectionViewModel(UiTools);
       var firmwareViewModel = new FirmwareViewModel(UiTools);
-      var settingsViewModel = new SettingsViewModel(UiTools);
 
       // And add them to the 'list of pages'
       PageViewModels = new List<PageViewModelBase>
       {
         connectionViewModel,
         firmwareViewModel,
-        settingsViewModel,
       };
 
       // Select the first view model to be displayed as default
       PageViewModels[0].IsOpen = true;
       CurrentPageViewModel = PageViewModels[0];
 
-      CmdOpen = new RelayCommand(() =>
+      CmdSettings = new RelayCommand(() =>
       {
-        var openDialog = new OpenDeviceDialogViewModel(UiTools.DialogService);
+        var openDialog = new SettingsDialogViewModel(UiTools.DialogService, settings);
         var success = UiTools.DialogService.ShowDialog(this, openDialog);
         if (success == true)
         {
           // Open the device e.g. by opening openDialog.Id from database
-          var msg = $"The device '{openDialog.SelectedDeviceFile.FileName}' will now be loaded";
-          UiTools.DialogService.ShowMessageBox(this,
-                                               msg,
-                                               "Loading file",
-                                               MessageBoxButton.OK,
-                                               MessageBoxImage.Information);
+          // TODO Load content from JSON
         }
       }, () => true);
 
@@ -80,11 +92,19 @@ namespace Logic.UI.ViewModels
           }
         }
 
-        var result = UiTools.DialogService.ShowMessageBox(this,
-                                                          "Do you really want to quit the application?",
-                                                          "Really exit?",
-                                                          MessageBoxButton.YesNo,
-                                                          MessageBoxImage.Warning);
+        MessageBoxResult result = MessageBoxResult.Yes;
+        if(settings.AskBeforeAppExit)
+        {
+          result = UiTools
+                     .DialogService
+                     .ShowMessageBox(this,
+                                     "Do you really want to quit the application?",
+                                     "Really exit?",
+                                     MessageBoxButton.YesNo,
+                                     MessageBoxImage.Warning);
+
+        }
+
         if (result == MessageBoxResult.Yes)
         {
           isShutdownCommitted = true;

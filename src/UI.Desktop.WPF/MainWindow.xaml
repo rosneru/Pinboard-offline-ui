@@ -34,7 +34,7 @@
     <Menu Grid.ColumnSpan="3">
       <MenuItem Header="_Project">
         <MenuItem Header="_About.." />
-        <MenuItem Command="{Binding CmdOpen}" Header="_Settings" />
+        <MenuItem Command="{Binding CmdSettings}" Header="_Settings" />
         <Separator />
         <MenuItem Command="{Binding CmdExit}" Header="_Exit" />
       </MenuItem>
@@ -77,7 +77,7 @@
 
     <ContentControl Grid.Column="2"
                     Grid.Row="2"
-                    Content="{Binding CurrentPageViewModel}"
+                    Content="{Binding CurrentBookmarkViewModel}"
                     FocusVisualStyle="{x:Null}"
                     IsTabStop="False">
       <ContentControl.Style>
