@@ -1,0 +1,10 @@
+# Ignoriere alle Build Ordner
+bin/
+obj/
+packages/
+publish/
+.vs/
+*.user
+*.suo
+*.pfx
+
