@@ -14,7 +14,7 @@
         WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        >
+        d:DataContext="{d:DesignInstance Type=dvm:SettingsDialogViewModel}">
   <DockPanel LastChildFill="True">
     <Grid DockPanel.Dock="Top">
       <Grid.ColumnDefinitions>
@@ -22,6 +22,8 @@
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
@@ -49,6 +51,11 @@
               IsEnabled="{Binding IsLocked,
                                   Converter={StaticResource BoolInverseConverter}}" />
       <StackPanel Grid.Row="2" Orientation="Horizontal">
+        <TextBlock Text="Current pinboard file state:"/>
+        <TextBlock Text="{Binding CurrentPinboardFileState}"/>
+      </StackPanel>
+      <Separator Grid.Row="3"/>
+      <StackPanel Grid.Row="4" Orientation="Horizontal">
         <CheckBox Content="Ask before application exit" IsChecked="{Binding AskBeforeAppExit}" />
       </StackPanel>
     </Grid>

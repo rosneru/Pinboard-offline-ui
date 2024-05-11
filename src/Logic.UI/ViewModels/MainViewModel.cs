@@ -28,19 +28,20 @@ namespace Logic.UI.ViewModels
 
     public MainViewModel(IDialogService dialogService)
     {
-      var app_data_dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      var developer_name = "tysw";
-      var app_name = "Pinboard-offline-ui";
-      var app_settings_path = Path.Combine(app_data_dir, developer_name, app_name);
+      var appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      var developerName = "tysw";
+      var appName = "Pinboard-offline-ui";
 
-      if (!Directory.Exists(app_settings_path))
+      var appSettingsPath = Path.Combine(appDataRoamingPath, developerName, appName);
+
+      if (!Directory.Exists(appSettingsPath))
       {
-        Directory.CreateDirectory(app_settings_path);
+        Directory.CreateDirectory(appSettingsPath);
       }
 
-      app_settings_path = Path.Combine(app_settings_path, "settings.json");
+      var appSettingsFile = Path.Combine(appSettingsPath, "settings.json");
       IAppSettings settings = new ConfigurationBuilder<IAppSettings>()
-        .UseJsonFile(app_settings_path)
+        .UseJsonFile(appSettingsFile)
         .Build();
 
       UiTools = new UITools(dialogService);
@@ -62,7 +63,9 @@ namespace Logic.UI.ViewModels
 
       CmdSettings = new RelayCommand(() =>
       {
-        var openDialog = new SettingsDialogViewModel(UiTools.DialogService, settings);
+        var openDialog = new SettingsDialogViewModel(UiTools.DialogService,
+                                                     settings,
+                                                     appSettingsPath);
         var success = UiTools.DialogService.ShowDialog(this, openDialog);
         if (success == true)
         {
@@ -102,7 +105,6 @@ namespace Logic.UI.ViewModels
                                      "Really exit?",
                                      MessageBoxButton.YesNo,
                                      MessageBoxImage.Warning);
-
         }
 
         if (result == MessageBoxResult.Yes)
