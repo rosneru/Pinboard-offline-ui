@@ -22,7 +22,7 @@ namespace Logic.UI.DialogViewModels
     public ICommand CmdDownloadJSON { get; }
 
     public  string JSONFileURL { get; set; }
-    public string CurrentPinboardFileState { get; set; }
+    public string CurrentPinboardFileState { get; set; } 
     public  bool AskBeforeAppExit { get; set; }
 
     public SettingsDialogViewModel(IDialogService dialogService,
@@ -51,15 +51,14 @@ namespace Logic.UI.DialogViewModels
 
       CmdDownloadJSON = new RelayCommand(() =>
       {
-        // TODO: Download the JSON file and only if it succeeds, do:
-        settings.JSONFileURL = JSONFileURL;
+        // TODO: - download the JSON file to 'downloaded.json'
+        //       - call checkPinboardFileState(downloadedFilePath);
+        //         (to have the date updated as success signal)
+        //       - if download fails, then set CurrentPinboardFileState to "Download failed"
+        //       - On success only if "Apply" is clicked,
+        //         - delete current pinboard file
+        //         - rename 'downloaded.json' to current pinboard file
       }, () => true);
-    }
-
-    int calculateDayDifference(DateTime d1, DateTime d2)
-    {
-      TimeSpan span = d2.Subtract(d1);
-      return (int)span.TotalDays;
     }
 
     private void checkPinboardFileState(string pinboardFilePath)
@@ -76,6 +75,12 @@ namespace Logic.UI.DialogViewModels
       var dateStr = writeTime.ToString("dd.MM.yyyy");
 
       CurrentPinboardFileState = $"downloaded on {dateStr} ({dayDifference} days ago)";
+    }
+
+    private int calculateDayDifference(DateTime d1, DateTime d2)
+    {
+      TimeSpan span = d2.Subtract(d1);
+      return (int)span.TotalDays;
     }
 
     private bool? dialogResult;
