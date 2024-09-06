@@ -16,7 +16,7 @@ namespace Logic.UI.DialogViewModels
   public class SettingsDialogViewModel : ObservableObject, IModalDialogViewModel
   {
     private const string PINBOARD_FILE_NAME = "pinboard_backup.json";
-    public bool? DialogResult => dialogResult;
+    public bool? DialogResult => _dialogResult;
 
     public ICommand CmdApply { get; }
     public ICommand CmdCancel { get; }
@@ -25,6 +25,8 @@ namespace Logic.UI.DialogViewModels
     public  string JSONFileURL { get; set; }
     public string CurrentPinboardFileState { get; set; } 
     public  bool AskBeforeAppExit { get; set; }
+
+    public bool HasDownloadedSuccessfully { get; set; } = false;
 
     public SettingsDialogViewModel(IDialogService dialogService,
                                    IAppSettings settings,
@@ -40,29 +42,37 @@ namespace Logic.UI.DialogViewModels
       {
         settings.AskBeforeAppExit = AskBeforeAppExit;
 
-        dialogResult = true;
+        // TODO: (if a new pinboard file was downloaded)
+        //       - if download fails, then set CurrentPinboardFileState to "Download failed"
+        //       - On success only if "Apply" is clicked,
+        //         - delete current pinboard file
+        //         - rename 'downloaded.json' to current pinboard file
+
+        _dialogResult = true;
         dialogService.Close(this);
-      }, () => AskBeforeAppExit != settings.AskBeforeAppExit);
+      }, () => (AskBeforeAppExit != settings.AskBeforeAppExit) || HasDownloadedSuccessfully);
 
       CmdCancel = new RelayCommand(() =>
       {
-        dialogResult = false;
+        _dialogResult = false;
         dialogService.Close(this);
       }, () => true);
 
       CmdDownloadJSON = new RelayCommand(() =>
       {
+
         // download the JSON file to 'downloaded.json'
         var downloadedFilePath = Path.Combine(appSettingsPath, "download.json");
-        downloadFile(downloadedFilePath);
+        HasDownloadedSuccessfully = false;
+        if (!downloadFile(downloadedFilePath))
+        {
+          CurrentPinboardFileState = "Download failed.";
+          return;
+        }
 
         // Call checkPinboardFileState(downloadedFilePath) (to have the date updated as success signal)
-        checkPinboardFileState("downloaded.json");
-        // TODO:
-        //       - if download fails, then set CurrentPinboardFileState to "Download failed"
-        //       - On success only if "Apply" is clicked,
-        //         - delete current pinboard file
-        //         - rename 'downloaded.json' to current pinboard file
+        checkPinboardFileState(downloadedFilePath);
+        HasDownloadedSuccessfully = true;
       }, () => true);
     }
 
@@ -110,6 +120,6 @@ namespace Logic.UI.DialogViewModels
       return (int)span.TotalDays;
     }
 
-    private bool? dialogResult;
+    private bool? _dialogResult;
   }
 }
