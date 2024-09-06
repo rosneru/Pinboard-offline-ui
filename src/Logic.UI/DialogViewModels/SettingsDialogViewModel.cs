@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -51,14 +52,40 @@ namespace Logic.UI.DialogViewModels
 
       CmdDownloadJSON = new RelayCommand(() =>
       {
-        // TODO: - download the JSON file to 'downloaded.json'
-        //       - call checkPinboardFileState(downloadedFilePath);
-        //         (to have the date updated as success signal)
+        // download the JSON file to 'downloaded.json'
+        var downloadedFilePath = Path.Combine(appSettingsPath, "download.json");
+        downloadFile(downloadedFilePath);
+
+        // Call checkPinboardFileState(downloadedFilePath) (to have the date updated as success signal)
+        checkPinboardFileState("downloaded.json");
+        // TODO:
         //       - if download fails, then set CurrentPinboardFileState to "Download failed"
         //       - On success only if "Apply" is clicked,
         //         - delete current pinboard file
         //         - rename 'downloaded.json' to current pinboard file
       }, () => true);
+    }
+
+    private bool downloadFile(string downloadedFilePath)
+    {
+      try
+      {
+        using (var client = new HttpClient())
+        {
+          using (var s = client.GetStreamAsync(JSONFileURL))
+          {
+            using (var fs = new FileStream(downloadedFilePath, FileMode.OpenOrCreate))
+            {
+              s.Result.CopyTo(fs);
+              return true;
+            }
+          }
+        }
+      }
+      catch
+      {
+        return false;
+      }
     }
 
     private void checkPinboardFileState(string pinboardFilePath)
