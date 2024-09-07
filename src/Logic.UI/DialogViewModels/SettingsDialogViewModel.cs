@@ -23,10 +23,10 @@ namespace Logic.UI.DialogViewModels
     public ICommand CmdDownloadJSON { get; }
 
     public  string JSONFileURL { get; set; }
-    public string CurrentPinboardFileState { get; set; } 
+    public string PinboardFileDate { get; set; }
     public  bool AskBeforeAppExit { get; set; }
 
-    public bool HasDownloadedSuccessfully { get; set; } = false;
+    public bool HasNewPinboardFileDownloaded { get; set; } = false;
 
     public SettingsDialogViewModel(IDialogService dialogService,
                                    IAppSettings settings,
@@ -36,7 +36,8 @@ namespace Logic.UI.DialogViewModels
       AskBeforeAppExit = settings.AskBeforeAppExit;
 
       var pinboardFilePath = Path.Combine(appSettingsPath, PINBOARD_FILE_NAME);
-      checkPinboardFileState(pinboardFilePath);
+      var currentFileDateStr = getPinboardFileDate(pinboardFilePath);
+      displayPinboardFileDate(currentFileDateStr);
 
       CmdApply = new RelayCommand(() =>
       {
@@ -50,7 +51,7 @@ namespace Logic.UI.DialogViewModels
 
         _dialogResult = true;
         dialogService.Close(this);
-      }, () => (AskBeforeAppExit != settings.AskBeforeAppExit) || HasDownloadedSuccessfully);
+      }, () => (AskBeforeAppExit != settings.AskBeforeAppExit) || HasNewPinboardFileDownloaded);
 
       CmdCancel = new RelayCommand(() =>
       {
@@ -58,39 +59,49 @@ namespace Logic.UI.DialogViewModels
         dialogService.Close(this);
       }, () => true);
 
-      CmdDownloadJSON = new RelayCommand(() =>
+      CmdDownloadJSON = new RelayCommand(async () =>
       {
 
         // download the JSON file to 'downloaded.json'
         var downloadedFilePath = Path.Combine(appSettingsPath, "download.json");
-        HasDownloadedSuccessfully = false;
-        if (!downloadFile(downloadedFilePath))
+        HasNewPinboardFileDownloaded = false;
+        _isDownloading = true;
+        var didDownloadSucceed = await downloadFile(downloadedFilePath);
+        _isDownloading = false;
+        if (didDownloadSucceed)
         {
-          CurrentPinboardFileState = "Download failed.";
+          PinboardFileDate = "Download failed.";
           return;
         }
 
         // Call checkPinboardFileState(downloadedFilePath) (to have the date updated as success signal)
-        checkPinboardFileState(downloadedFilePath);
-        HasDownloadedSuccessfully = true;
-      }, () => true);
+        getPinboardFileDate(downloadedFilePath);
+        HasNewPinboardFileDownloaded = true;
+      }, () => !_isDownloading);
     }
 
-    private bool downloadFile(string downloadedFilePath)
+    private void displayPinboardFileDate(string currentFileDate, string newFileDate)
+    {
+      if (string.IsNullOrEmpty(currentFileDate))
+      {
+        PinboardFileDate = $"None";
+      }
+      else
+      {
+        PinboardFileDate = $"File from download date {currentFileDate}";
+      }
+    }
+
+    private bool _isDownloading = false;
+    private async Task<bool> downloadFile(string downloadedFilePath)
     {
       try
       {
-        using (var client = new HttpClient())
-        {
-          using (var s = client.GetStreamAsync(JSONFileURL))
-          {
-            using (var fs = new FileStream(downloadedFilePath, FileMode.OpenOrCreate))
-            {
-              s.Result.CopyTo(fs);
-              return true;
-            }
-          }
-        }
+        using var client = new HttpClient();
+        using var s = await client.GetStreamAsync(JSONFileURL);
+        using var fs = new FileStream(downloadedFilePath, FileMode.OpenOrCreate);
+        await s.CopyToAsync(fs);
+        return true;
       }
       catch
       {
@@ -98,12 +109,11 @@ namespace Logic.UI.DialogViewModels
       }
     }
 
-    private void checkPinboardFileState(string pinboardFilePath)
+    private string getPinboardFileDate(string pinboardFilePath)
     {
       if (!File.Exists(pinboardFilePath))
       {
-        CurrentPinboardFileState = "None";
-        return;
+        return "";
       }
 
       var writeTime = File.GetLastWriteTime(pinboardFilePath);
@@ -111,7 +121,7 @@ namespace Logic.UI.DialogViewModels
 
       var dateStr = writeTime.ToString("dd.MM.yyyy");
 
-      CurrentPinboardFileState = $"downloaded on {dateStr} ({dayDifference} days ago)";
+      return $"{dateStr} ({dayDifference} days ago)";
     }
 
     private int calculateDayDifference(DateTime d1, DateTime d2)

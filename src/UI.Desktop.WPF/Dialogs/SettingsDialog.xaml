@@ -51,8 +51,8 @@
               IsEnabled="{Binding IsLocked,
                                   Converter={StaticResource BoolInverseConverter}}" />
       <StackPanel Grid.Row="2" Orientation="Horizontal">
-        <TextBlock Text="Current pinboard file state:"/>
-        <TextBlock Text="{Binding CurrentPinboardFileState}"/>
+        <TextBlock Text="Pinboard file date:"/>
+        <TextBlock Text="{Binding PinboardFileDate}"/>
       </StackPanel>
       <Separator Grid.Row="3"/>
       <StackPanel Grid.Row="4" Orientation="Horizontal">
