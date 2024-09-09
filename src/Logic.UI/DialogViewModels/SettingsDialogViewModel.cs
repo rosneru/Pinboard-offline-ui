@@ -37,7 +37,7 @@ namespace Logic.UI.DialogViewModels
 
       var pinboardFilePath = Path.Combine(appSettingsPath, PINBOARD_FILE_NAME);
       var currentFileDateStr = getPinboardFileDate(pinboardFilePath);
-      displayPinboardFileDate(currentFileDateStr);
+      displayPinboardFileDate(currentFileDateStr, "");
 
       CmdApply = new RelayCommand(() =>
       {
