@@ -19,16 +19,19 @@ namespace Logic.UI.DialogViewModels
 
     public bool? DialogResult => _dialogResult;
     
-    public ICommand CmdDownloadJSON { get; }
+    public ICommand CmdUpdate { get; }
     public ICommand CmdClose { get; }
-    
+
+    public string JSONFileURL { get; set; }
     public string PinboardFileDate { get; set; }
 
     public UpdateDialogViewModel(IDialogService dialogService,
                                  IAppSettings settings,
                                  string appSettingsPath)
     {
-      CmdDownloadJSON = new RelayCommand(async () =>
+      JSONFileURL = settings.JSONFileURL;
+
+      CmdUpdate = new RelayCommand(async () =>
       {
         var pinboardFilePath = Path.Combine(appSettingsPath, PINBOARD_FILE_NAME);
         var currentFileDateStr = getPinboardFileDate(pinboardFilePath);
@@ -48,7 +51,13 @@ namespace Logic.UI.DialogViewModels
 
         // Call checkPinboardFileState(downloadedFilePath) (to have the date updated as success signal)
         getPinboardFileDate(downloadedFilePath);
-      }, () => !_isDownloading);
+      }, () => !string.IsNullOrEmpty(JSONFileURL) && !_isDownloading);
+
+      CmdClose = new RelayCommand(() =>
+      {
+        _dialogResult = false;
+        dialogService.Close(this);
+      }, () => true);
     }
 
     private void displayPinboardFileDate(string currentFileDate, string newFileDate)

@@ -17,6 +17,9 @@
     <KeyBinding Key="P"
                 Command="{Binding CmdSettings}"
                 Modifiers="Alt" />
+    <KeyBinding Key="U"
+                Command="{Binding CmdUpdate}"
+                Modifiers="Alt" />
   </Window.InputBindings>
   <Interactivity:Interaction.Triggers>
     <Interactivity:EventTrigger EventName="Closing">

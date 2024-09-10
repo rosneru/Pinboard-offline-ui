@@ -16,6 +16,9 @@
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
+  <Window.InputBindings>
+    <KeyBinding Key="Esc" Command="{Binding CmdCancel}" />
+  </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
@@ -42,8 +45,8 @@
               Content="_Apply" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdReject}"
-              Content="_Reject" />
+              Command="{Binding CmdCancel}"
+              Content="_Cancel" />
     </StackPanel>
 
   </Grid>

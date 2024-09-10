@@ -16,6 +16,9 @@
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
+  <Window.InputBindings>
+    <KeyBinding Key="Esc" Command="{Binding CmdClose}" />
+  </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
