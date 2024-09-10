@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace UI.Desktop.WPF.Dialogs
 {
     /// <summary>
-    /// Interaction logic for SettingsDialogGeneral.xaml
+    /// Interaction logic for UpdateDialog.xaml
     /// </summary>
-    public partial class SettingsDialogGeneral : UserControl
+    public partial class UpdateDialog : Window
     {
-        public SettingsDialogGeneral()
+        public UpdateDialog()
         {
             InitializeComponent();
         }
