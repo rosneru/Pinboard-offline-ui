@@ -43,9 +43,13 @@
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
 
-      <Button Command="{Binding CmdUpdate}" Content="_Update" />
+      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+              Command="{Binding CmdUpdate}"
+              Content="_Update" />
 
-      <Button Command="{Binding CmdClose}" Content="_Close" />
+      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+              Command="{Binding CmdClose}"
+              Content="_Close" />
     </StackPanel>
 
   </Grid>

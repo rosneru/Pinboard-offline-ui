@@ -18,6 +18,7 @@ namespace Logic.UI.ViewModels
   public class MainViewModel : ObservableObject
   {
     public ICommand CmdSettings { get; }
+    public ICommand CmdUpdate { get; }
     public ICommand CmdExit { get; }
 
 
@@ -74,9 +75,22 @@ namespace Logic.UI.ViewModels
         }
       }, () => true);
 
+      CmdUpdate = new RelayCommand(() =>
+      {
+        var settingsDialog = new UpdateDialogViewModel(UiTools.DialogService,
+                                                     settings,
+                                                     appSettingsPath);
+        var success = UiTools.DialogService.ShowDialog(this, settingsDialog);
+        if (success == true)
+        {
+          // Open the device e.g. by opening openDialog.Id from database
+          // TODO Load content from JSON
+        }
+      }, () => true);
+
       CmdExit = new RelayCommand<object>((p) =>
       {
-        if (isShutdownCommitted)
+        if (_isExitAccepted)
         {
           // The Application.Current.Shutdown() below leads to a 2nd
           // invocation of this command. Can be skipped.
@@ -109,12 +123,14 @@ namespace Logic.UI.ViewModels
 
         if (result == MessageBoxResult.Yes)
         {
-          isShutdownCommitted = true;
+          _isExitAccepted = true;
           Application.Current.Shutdown();
         }
       }, (p) => true);
     }
 
-    bool isShutdownCommitted = false;
+
+
+    bool _isExitAccepted = false;
   }
 }
