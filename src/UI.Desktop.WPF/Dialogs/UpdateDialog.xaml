@@ -10,14 +10,14 @@
         Title="Update"
         MinWidth="640"
         MinHeight="400"
-        d:DataContext="{d:DesignInstance Type=dvm:SettingsDialogViewModel}"
+        d:DataContext="{d:DesignInstance Type=dvm:UpdateDialogViewModel}"
         md:DialogServiceViews.IsRegistered="True"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
   <Window.InputBindings>
-    <KeyBinding Key="Esc" Command="{Binding CmdClose}" />
+    <KeyBinding Key="Esc" Command="{Binding CmdCancel}" />
   </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
@@ -38,8 +38,19 @@
                               Mode=OneWay}" />
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="Pinboard file date:" />
-        <TextBlock Text="{Binding PinboardFileDate}" />
+        <TextBlock FontWeight="Bold" Text="{Binding CurrentFile.DateStr}" />
       </StackPanel>
+      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+              Command="{Binding CmdDownload}"
+              Content="_Download" />
+      <TextBlock FontWeight="Bold"
+                 Text="Download failed. Try to change the URL in settings and download again."
+                 Visibility="{Binding HasDownloadSucceeded,
+                                      Converter={StaticResource BoolVisibilityConverter}}" />
+      <TextBlock FontWeight="Bold"
+                 Text="Download succeeded. Click on `Save` to apply the new data file."
+                 Visibility="{Binding HasDownloadFailed,
+                                      Converter={StaticResource BoolVisibilityConverter}}" />
     </StackPanel>
     <StackPanel Grid.Row="1"
                 Margin="0 6 3 0"
@@ -47,12 +58,12 @@
                 Orientation="Horizontal">
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdUpdate}"
-              Content="_Update" />
+              Command="{Binding CmdSave}"
+              Content="_Save" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdClose}"
-              Content="_Close" />
+              Command="{Binding CmdCancel}"
+              Content="_Cancel" />
     </StackPanel>
 
   </Grid>
