@@ -46,8 +46,8 @@ namespace Logic.UI.DialogViewModels
 
         // download the JSON file to 'downloaded.json'
         var downloadedFilePath = Path.Combine(appSettingsPath, "download.json");
-        bool succ = await NewFile.Download(downloadedFilePath, settings.JSONFileURL);
-        HasDownloadSucceeded = !succ;
+        HasDownloadSucceeded = await NewFile.Download(downloadedFilePath, settings.JSONFileURL);
+        HasDownloadFailed = !HasDownloadSucceeded;
 
       }, () => !HasDownloadSucceeded);
 

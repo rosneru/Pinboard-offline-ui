@@ -45,11 +45,11 @@
               Content="_Download" />
       <TextBlock FontWeight="Bold"
                  Text="Download failed. Try to change the URL in settings and download again."
-                 Visibility="{Binding HasDownloadSucceeded,
+                 Visibility="{Binding HasDownloadFailed,
                                       Converter={StaticResource BoolVisibilityConverter}}" />
       <TextBlock FontWeight="Bold"
                  Text="Download succeeded. Click on `Save` to apply the new data file."
-                 Visibility="{Binding HasDownloadFailed,
+                 Visibility="{Binding HasDownloadSucceeded,
                                       Converter={StaticResource BoolVisibilityConverter}}" />
     </StackPanel>
     <StackPanel Grid.Row="1"
