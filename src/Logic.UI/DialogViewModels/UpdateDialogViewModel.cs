@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -43,18 +44,18 @@ namespace Logic.UI.DialogViewModels
 
       CmdDownload = new RelayCommand(async () =>
       {
-
-        // download the JSON file to 'downloaded.json'
-        var downloadedFilePath = Path.Combine(appSettingsPath, "download.json");
-        HasDownloadSucceeded = await NewFile.Download(downloadedFilePath, settings.JSONFileURL);
+        HasDownloadSucceeded = await NewFile.Download(settings.JSONFileURL);
         HasDownloadFailed = !HasDownloadSucceeded;
-
+        CommandManager.InvalidateRequerySuggested();
       }, () => !HasDownloadSucceeded);
 
       CmdSave= new RelayCommand(() =>
       {
-        _dialogResult = true;
-        dialogService.Close(this);
+        if(CurrentFile.SaveContentsFromMemoryFile(NewFile))
+        {
+          _dialogResult = true;
+          dialogService.Close(this);
+        }
       }, () => HasDownloadSucceeded);
 
       CmdCancel = new RelayCommand(() =>

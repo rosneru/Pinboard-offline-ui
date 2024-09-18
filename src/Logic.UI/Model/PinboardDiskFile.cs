@@ -26,6 +26,23 @@ namespace Logic.UI.Model
       updateDateStr();
     }
 
+    public bool SaveContentsFromMemoryFile(PinboardMemoryFile memoryFile)
+    {
+      try
+      {
+        using(var fs = new FileStream(_fileFullPath, FileMode.Create, FileAccess.Write))
+        {
+          memoryFile.Stream.CopyTo(fs);
+        }
+
+        return true;
+      }
+      catch(Exception)
+      {
+        return false;
+      }
+    }
+
     private void updateDateStr()
     {
       string currentFileDate = getPinboardFileDate();
@@ -65,22 +82,16 @@ namespace Logic.UI.Model
     string _fileFullPath;
   }
 
-  public class PinboardMemoryFile : PinboardFile
+  public class PinboardMemoryFile : PinboardFile, IDisposable
   {
-    public PinboardMemoryFile()
-    {
-          
-    }
+    public Stream Stream { get; private set; } = null;
 
-    public async Task<bool> Download(string downloadedFilePath,
-                                     string jsonFileURL)
+    public async Task<bool> Download(string jsonFileURL)
     {
       try
       {
         using var client = new HttpClient();
-        using var s = await client.GetStreamAsync(jsonFileURL);
-        using var fs = new FileStream(downloadedFilePath, FileMode.OpenOrCreate);
-        await s.CopyToAsync(fs);
+        Stream = await client.GetStreamAsync(jsonFileURL);
         return true;
       }
       catch
@@ -89,5 +100,10 @@ namespace Logic.UI.Model
       }
     }
 
+    public void Dispose()
+    {
+      Stream = null;
+    }
   }
+
 }
