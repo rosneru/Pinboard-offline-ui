@@ -25,21 +25,24 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <StackPanel Orientation="Vertical">
-      <Label Grid.Column="0"
-             Grid.Row="0"
-             Content="URL of Pinboard.in backup file in JSON format" />
-      <TextBox x:Name="tbxJSONFileURL"
-               Grid.Column="0"
-               Grid.Row="1"
-               Focusable="True"
-               IsReadOnly="True"
-               IsTabStop="True"
-               Text="{Binding JSONFileURL,
-                              Mode=OneWay}" />
       <StackPanel Orientation="Horizontal">
-        <TextBlock Text="Pinboard file date:" />
+        <TextBlock Text="Current Pinboard file date:" />
         <TextBlock FontWeight="Bold" Text="{Binding CurrentFile.DateStr}" />
       </StackPanel>
+      <Label Content="The new Pinboard.in backup file will be downloaded from:"
+             Visibility="{Binding HasURL, Converter={StaticResource BoolVisibilityConverter}}"/>
+      <Label x:Name="tbxJSONFileURL"
+             FontStyle="Italic"
+             Content="{Binding JSONFileURL,
+                               Mode=OneWay}"
+             Focusable="True"
+             IsTabStop="True"
+             Visibility="{Binding HasURL, Converter={StaticResource BoolVisibilityConverter}}"/>
+      <Label Content="No download URL set!"
+             Foreground="Red"
+             FontWeight="Bold"
+             Visibility="{Binding HasURL, Converter={StaticResource BoolInverseVisibilityConverter}}"/>
+      <Label Content="Download URL can be changed in settings." />
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding CmdDownload}"
               Content="_Download" />

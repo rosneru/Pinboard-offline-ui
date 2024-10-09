@@ -27,9 +27,11 @@ namespace Logic.UI.DialogViewModels
     public PinboardDiskFile CurrentFile { get; private set; }
     public PinboardMemoryFile NewFile { get; private set; }
 
+    public bool IsDownloadInProgress { get; private set; } = false;
     public bool HasDownloadSucceeded { get; private set; } = false;
 
     public bool HasDownloadFailed { get; private set; } = false;
+    public bool HasURL { get; private set; } = false;
 
     public string JSONFileURL { get; set; }
 
@@ -41,13 +43,19 @@ namespace Logic.UI.DialogViewModels
       JSONFileURL = settings.JSONFileURL;
       CurrentFile = new PinboardDiskFile(appSettingsPath, PINBOARD_FILE_NAME);
       NewFile = new PinboardMemoryFile();
+      HasURL = !string.IsNullOrEmpty(JSONFileURL);
 
       CmdDownload = new RelayCommand(async () =>
       {
+        HasDownloadFailed = false;
+        IsDownloadInProgress = true;
+        //CommandManager.InvalidateRequerySuggested();
+
         HasDownloadSucceeded = await NewFile.Download(settings.JSONFileURL);
         HasDownloadFailed = !HasDownloadSucceeded;
+        IsDownloadInProgress = false;
         CommandManager.InvalidateRequerySuggested();
-      }, () => !HasDownloadSucceeded);
+      }, () => HasURL && !IsDownloadInProgress && !HasDownloadSucceeded);
 
       CmdSave= new RelayCommand(() =>
       {
