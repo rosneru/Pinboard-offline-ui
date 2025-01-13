@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Logic.UI.Tools;
 using Logic.UI.ViewModels;
-using PropertyChanged;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,14 +10,11 @@ using System.Windows.Input;
 
 namespace Logic.UI.PageViewModels
 {
-  public class ConnectionViewModel : PageViewModelBase
+  public partial class ConnectionViewModel : PageViewModelBase
   {
-
-    public ICommand CmdPing { get; }
-
-    public ICommand CmdConnect { get; }
-
-    public string IPAddress { get; set; } = "192.168.1.1";
+    [ObservableProperty] private ICommand cmdPing;
+    [ObservableProperty] private ICommand _cmdConnect;
+    [ObservableProperty] private string _iPAddress = "192.168.1.1";
 
 
     public ConnectionViewModel(UITools UiTools)

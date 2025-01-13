@@ -9,14 +9,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Logic.UI.Model
 {
-  public class PinboardFile : ObservableObject
+  public partial class PinboardFile : ObservableObject
   {
 
   }
 
-  public class PinboardDiskFile : PinboardFile
+  public partial class PinboardDiskFile : PinboardFile
   {
-    public string DateStr { get; private set; }
+    [ObservableProperty] private string _dateStr;
 
     public PinboardDiskFile(string appSettingsPath, string fileName)
     {

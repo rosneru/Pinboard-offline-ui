@@ -17,20 +17,20 @@ namespace Logic.UI.Tools
   /// fixed set in a private variable. TODO This could be made a global
   /// setting and loaded from database.
   /// </summary>
-  public class UITools : ObservableObject
+  public partial class UITools : ObservableObject
   {
 
-    public ICommand CmdMenuLock { get; }
-    public ICommand CmdMenuUnlock { get; }
-    public ICommand CmdCancel { get; }
+    [ObservableProperty] private ICommand _cmdMenuLock;
+    [ObservableProperty] private ICommand _cmdMenuUnlock;
+    [ObservableProperty] private ICommand _cmdCancel;
 
-    public IDialogService DialogService { get; }
+    [ObservableProperty] private IDialogService _dialogService;
 
-    public bool IsMenuLocked { get; private set; }
+    [ObservableProperty] private bool _isMenuLocked;
 
-    public StatusBarViewModel StatusBar { get; private set; }
+    [ObservableProperty] private StatusBarViewModel _statusBar;
 
-    public CancellationTokenSource CancelToken { get; set; }
+    [ObservableProperty] private CancellationTokenSource _cancelToken;
 
     public UITools(IDialogService dialogService)
     {

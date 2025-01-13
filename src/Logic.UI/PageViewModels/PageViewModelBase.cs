@@ -5,28 +5,28 @@ using Logic.UI.ViewModels;
 
 namespace Logic.UI.PageViewModels
 {
-  public abstract class PageViewModelBase : ObservableObject
+  public abstract partial class PageViewModelBase : ObservableObject
   {
-    public string Name { get; }
-    public string Symbol { get; }
+    [ObservableProperty] private string _name;
+    [ObservableProperty] private string _symbol;
 
-    public string ErrorText { get; set; }
+    [ObservableProperty] private string _errorText;
 
 
-    public string SuccessText { get; set; }
+    [ObservableProperty] private string _successText;
 
     /// <summary>
     /// True if this ViewModel is the one currently open.
     /// </summary>
-    public bool IsOpen { get; set; }
+    [ObservableProperty] private bool _isOpen;
 
     /// <summary>
     /// True if this ViewModel is locked until either apply or reject 
     /// action is done.
     /// </summary>
-    public bool IsLocked { get; set; }
+    [ObservableProperty] private bool _isLocked;
 
-    public UITools UiTools { get; }
+    [ObservableProperty] private UITools _uiTools;
 
     public PageViewModelBase(string name,
                              string symbol,

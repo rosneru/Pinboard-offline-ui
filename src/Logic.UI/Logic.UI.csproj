@@ -9,7 +9,6 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Config.Net" Version="5.2.1" />
     <PackageReference Include="MvvmDialogs" Version="9.1.2" />
-    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
