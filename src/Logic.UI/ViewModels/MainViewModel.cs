@@ -60,7 +60,7 @@ namespace Logic.UI.ViewModels
     }
 
     [RelayCommand]
-    void OpenUpdate()
+    async Task OpenUpdate()
     {
       var settingsDialog = new UpdateDialogViewModel(UiTools.DialogService,
                                                     _appSettings,
@@ -69,8 +69,7 @@ namespace Logic.UI.ViewModels
       var success = UiTools.DialogService.ShowDialog(this, settingsDialog);
       if (success == true)
       {
-        // Open the device e.g. by opening openDialog.Id from database
-        // TODO Load content from JSON
+        await Loaded();
       }
     }
 
