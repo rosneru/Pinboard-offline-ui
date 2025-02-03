@@ -21,7 +21,7 @@ namespace Logic.UI.ViewModels.Controls
   /// property and display its contents maybe flashing to ensure that
   /// the user will notice it.
   /// </summary>
-  public class StatusBarViewModel : ObservableObject
+  public partial class StatusBarViewModel : ObservableObject
   {
     private const int notificationDuration_ms = 550;
 
@@ -29,25 +29,13 @@ namespace Logic.UI.ViewModels.Controls
     /// Holds the last notification message for a distinct time span,
     /// then is set to empty.
     /// </summary>
-    public string Notification { get; private set; }
+    [ObservableProperty] private string _notification;
 
     /// <summary>
     /// The text about current application state to be displayed in the
     /// status bar.
     /// </summary>
-    public string StatusText { get; set; } = "Ready";
-
-    /// <summary>
-    /// The current user name or login name  to be displayed in the
-    /// status bar.
-    /// </summary>
-    public string LoginName { get; set; } = "-";
-
-    /// <summary>
-    /// The current application version  to be displayed in the status
-    /// bar.
-    /// </summary>
-    public string AppVersion { get; set; } = "-";
+    [ObservableProperty] private string _statusText = "Ready";
 
     SynchronizationContext uiTaskContext = SynchronizationContext.Current;
 
@@ -86,12 +74,12 @@ namespace Logic.UI.ViewModels.Controls
           }
           while (token.IsCancellationRequested == false);
         }
-        catch(OperationCanceledException)
+        catch (OperationCanceledException)
         {
           // No special handling of 'cancel' needed here, just exit the
           // task
         }
-        catch(Exception e)
+        catch (Exception e)
         {
           // The notification loop broke because of an exception:
           // set the exception message as last visible Notification

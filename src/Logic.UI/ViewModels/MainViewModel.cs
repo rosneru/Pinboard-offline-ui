@@ -75,14 +75,18 @@ namespace Logic.UI.ViewModels
     }
 
     [RelayCommand]
-    void Loaded()
+    async Task Loaded()
     {
-        
-
-      _ = Task.Run(async () =>
+      Mouse.OverrideCursor = Cursors.Wait;
+      UiTools.StatusBar.StatusText = $"Loading bookmarks..";
+      Bookmarks = await Task.Run(() =>
       {
-        Bookmarks = await LoadBookmarks();
+        string bookmarkFilePath = Path.Combine(_appSettingsPath, PINBOARD_FILE_NAME);
+        string json = File.ReadAllText(bookmarkFilePath);
+        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
       });
+      UiTools.StatusBar.StatusText = $"{Bookmarks.Count} bookmarks loaded.";
+      Mouse.OverrideCursor = null;
     }
 
     private bool CanExecuteExit()
@@ -124,20 +128,6 @@ namespace Logic.UI.ViewModels
       }
     }
 
-
-    private async Task<List<Bookmark>> LoadBookmarks()
-    {
-      Mouse.OverrideCursor = Cursors.Wait;
-      var result = await Task.Run(() =>
-      {
-        string bookmarkFilePath = Path.Combine(_appSettingsPath, PINBOARD_FILE_NAME);
-        string json = File.ReadAllText(bookmarkFilePath);
-        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
-      });
-      Mouse.OverrideCursor = null;
-
-      return result;
-    }
 
 
     bool _isAlreadyShutdown = false;

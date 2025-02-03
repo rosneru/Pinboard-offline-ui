@@ -37,7 +37,7 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" MinWidth="100" />
+      <ColumnDefinition Width="200" MinWidth="100"/>
       <ColumnDefinition Width="5" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
@@ -57,34 +57,24 @@
       </MenuItem>
     </Menu>
 
+    <ListView Grid.Column="0"
+              Grid.Row="1"
+              Grid.RowSpan="2"
+              HorizontalContentAlignment="Center"
+              ItemsSource="{Binding Bookmarks}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
+
     <GridSplitter Grid.Column="1"
                   Grid.Row="1"
                   Grid.RowSpan="2"
                   Width="5"
                   HorizontalAlignment="Stretch" />
 
-    <ListView Grid.Column="0"
-              Grid.Row="1"
-              Grid.RowSpan="2"
-              HorizontalContentAlignment="Center"
-              IsEnabled="{Binding IsMenuLocked,
-                                  Converter={StaticResource BoolInverseConverter}}"
-              IsSynchronizedWithCurrentItem="True"
-              ItemsSource="{Binding BookmarkViewModels,
-                                    FallbackValue='aaa'}"
-              SelectedItem="{Binding CurrentBookmarkViewModel}">
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Vertical">
-            <TextBlock HorizontalAlignment="Center"
-                       FontFamily="Segoe MDL2 Assets"
-                       FontSize="16"
-                       Text="{Binding Symbol}" />
-            <TextBlock HorizontalAlignment="Center" Text="{Binding Name}" />
-          </StackPanel>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
 
     <StackPanel Grid.Column="2"
                 Grid.Row="1"
