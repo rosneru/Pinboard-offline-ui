@@ -14,67 +14,76 @@ using MvvmDialogs;
 
 namespace Logic.UI.DialogViewModels
 {
-  public class UpdateDialogViewModel : ObservableObject, IModalDialogViewModel
+  public partial class UpdateDialogViewModel : ObservableObject, IModalDialogViewModel
   {
     private const string PINBOARD_FILE_NAME = "pinboard_backup.json";
 
-    public bool? DialogResult => _dialogResult;
-    
-    public ICommand CmdDownload { get; }
-    public ICommand CmdSave { get; }
-    public ICommand CmdCancel { get; }
+    [ObservableProperty] private bool? _dialogResult;
 
-    public PinboardDiskFile CurrentFile { get; private set; }
-    public PinboardMemoryFile NewFile { get; private set; }
-
-    public bool IsDownloadInProgress { get; private set; } = false;
-    public bool HasDownloadSucceeded { get; private set; } = false;
-
-    public bool HasDownloadFailed { get; private set; } = false;
-    public bool HasURL { get; private set; } = false;
-
-    public string JSONFileURL { get; set; }
+    [ObservableProperty] private PinboardDiskFile _currentFile;
+    [ObservableProperty] private PinboardMemoryFile _newFile;
+    [ObservableProperty] private bool _isDownloadInProgress;
+    [ObservableProperty] private bool _hasDownloadSucceeded;
+    [ObservableProperty] private bool _hasDownloadFailed;
+    [ObservableProperty] private bool _hasURL;
+    [ObservableProperty] private string _jSONFileURL;
 
 
     public UpdateDialogViewModel(IDialogService dialogService,
-                                 IAppSettings settings,
+                                 IAppSettings appSettings,
                                  string appSettingsPath)
     {
-      JSONFileURL = settings.JSONFileURL;
+      _dialogService = dialogService;
+      _appSettings = appSettings;
+
+      JSONFileURL = appSettings.JSONFileURL;
       CurrentFile = new PinboardDiskFile(appSettingsPath, PINBOARD_FILE_NAME);
       NewFile = new PinboardMemoryFile();
       HasURL = !string.IsNullOrEmpty(JSONFileURL);
-
-      CmdDownload = new RelayCommand(async () =>
-      {
-        HasDownloadFailed = false;
-        IsDownloadInProgress = true;
-        //CommandManager.InvalidateRequerySuggested();
-
-        HasDownloadSucceeded = await NewFile.Download(settings.JSONFileURL);
-        HasDownloadFailed = !HasDownloadSucceeded;
-        IsDownloadInProgress = false;
-        CommandManager.InvalidateRequerySuggested();
-      }, () => HasURL && !IsDownloadInProgress && !HasDownloadSucceeded);
-
-      CmdSave= new RelayCommand(() =>
-      {
-        if(CurrentFile.SaveContentsFromMemoryFile(NewFile))
-        {
-          _dialogResult = true;
-          dialogService.Close(this);
-        }
-      }, () => HasDownloadSucceeded);
-
-      CmdCancel = new RelayCommand(() =>
-      {
-        _dialogResult = false;
-        dialogService.Close(this);
-      }, () => true);
     }
 
+    private bool CanExecuteDownload()
+    {
+      return HasURL && !IsDownloadInProgress && !HasDownloadSucceeded;
+    }
 
-    private bool? _dialogResult;
+    [RelayCommand(CanExecute = nameof(CanExecuteDownload))]
+    private async Task Download()
+    {
+      HasDownloadFailed = false;
+      IsDownloadInProgress = true;
+      Mouse.OverrideCursor = Cursors.Wait;
 
+      HasDownloadSucceeded = await NewFile.Download(_appSettings.JSONFileURL);
+
+      Mouse.OverrideCursor = null;
+      IsDownloadInProgress = false;
+      HasDownloadFailed = !HasDownloadSucceeded;
+    }
+
+    private bool CanExecuteSave()
+    {
+      return HasDownloadSucceeded;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExecuteSave))]
+    private void Save()
+    {
+      if (CurrentFile.SaveContentsFromMemoryFile(NewFile))
+      {
+        DialogResult = true;
+        _dialogService.Close(this);
+      }
+    }
+
+    [RelayCommand]
+    private void Cancel()
+    {
+      DialogResult = false;
+      _dialogService.Close(this);
+    }
+
+    IDialogService _dialogService;
+    IAppSettings _appSettings;
   }
 }
