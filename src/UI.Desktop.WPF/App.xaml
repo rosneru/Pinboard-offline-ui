@@ -1,9 +1,7 @@
 ﻿<Application x:Class="UI.Desktop.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Desktop="clr-namespace:UI.Desktop.WPF"
-             xmlns:PageViewModels="clr-namespace:Logic.UI.PageViewModels;assembly=Logic.UI"
-             xmlns:PageViews="clr-namespace:UI.Desktop.WPF.PageViews">
+             xmlns:Desktop="clr-namespace:UI.Desktop.WPF">
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>

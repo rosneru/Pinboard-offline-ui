@@ -15,15 +15,15 @@
         mc:Ignorable="d">
   <Window.InputBindings>
     <KeyBinding Key="P"
-                Command="{Binding CmdSettings}"
+                Command="{Binding OpenSettingsCommand}"
                 Modifiers="Alt" />
     <KeyBinding Key="U"
-                Command="{Binding CmdUpdate}"
+                Command="{Binding OpenUpdateCommand}"
                 Modifiers="Alt" />
   </Window.InputBindings>
   <Interactivity:Interaction.Triggers>
     <Interactivity:EventTrigger EventName="Closing">
-      <Interactivity:InvokeCommandAction Command="{Binding CmdExit}" PassEventArgsToCommand="True" />
+      <Interactivity:InvokeCommandAction Command="{Binding ExitCommand}" PassEventArgsToCommand="True" />
     </Interactivity:EventTrigger>
   </Interactivity:Interaction.Triggers>
   <Grid Margin="5">
@@ -43,14 +43,14 @@
       <MenuItem Header="_Project">
         <MenuItem Header="_About.." />
         <Separator />
-        <MenuItem Command="{Binding CmdSettings}"
+        <MenuItem Command="{Binding OpenSettingsCommand}"
                   Header="_Settings.."
                   InputGestureText="Alt+P" />
-        <MenuItem Command="{Binding CmdUpdate}"
+        <MenuItem Command="{Binding OpenUpdateCommand}"
                   Header="_Update.."
                   InputGestureText="Alt+U" />
         <Separator />
-        <MenuItem Command="{Binding CmdExit}" Header="_Exit" InputGestureText="Alt+F4" />
+        <MenuItem Command="{Binding ExitCommand}" Header="_Exit" InputGestureText="Alt+F4" />
       </MenuItem>
     </Menu>
 
