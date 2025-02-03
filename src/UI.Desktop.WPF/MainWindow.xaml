@@ -22,6 +22,9 @@
                 Modifiers="Alt" />
   </Window.InputBindings>
   <Interactivity:Interaction.Triggers>
+    <Interactivity:EventTrigger EventName="Loaded">
+      <Interactivity:InvokeCommandAction Command="{Binding LoadedCommand}" />
+    </Interactivity:EventTrigger>
     <Interactivity:EventTrigger EventName="Closing">
       <Interactivity:InvokeCommandAction Command="{Binding ExitCommand}" PassEventArgsToCommand="True" />
     </Interactivity:EventTrigger>

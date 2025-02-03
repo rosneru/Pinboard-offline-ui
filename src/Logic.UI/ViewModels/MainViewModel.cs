@@ -5,16 +5,24 @@ using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
 using Logic.UI.Tools;
 using MvvmDialogs;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Logic.UI.ViewModels
 {
   public partial class MainViewModel : ObservableObject
   {
+    private const string PINBOARD_FILE_NAME = "pinboard_backup.json";
+
     [ObservableProperty] private UITools _uiTools;
+    [ObservableProperty] private List<Bookmark> bookmarks = [];
 
     public MainViewModel(IDialogService dialogService)
     {
@@ -56,13 +64,25 @@ namespace Logic.UI.ViewModels
     {
       var settingsDialog = new UpdateDialogViewModel(UiTools.DialogService,
                                                     _appSettings,
-                                                    _appSettingsPath);
+                                                    _appSettingsPath,
+                                                    PINBOARD_FILE_NAME);
       var success = UiTools.DialogService.ShowDialog(this, settingsDialog);
       if (success == true)
       {
         // Open the device e.g. by opening openDialog.Id from database
         // TODO Load content from JSON
       }
+    }
+
+    [RelayCommand]
+    void Loaded()
+    {
+        
+
+      _ = Task.Run(async () =>
+      {
+        Bookmarks = await LoadBookmarks();
+      });
     }
 
     private bool CanExecuteExit()
@@ -102,6 +122,21 @@ namespace Logic.UI.ViewModels
         _isAlreadyShutdown = true;
         Application.Current.Shutdown();
       }
+    }
+
+
+    private async Task<List<Bookmark>> LoadBookmarks()
+    {
+      Mouse.OverrideCursor = Cursors.Wait;
+      var result = await Task.Run(() =>
+      {
+        string bookmarkFilePath = Path.Combine(_appSettingsPath, PINBOARD_FILE_NAME);
+        string json = File.ReadAllText(bookmarkFilePath);
+        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
+      });
+      Mouse.OverrideCursor = null;
+
+      return result;
     }
 
 

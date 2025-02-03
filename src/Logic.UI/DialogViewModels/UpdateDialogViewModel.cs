@@ -16,8 +16,6 @@ namespace Logic.UI.DialogViewModels
 {
   public partial class UpdateDialogViewModel : ObservableObject, IModalDialogViewModel
   {
-    private const string PINBOARD_FILE_NAME = "pinboard_backup.json";
-
     [ObservableProperty] private bool? _dialogResult;
 
     [ObservableProperty] private PinboardDiskFile _currentFile;
@@ -31,13 +29,14 @@ namespace Logic.UI.DialogViewModels
 
     public UpdateDialogViewModel(IDialogService dialogService,
                                  IAppSettings appSettings,
-                                 string appSettingsPath)
+                                 string appSettingsPath,
+                                 string pinboardFileName)
     {
       _dialogService = dialogService;
       _appSettings = appSettings;
 
       JSONFileURL = appSettings.JSONFileURL;
-      CurrentFile = new PinboardDiskFile(appSettingsPath, PINBOARD_FILE_NAME);
+      CurrentFile = new PinboardDiskFile(appSettingsPath, pinboardFileName);
       NewFile = new PinboardMemoryFile();
       HasURL = !string.IsNullOrEmpty(JSONFileURL);
     }
