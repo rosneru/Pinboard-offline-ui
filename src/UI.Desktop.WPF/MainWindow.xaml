@@ -7,6 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         xmlns:viewmodel="clr-namespace:Logic.UI.ViewModels;assembly=Logic.UI"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         Title="Pinboard.in offline viewer"
         Width="1066"
         Height="600"
@@ -85,10 +86,9 @@
       <Button Content="Filter 2" />
     </StackPanel>
 
-    <TextBlock Grid.Column="2"
-               Grid.Row="2"
-               Text="{Binding SelectedBookmark.Extended}">
-    </TextBlock>
+    <wv2:WebView2 Grid.Column="2"
+               Grid.Row="2" x:Name="wv">
+    </wv2:WebView2>
 
     <Views:StatusBarView Grid.ColumnSpan="3" Grid.Row="3" />
 

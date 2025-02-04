@@ -4,6 +4,7 @@ using Config.Net;
 using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
 using Logic.UI.Tools;
+using Markdig;
 using MvvmDialogs;
 using Newtonsoft.Json;
 using System;
@@ -24,10 +25,11 @@ namespace Logic.UI.ViewModels
     [ObservableProperty] private UITools _uiTools;
     [ObservableProperty] private List<Bookmark> bookmarks = [];
     [ObservableProperty] private Bookmark _selectedBookmark;
+    [ObservableProperty] private string _selectedBookmarkHtml = "<!DOCTYPE html>\r\n<html>\r\n    <head>\r\n        <title>Example</title>\r\n    </head>\r\n    <body>\r\n        <p>This is an example of a simple HTML page with one paragraph.</p>\r\n    </body>\r\n</html>";
 
     partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
     {
-      
+      SelectedBookmarkHtml = Markdown.ToHtml(newValue.Extended);
     }
     public MainViewModel(IDialogService dialogService)
     {
