@@ -61,6 +61,7 @@
               Grid.Row="1"
               Grid.RowSpan="2"
               HorizontalContentAlignment="Center"
+              SelectedItem="{Binding SelectedBookmark}"
               ItemsSource="{Binding Bookmarks}">
       <ListView.View>
         <GridView>
@@ -84,21 +85,10 @@
       <Button Content="Filter 2" />
     </StackPanel>
 
-    <ContentControl Grid.Column="2"
-                    Grid.Row="2"
-                    Content="{Binding CurrentBookmarkViewModel}"
-                    FocusVisualStyle="{x:Null}"
-                    IsTabStop="False">
-      <ContentControl.Style>
-        <Style TargetType="ContentControl">
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding MessageBoxViewModel.IsOpen}" Value="False">
-              <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </ContentControl.Style>
-    </ContentControl>
+    <TextBlock Grid.Column="2"
+               Grid.Row="2"
+               Text="{Binding SelectedBookmark.Extended}">
+    </TextBlock>
 
     <Views:StatusBarView Grid.ColumnSpan="3" Grid.Row="3" />
 

@@ -23,7 +23,12 @@ namespace Logic.UI.ViewModels
 
     [ObservableProperty] private UITools _uiTools;
     [ObservableProperty] private List<Bookmark> bookmarks = [];
+    [ObservableProperty] private Bookmark _selectedBookmark;
 
+    partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
+    {
+      
+    }
     public MainViewModel(IDialogService dialogService)
     {
       var appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
