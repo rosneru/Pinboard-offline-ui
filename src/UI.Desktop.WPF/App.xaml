@@ -1,111 +1,24 @@
 ﻿<Application x:Class="UI.Desktop.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Converters="clr-namespace:UI.Desktop.WPF.Converters"
-             xmlns:Desktop="clr-namespace:UI.Desktop.WPF"
-             xmlns:PageViewModels="clr-namespace:Logic.UI.PageViewModels;assembly=Logic.UI"
-             xmlns:PageViews="clr-namespace:UI.Desktop.WPF.PageViews">
-    <Application.Resources>
-        <!--  Connect the views with their corresponding ViewModels  -->
-        <DataTemplate DataType="{x:Type PageViewModels:FirmwareViewModel}">
-            <PageViews:FirmwareView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type PageViewModels:ConnectionViewModel}">
-            <PageViews:ConnectionView />
-        </DataTemplate>
-
-        <!--  Define the converters  -->
-        <Converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter" />
-        <Converters:BoolInverseVisibilityConverter x:Key="BoolInverseVisibilityConverter" />
-        <Converters:BoolInverseConverter x:Key="BoolInverseConverter" />
-        <Converters:IntToStringConverter x:Key="IntToStringConverter" />
-        <Converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
-        <Converters:StringNullOrEmptyVisibilityConverter x:Key="StringNullOrEmptyVisibilityConverter" />
-        <!--  Define the default style for GroupBox  -->
-        <Style TargetType="{x:Type GroupBox}">
-            <Setter Property="HeaderTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <TextBlock Height="20" Text="{Binding}" />
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="DataGrid">
-            <Setter Property="Margin" Value="3 0 3 3" />
-        </Style>
-
-        <!--  Define the global style for PasswordBoxes  -->
-        <Style TargetType="{x:Type PasswordBox}">
-            <Setter Property="Margin" Value="3 0 3 3" />
-            <Setter Property="MinWidth" Value="80" />
-            <Setter Property="Height" Value="24" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-        <!--  Define the global style for TextBlocks  -->
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="3 0 3 3" />
-        </Style>
-
-        <!--  Define the global style for TextBoxes  -->
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Margin" Value="3 0 3 3" />
-            <Setter Property="MinHeight" Value="24" />
-            <Setter Property="MinWidth" Value="80" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="Background" Value="Red" />
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!--  Define the default style for the Separator  -->
-        <Style TargetType="{x:Type Separator}">
-            <Setter Property="Margin" Value="0 6 0 6" />
-        </Style>
-
-        <!--  Define the default style for StackPanel  -->
-        <Style TargetType="{x:Type StackPanel}">
-            <Setter Property="Margin" Value="3 6 3 3" />
-        </Style>
-
-        <!--  Define the default style for Button  -->
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="MinWidth" Value="70" />
-            <Setter Property="MinHeight" Value="24" />
-            <Setter Property="Margin" Value="3 0 3 3" />
-        </Style>
-
-        <!--  Define a style for disabled Image Button  -->
-        <Style x:Key="ImageEnabled" TargetType="Image">
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.25" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!--  Define the default style for ComboBoxes  -->
-        <Style TargetType="{x:Type ComboBox}">
-            <Setter Property="MinWidth" Value="80" />
-            <Setter Property="Height" Value="24" />
-            <Setter Property="Margin" Value="3 0 3 3" />
-        </Style>
-
-        <!--  Define the default style for Label  -->
-        <Style TargetType="{x:Type Label}">
-            <Setter Property="Margin" Value="0 0 3 0" />
-        </Style>
-
-
-        <!--  Define the default style for CheckBox  -->
-        <Style TargetType="{x:Type CheckBox}">
-            <Setter Property="Margin" Value="3 6 3 3" />
-        </Style>
-    </Application.Resources>
+             xmlns:Desktop="clr-namespace:UI.Desktop.WPF">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Resources\Buttons.xaml" />
+        <ResourceDictionary Source="Resources\CheckBoxes.xaml" />
+        <ResourceDictionary Source="Resources\ComboBoxes.xaml" />
+        <ResourceDictionary Source="Resources\Converters.xaml" />
+        <ResourceDictionary Source="Resources\DataGrids.xaml" />
+        <ResourceDictionary Source="Resources\GroupBoxes.xaml" />
+        <ResourceDictionary Source="Resources\ImageButtons.xaml" />
+        <ResourceDictionary Source="Resources\Labels.xaml" />
+        <ResourceDictionary Source="Resources\PasswordBoxes.xaml" />
+        <ResourceDictionary Source="Resources\Separators.xaml" />
+        <ResourceDictionary Source="Resources\StackPanels.xaml" />
+        <ResourceDictionary Source="Resources\TextBlocks.xaml" />
+        <ResourceDictionary Source="Resources\TextBoxes.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
 </Application>

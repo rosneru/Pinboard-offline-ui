@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Converters="clr-namespace:UI.Desktop.WPF.Converters">
+  <Converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter" />
+  <Converters:BoolInverseVisibilityConverter x:Key="BoolInverseVisibilityConverter" />
+  <Converters:BoolInverseConverter x:Key="BoolInverseConverter" />
+  <Converters:IntToStringConverter x:Key="IntToStringConverter" />
+  <Converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
+  <Converters:StringNullOrEmptyVisibilityConverter x:Key="StringNullOrEmptyVisibilityConverter" />
+</ResourceDictionary>

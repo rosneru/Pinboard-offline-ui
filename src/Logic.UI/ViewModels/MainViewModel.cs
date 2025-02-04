@@ -3,29 +3,49 @@ using CommunityToolkit.Mvvm.Input;
 using Config.Net;
 using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
-using Logic.UI.PageViewModels;
 using Logic.UI.Tools;
+using Markdig;
 using MvvmDialogs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Logic.UI.ViewModels
 {
-  public class MainViewModel : ObservableObject
+  public partial class MainViewModel : ObservableObject
   {
-    public ICommand CmdSettings { get; }
-    public ICommand CmdUpdate { get; }
-    public ICommand CmdExit { get; }
+    private const string PINBOARD_FILE_NAME = "pinboard_backup.json";
 
+    [ObservableProperty] private UITools _uiTools;
+    [ObservableProperty] private List<Bookmark> bookmarks = [];
+    [ObservableProperty] private Bookmark _selectedBookmark;
+    [ObservableProperty] private string _selectedBookmarkHtml;
 
-    public List<PageViewModelBase> PageViewModels { get; set; }
-    public PageViewModelBase CurrentPageViewModel { get; set; }
+    partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
+    {
+      var bookmarkContent = newValue.Extended;
 
-    public UITools UiTools { get; }
+      // Translate the '==' around '==Higlighted==' passages with
+      // into  '<mark>Higlighted</mark>'. Because this is the syntax,
+      // `Markdig` understands and renders highlighted.
+      //
+      // Regex explained:
+      //  - '(?<!\=)' ensures ther's no '=' before start of match (Negative Lookbehind)
+      //  - '\={2}' matches exactly two '='
+      //  - '(?!\=)' ensures ther's no '=' after end of match (Negative Lookahead)
+      int i = 0;
+      var bookmarkContendTranslated = new Regex(@"(?<!\=)\={2}(?!\=)")
+        .Replace(bookmarkContent, m => i++ % 2 == 0 ? "<mark>" : "</mark>");
+      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated);
+    }
+
 
     public MainViewModel(IDialogService dialogService)
     {
@@ -33,104 +53,106 @@ namespace Logic.UI.ViewModels
       var developerName = "tysw";
       var appName = "Pinboard-offline-ui";
 
-      var appSettingsPath = Path.Combine(appDataRoamingPath, developerName, appName);
+      _appSettingsPath = Path.Combine(appDataRoamingPath, developerName, appName);
 
-      if (!Directory.Exists(appSettingsPath))
+      if (!Directory.Exists(_appSettingsPath))
       {
-        Directory.CreateDirectory(appSettingsPath);
+        Directory.CreateDirectory(_appSettingsPath);
       }
 
-      var appSettingsFile = Path.Combine(appSettingsPath, "settings.json");
-      IAppSettings settings = new ConfigurationBuilder<IAppSettings>()
+      var appSettingsFile = Path.Combine(_appSettingsPath, "settings.json");
+      _appSettings = new ConfigurationBuilder<IAppSettings>()
         .UseJsonFile(appSettingsFile)
         .Build();
 
       UiTools = new UITools(dialogService);
+    }
 
-      // Create the PageViewModels
-      var connectionViewModel = new ConnectionViewModel(UiTools);
-      var firmwareViewModel = new FirmwareViewModel(UiTools);
-
-      // And add them to the 'list of pages'
-      PageViewModels = new List<PageViewModelBase>
+    [RelayCommand]
+    void OpenSettings()
+    {
+      var openDialog = new SettingsDialogViewModel(UiTools.DialogService,
+                                                   _appSettings,
+                                                   _appSettingsPath);
+      var success = UiTools.DialogService.ShowDialog(this, openDialog);
+      if (success == true)
       {
-        connectionViewModel,
-        firmwareViewModel,
-      };
+        // Open the device e.g. by opening openDialog.Id from database
+        // TODO Load content from JSON
+      }
+    }
 
-      // Select the first view model to be displayed as default
-      PageViewModels[0].IsOpen = true;
-      CurrentPageViewModel = PageViewModels[0];
-
-      CmdSettings = new RelayCommand(() =>
+    [RelayCommand]
+    async Task OpenUpdate()
+    {
+      var settingsDialog = new UpdateDialogViewModel(UiTools.DialogService,
+                                                     _appSettings,
+                                                     _appSettingsPath,
+                                                     PINBOARD_FILE_NAME);
+      var success = UiTools.DialogService.ShowDialog(this, settingsDialog);
+      if (success == true)
       {
-        var openDialog = new SettingsDialogViewModel(UiTools.DialogService,
-                                                     settings,
-                                                     appSettingsPath);
-        var success = UiTools.DialogService.ShowDialog(this, openDialog);
-        if (success == true)
-        {
-          // Open the device e.g. by opening openDialog.Id from database
-          // TODO Load content from JSON
-        }
-      }, () => true);
+        await Loaded();
+      }
+    }
 
-      CmdUpdate = new RelayCommand(() =>
+    [RelayCommand]
+    async Task Loaded()
+    {
+      Mouse.OverrideCursor = Cursors.Wait;
+      UiTools.StatusBar.StatusText = $"Loading bookmarks..";
+      Bookmarks = await Task.Run(() =>
       {
-        var settingsDialog = new UpdateDialogViewModel(UiTools.DialogService,
-                                                     settings,
-                                                     appSettingsPath);
-        var success = UiTools.DialogService.ShowDialog(this, settingsDialog);
-        if (success == true)
-        {
-          // Open the device e.g. by opening openDialog.Id from database
-          // TODO Load content from JSON
-        }
-      }, () => true);
+        string bookmarkFilePath = Path.Combine(_appSettingsPath, PINBOARD_FILE_NAME);
+        string json = File.ReadAllText(bookmarkFilePath);
+        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
+      });
+      UiTools.StatusBar.StatusText = $"{Bookmarks.Count} bookmarks loaded.";
+      Mouse.OverrideCursor = null;
+    }
 
-      CmdExit = new RelayCommand<object>((p) =>
+    private bool CanExecuteExit()
+    {
+      // Not allowed if shutdown is already in progress.
+      return !_isAlreadyShutdown;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExecuteExit))]
+    private void Exit(CancelEventArgs cancelEventArgs)
+    {
+      if (cancelEventArgs != null)
       {
-        if (_isExitAccepted)
-        {
-          // The Application.Current.Shutdown() below leads to a 2nd
-          // invocation of this command. Can be skipped.
-          return;
-        }
+        // The command was probably triggered by a WindowCLose event. We
+        // cancel that WindowsClose because shutdown is done manually
+        // depending on the MessageBox result below.
+        cancelEventArgs.Cancel = true;
+      }
 
-        if (p != null)
-        {
-          var cancelEventArgs = p as CancelEventArgs;
-          if (cancelEventArgs != null)
-          {
-            // Ok, the command was probably triggered by a WindowCLose
-            // event. We cancel that WindowsClose because shutdown is
-            // done manually depending on the MessageBox result below.
-            cancelEventArgs.Cancel = true;
-          }
-        }
+      MessageBoxResult result = MessageBoxResult.Yes;
+      if (_appSettings.AskBeforeAppExit)
+      {
+        result = UiTools
+          .DialogService
+          .ShowMessageBox(this,
+                          "Do you really want to quit the application?",
+                          "Really exit?",
+                          MessageBoxButton.YesNo,
+                          MessageBoxImage.Warning);
+      }
 
-        MessageBoxResult result = MessageBoxResult.Yes;
-        if(settings.AskBeforeAppExit)
-        {
-          result = UiTools
-                     .DialogService
-                     .ShowMessageBox(this,
-                                     "Do you really want to quit the application?",
-                                     "Really exit?",
-                                     MessageBoxButton.YesNo,
-                                     MessageBoxImage.Warning);
-        }
-
-        if (result == MessageBoxResult.Yes)
-        {
-          _isExitAccepted = true;
-          Application.Current.Shutdown();
-        }
-      }, (p) => true);
+      if (result == MessageBoxResult.Yes)
+      {
+        // Shutdown() will trigger another invocation of this command.
+        // So we mark that the shutdown process has already started to
+        // block the re-invocation.
+        _isAlreadyShutdown = true;
+        Application.Current.Shutdown();
+      }
     }
 
 
-
-    bool _isExitAccepted = false;
+    bool _isAlreadyShutdown = false;
+    private readonly string _appSettingsPath;
+    private readonly IAppSettings _appSettings;
   }
 }

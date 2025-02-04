@@ -17,53 +17,51 @@ namespace Logic.UI.Tools
   /// fixed set in a private variable. TODO This could be made a global
   /// setting and loaded from database.
   /// </summary>
-  public class UITools : ObservableObject
+  public partial class UITools : ObservableObject
   {
+    [ObservableProperty] private IDialogService _dialogService;
 
-    public ICommand CmdMenuLock { get; }
-    public ICommand CmdMenuUnlock { get; }
-    public ICommand CmdCancel { get; }
+    [ObservableProperty] private bool _isMenuLocked;
 
-    public IDialogService DialogService { get; }
+    [ObservableProperty] private StatusBarViewModel _statusBar;
 
-    public bool IsMenuLocked { get; private set; }
-
-    public StatusBarViewModel StatusBar { get; private set; }
-
-    public CancellationTokenSource CancelToken { get; set; }
+    [ObservableProperty] private CancellationTokenSource _cancelToken;
 
     public UITools(IDialogService dialogService)
     {
       DialogService = dialogService;
-      ctsQuit = new CancellationTokenSource();
-
-      CmdMenuUnlock = new RelayCommand(() =>
-      {
-        IsMenuLocked = false;
-      });
-
-      CmdMenuLock = new RelayCommand(() =>
-      {
-        IsMenuLocked = true;
-      });
-
-      CmdCancel = new RelayCommand(() =>
-      {
-        CancelToken?.Cancel();
-      });
-
+      _ctsQuit = new CancellationTokenSource();
 
       // The status bar has a permanent running task for the
       // notification queue which can be quit using the given token.
-      StatusBar = new StatusBarViewModel(ctsQuit.Token);
+      StatusBar = new StatusBarViewModel(_ctsQuit.Token);
     }
+
+    [RelayCommand]
+    void MenuUnlock()
+    {
+      IsMenuLocked = false;
+    }
+
+    [RelayCommand]
+    void MenuLock()
+    {
+      IsMenuLocked = true;
+    }
+
+    [RelayCommand]
+    void Cancel()
+    {
+      CancelToken?.Cancel();
+    }
+
 
     public void QuitAllTasks()
     {
       CancelToken?.Cancel();
-      ctsQuit?.Cancel();
+      _ctsQuit?.Cancel();
     }
 
-    private CancellationTokenSource ctsQuit;
+    private CancellationTokenSource _ctsQuit;
   }
 }

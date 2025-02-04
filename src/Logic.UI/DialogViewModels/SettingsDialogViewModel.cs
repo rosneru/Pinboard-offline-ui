@@ -13,42 +13,48 @@ using MvvmDialogs;
 
 namespace Logic.UI.DialogViewModels
 {
-  public class SettingsDialogViewModel : ObservableObject, IModalDialogViewModel
+  public partial class SettingsDialogViewModel : ObservableObject, IModalDialogViewModel
   {
-    public bool? DialogResult => _dialogResult;
+    [ObservableProperty] private bool? _dialogResult;
 
-    public ICommand CmdApply { get; }
-    public ICommand CmdCancel { get; }
-    public ICommand CmdDownloadJSON { get; }
-
-    public  string JSONFileURL { get; set; }
-
-    public  bool AskBeforeAppExit { get; set; }
+    [ObservableProperty] private string _jSONFileURL;
+    [ObservableProperty] private bool _askBeforeAppExit;
 
     public SettingsDialogViewModel(IDialogService dialogService,
-                                   IAppSettings settings,
+                                   IAppSettings appSettings,
                                    string appSettingsPath)
     {
-      JSONFileURL = settings.JSONFileURL;
-      AskBeforeAppExit = settings.AskBeforeAppExit;
+      _dialogService = dialogService;
+      _appSettings = appSettings;
 
-      CmdApply = new RelayCommand(() =>
-      {
-        settings.JSONFileURL = JSONFileURL;
-        settings.AskBeforeAppExit = AskBeforeAppExit;
-
-        _dialogResult = true;
-        dialogService.Close(this);
-      }, () => (AskBeforeAppExit != settings.AskBeforeAppExit) ||
-                JSONFileURL != settings.JSONFileURL);
-
-      CmdCancel = new RelayCommand(() =>
-      {
-        _dialogResult = false;
-        dialogService.Close(this);
-      }, () => true);
+      JSONFileURL = appSettings.JSONFileURL;
+      AskBeforeAppExit = appSettings.AskBeforeAppExit;
     }
 
-    private bool? _dialogResult;
+    private bool CanExecuteApply()
+    {
+      return (AskBeforeAppExit != _appSettings.AskBeforeAppExit) ||
+             (JSONFileURL != _appSettings.JSONFileURL);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExecuteApply))]
+    private void Apply()
+    {
+      _appSettings.JSONFileURL = JSONFileURL;
+      _appSettings.AskBeforeAppExit = AskBeforeAppExit;
+
+      DialogResult = true;
+      _dialogService.Close(this);
+    }
+
+    [RelayCommand]
+    private void Cancel()
+    {
+      DialogResult = false;
+      _dialogService.Close(this);
+    }
+
+    IDialogService _dialogService;
+    IAppSettings _appSettings;
   }
 }

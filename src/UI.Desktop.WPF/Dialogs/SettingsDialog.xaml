@@ -17,7 +17,7 @@
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
   <Window.InputBindings>
-    <KeyBinding Key="Esc" Command="{Binding CmdCancel}" />
+    <KeyBinding Key="Esc" Command="{Binding CancelCommand}" />
   </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
@@ -41,11 +41,11 @@
                 Orientation="Horizontal">
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdApply}"
+              Command="{Binding ApplyCommand}"
               Content="_Apply" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdCancel}"
+              Command="{Binding CancelCommand}"
               Content="_Cancel" />
     </StackPanel>
 

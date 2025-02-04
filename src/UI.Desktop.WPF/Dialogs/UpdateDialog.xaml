@@ -17,7 +17,7 @@
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
   <Window.InputBindings>
-    <KeyBinding Key="Esc" Command="{Binding CmdCancel}" />
+    <KeyBinding Key="Esc" Command="{Binding CancelCommand}" />
   </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
@@ -44,7 +44,7 @@
              Visibility="{Binding HasURL, Converter={StaticResource BoolInverseVisibilityConverter}}"/>
       <Label Content="Download URL can be changed in settings." />
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdDownload}"
+              Command="{Binding DownloadCommand}"
               Content="_Download" />
       <TextBlock FontWeight="Bold"
                  Text="Download failed. Try to change the URL in settings and download again."
@@ -61,11 +61,11 @@
                 Orientation="Horizontal">
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdSave}"
+              Command="{Binding SaveCommand}"
               Content="_Save" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CmdCancel}"
+              Command="{Binding CancelCommand}"
               Content="_Cancel" />
     </StackPanel>
 

@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Logic.UI;
 using Logic.UI.DialogViewModels;
 using Logic.UI.ViewModels;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmDialogs;
 using System;
@@ -17,9 +18,12 @@ namespace UI.Desktop.WPF
   /// </summary>
   public partial class App : Application
   {
+    public IHost Host => _host.Value;
+
+
     public App()
     {
-      Services = ConfigureServices();
+      _host = new(InitializeHost);
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -28,7 +32,7 @@ namespace UI.Desktop.WPF
 
       MainWindow app = new MainWindow();
 
-      app.DataContext = Services.GetRequiredService<MainViewModel>();
+      app.DataContext = GetService<MainViewModel>();
       app.Show();
     }
 
@@ -38,17 +42,34 @@ namespace UI.Desktop.WPF
     public new static App Current => (App)Application.Current;
 
 
-    public IServiceProvider Services { get; }
-
-
-    private static IServiceProvider ConfigureServices()
+    private IHost InitializeHost()
     {
-      var services = new ServiceCollection();
-
-      var dialogService = new DialogService(dialogTypeLocator: new DialogTypeLocator());
-      services.AddSingleton<IDialogService, DialogService>(_ => dialogService).AddTransient<MainViewModel>();
-
-      return services.BuildServiceProvider();
+      return Microsoft.Extensions.Hosting.Host
+        .CreateDefaultBuilder()
+        .UseContentRoot(AppContext.BaseDirectory)
+        .ConfigureServices(ConfigureServices)
+        .Build();
     }
+
+
+    private void ConfigureServices(HostBuilderContext context, IServiceCollection services)
+    {
+      services
+        .AddSingleton<IDialogService, DialogService>(_ => new(dialogTypeLocator: new DialogTypeLocator()))
+        .AddTransient<MainViewModel>();
+    }
+
+    public static T GetService<T>() where T : class
+    {
+      if ((App.Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
+      {
+        throw new InvalidOperationException($"Type {typeof(T).Name} is not configured");
+      }
+
+      return service;
+    }
+
+
+    private readonly Lazy<IHost> _host;
   }
 }

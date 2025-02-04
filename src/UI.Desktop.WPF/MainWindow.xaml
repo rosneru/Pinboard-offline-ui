@@ -7,6 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         xmlns:viewmodel="clr-namespace:Logic.UI.ViewModels;assembly=Logic.UI"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         Title="Pinboard.in offline viewer"
         Width="1066"
         Height="600"
@@ -15,15 +16,18 @@
         mc:Ignorable="d">
   <Window.InputBindings>
     <KeyBinding Key="P"
-                Command="{Binding CmdSettings}"
+                Command="{Binding OpenSettingsCommand}"
                 Modifiers="Alt" />
     <KeyBinding Key="U"
-                Command="{Binding CmdUpdate}"
+                Command="{Binding OpenUpdateCommand}"
                 Modifiers="Alt" />
   </Window.InputBindings>
   <Interactivity:Interaction.Triggers>
+    <Interactivity:EventTrigger EventName="Loaded">
+      <Interactivity:InvokeCommandAction Command="{Binding LoadedCommand}" />
+    </Interactivity:EventTrigger>
     <Interactivity:EventTrigger EventName="Closing">
-      <Interactivity:InvokeCommandAction Command="{Binding CmdExit}" PassEventArgsToCommand="True" />
+      <Interactivity:InvokeCommandAction Command="{Binding ExitCommand}" PassEventArgsToCommand="True" />
     </Interactivity:EventTrigger>
   </Interactivity:Interaction.Triggers>
   <Grid Margin="5">
@@ -34,7 +38,7 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" MinWidth="100" />
+      <ColumnDefinition Width="200" MinWidth="100"/>
       <ColumnDefinition Width="5" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
@@ -43,16 +47,29 @@
       <MenuItem Header="_Project">
         <MenuItem Header="_About.." />
         <Separator />
-        <MenuItem Command="{Binding CmdSettings}"
+        <MenuItem Command="{Binding OpenSettingsCommand}"
                   Header="_Settings.."
                   InputGestureText="Alt+P" />
-        <MenuItem Command="{Binding CmdUpdate}"
+        <MenuItem Command="{Binding OpenUpdateCommand}"
                   Header="_Update.."
                   InputGestureText="Alt+U" />
         <Separator />
-        <MenuItem Command="{Binding CmdExit}" Header="_Exit" InputGestureText="Alt+F4" />
+        <MenuItem Command="{Binding ExitCommand}" Header="_Exit" InputGestureText="Alt+F4" />
       </MenuItem>
     </Menu>
+
+    <ListView Grid.Column="0"
+              Grid.Row="1"
+              Grid.RowSpan="2"
+              HorizontalContentAlignment="Center"
+              SelectedItem="{Binding SelectedBookmark}"
+              ItemsSource="{Binding Bookmarks}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}"/>
+        </GridView>
+      </ListView.View>
+    </ListView>
 
     <GridSplitter Grid.Column="1"
                   Grid.Row="1"
@@ -60,28 +77,6 @@
                   Width="5"
                   HorizontalAlignment="Stretch" />
 
-    <ListView Grid.Column="0"
-              Grid.Row="1"
-              Grid.RowSpan="2"
-              HorizontalContentAlignment="Center"
-              IsEnabled="{Binding IsMenuLocked,
-                                  Converter={StaticResource BoolInverseConverter}}"
-              IsSynchronizedWithCurrentItem="True"
-              ItemsSource="{Binding BookmarkViewModels,
-                                    FallbackValue='aaa'}"
-              SelectedItem="{Binding CurrentBookmarkViewModel}">
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Vertical">
-            <TextBlock HorizontalAlignment="Center"
-                       FontFamily="Segoe MDL2 Assets"
-                       FontSize="16"
-                       Text="{Binding Symbol}" />
-            <TextBlock HorizontalAlignment="Center" Text="{Binding Name}" />
-          </StackPanel>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
 
     <StackPanel Grid.Column="2"
                 Grid.Row="1"
@@ -91,21 +86,9 @@
       <Button Content="Filter 2" />
     </StackPanel>
 
-    <ContentControl Grid.Column="2"
-                    Grid.Row="2"
-                    Content="{Binding CurrentBookmarkViewModel}"
-                    FocusVisualStyle="{x:Null}"
-                    IsTabStop="False">
-      <ContentControl.Style>
-        <Style TargetType="ContentControl">
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding MessageBoxViewModel.IsOpen}" Value="False">
-              <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </ContentControl.Style>
-    </ContentControl>
+    <wv2:WebView2 Grid.Column="2"
+               Grid.Row="2" x:Name="wv">
+    </wv2:WebView2>
 
     <Views:StatusBarView Grid.ColumnSpan="3" Grid.Row="3" />
 
