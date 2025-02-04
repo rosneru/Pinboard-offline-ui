@@ -33,9 +33,8 @@ namespace Logic.UI.ViewModels
       var bookmarkContent = newValue.Extended;
 
       // Translate the '==' around '==Higlighted==' passages with
-      // '<mark>, </mark>', into something like '<mark>Higlighted</mark>'.
-      // Because this is the syntax, Markdig understands and renders
-      // highlighted.
+      // into  '<mark>Higlighted</mark>'. Because this is the syntax,
+      // `Markdig` understands and renders highlighted.
       //
       // Regex explained:
       //  - '(?<!\=)' ensures ther's no '=' before start of match (Negative Lookbehind)
@@ -46,6 +45,8 @@ namespace Logic.UI.ViewModels
         .Replace(bookmarkContent, m => i++ % 2 == 0 ? "<mark>" : "</mark>");
       SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated);
     }
+
+
     public MainViewModel(IDialogService dialogService)
     {
       var appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -85,9 +86,9 @@ namespace Logic.UI.ViewModels
     async Task OpenUpdate()
     {
       var settingsDialog = new UpdateDialogViewModel(UiTools.DialogService,
-                                                    _appSettings,
-                                                    _appSettingsPath,
-                                                    PINBOARD_FILE_NAME);
+                                                     _appSettings,
+                                                     _appSettingsPath,
+                                                     PINBOARD_FILE_NAME);
       var success = UiTools.DialogService.ShowDialog(this, settingsDialog);
       if (success == true)
       {
