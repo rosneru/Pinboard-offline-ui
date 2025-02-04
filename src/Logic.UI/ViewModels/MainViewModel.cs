@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -25,11 +26,25 @@ namespace Logic.UI.ViewModels
     [ObservableProperty] private UITools _uiTools;
     [ObservableProperty] private List<Bookmark> bookmarks = [];
     [ObservableProperty] private Bookmark _selectedBookmark;
-    [ObservableProperty] private string _selectedBookmarkHtml = "<!DOCTYPE html>\r\n<html>\r\n    <head>\r\n        <title>Example</title>\r\n    </head>\r\n    <body>\r\n        <p>This is an example of a simple HTML page with one paragraph.</p>\r\n    </body>\r\n</html>";
+    [ObservableProperty] private string _selectedBookmarkHtml;
 
     partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
     {
-      SelectedBookmarkHtml = Markdown.ToHtml(newValue.Extended);
+      var bookmarkContent = newValue.Extended;
+
+      // Translate the '==' around '==Higlighted==' passages with
+      // '<mark>, </mark>', into something like '<mark>Higlighted</mark>'.
+      // Because this is the syntax, Markdig understands and renders
+      // highlighted.
+      //
+      // Regex explained:
+      //  - '(?<!\=)' ensures ther's no '=' before start of match (Negative Lookbehind)
+      //  - '\={2}' matches exactly two '='
+      //  - '(?!\=)' ensures ther's no '=' after end of match (Negative Lookahead)
+      int i = 0;
+      var bookmarkContendTranslated = new Regex(@"(?<!\=)\={2}(?!\=)")
+        .Replace(bookmarkContent, m => i++ % 2 == 0 ? "<mark>" : "</mark>");
+      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated);
     }
     public MainViewModel(IDialogService dialogService)
     {
@@ -133,7 +148,6 @@ namespace Logic.UI.ViewModels
         Application.Current.Shutdown();
       }
     }
-
 
 
     bool _isAlreadyShutdown = false;
