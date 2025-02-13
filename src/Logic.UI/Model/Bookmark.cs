@@ -17,5 +17,7 @@ namespace Logic.UI.Model
     public string Shared { get; set; }
     public string ToRead { get; set; }
     public string Tags { get; set; }
+
+    public String[] TagsArray { get; set; }
   }
 }

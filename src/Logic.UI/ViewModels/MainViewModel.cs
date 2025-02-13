@@ -5,6 +5,7 @@ using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
 using Logic.UI.Tools;
 using Markdig;
+using Markdig.Parsers;
 using MvvmDialogs;
 using Newtonsoft.Json;
 using System;
@@ -13,6 +14,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -101,14 +103,13 @@ namespace Logic.UI.ViewModels
     async Task Loaded()
     {
       Mouse.OverrideCursor = Cursors.Wait;
+
       UiTools.StatusBar.StatusText = $"Loading bookmarks..";
-      Bookmarks = await Task.Run(() =>
-      {
-        string bookmarkFilePath = Path.Combine(_appSettingsPath, PINBOARD_FILE_NAME);
-        string json = File.ReadAllText(bookmarkFilePath);
-        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
-      });
+      var bookmarks = await loadBookmarks();
+      UiTools.StatusBar.StatusText = $"Processing bookmarks..";
+      Bookmarks = await splitBookmarksTags(bookmarks);
       UiTools.StatusBar.StatusText = $"{Bookmarks.Count} bookmarks loaded.";
+
       Mouse.OverrideCursor = null;
     }
 
@@ -149,6 +150,30 @@ namespace Logic.UI.ViewModels
         _isAlreadyShutdown = true;
         Application.Current.Shutdown();
       }
+    }
+
+
+    private Task<List<Bookmark>> loadBookmarks()
+    {
+      return Task.Run(() =>
+      {
+        string bookmarkFilePath = Path.Combine(_appSettingsPath, PINBOARD_FILE_NAME);
+        string json = File.ReadAllText(bookmarkFilePath);
+        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
+      });
+    }
+
+    private Task<List<Bookmark>> splitBookmarksTags(List<Bookmark> bookmarks)
+    {
+      return Task.Run(() =>
+      {
+        foreach (var bookmark in bookmarks)
+        {
+          bookmark.TagsArray = bookmark.Tags.Split(' ');
+        }
+
+        return bookmarks;
+      });
     }
 
 
