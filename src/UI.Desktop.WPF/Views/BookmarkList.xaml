@@ -29,6 +29,7 @@
           <ListView Grid.Row="2"
                     Background="Transparent"
                     BorderThickness="0"
+                    IsHitTestVisible="False"
                     ItemsSource="{Binding TagsArray}">
             <ListView.ItemsPanel>
               <ItemsPanelTemplate>
@@ -41,7 +42,8 @@
                         Background="Black"
                         BorderBrush="Black"
                         BorderThickness="1"
-                        CornerRadius="5">
+                        CornerRadius="5"
+                        IsHitTestVisible="False">
                   <TextBlock Padding="0"
                              HorizontalAlignment="Center"
                              VerticalAlignment="Center"
