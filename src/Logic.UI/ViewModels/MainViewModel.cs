@@ -33,7 +33,12 @@ namespace Logic.UI.ViewModels
 
     partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
     {
-      var bookmarkContent = newValue.Extended;
+      if (newValue is null)
+      {
+        return;
+      }
+
+      var bookmarkContent = newValue!.Extended;
 
       // Translate the '==' around '==Highlighted==' passages with
       // into  '<mark>Highlighted</mark>'. Because this is the syntax,
