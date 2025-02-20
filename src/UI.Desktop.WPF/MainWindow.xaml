@@ -11,6 +11,7 @@
         Title="Pinboard.in offline viewer"
         Width="1066"
         Height="600"
+        WindowState="Maximized"
         d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
         md:DialogServiceViews.IsRegistered="True"
         mc:Ignorable="d">
@@ -38,9 +39,9 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="200" MinWidth="100" />
+      <ColumnDefinition Width="*" MinWidth="100" />
       <ColumnDefinition Width="5" />
-      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="3*" />
     </Grid.ColumnDefinitions>
 
     <Menu Grid.ColumnSpan="3">
