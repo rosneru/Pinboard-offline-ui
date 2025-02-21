@@ -25,34 +25,8 @@ namespace Logic.UI.ViewModels
   {
     private const string PINBOARD_FILE_NAME = "pinboard_backup.json";
 
-    [ObservableProperty] private List<Bookmark> bookmarks = [];
-    [ObservableProperty] private Bookmark _selectedBookmark;
-    [ObservableProperty] private string _selectedBookmarkHtml;
-
     [ObservableProperty] private UITools _uiTools;
-
-    partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
-    {
-      if (newValue is null)
-      {
-        return;
-      }
-
-      var bookmarkContent = newValue!.Extended;
-
-      // Translate the '==' around '==Highlighted==' passages with
-      // into  '<mark>Highlighted</mark>'. Because this is the syntax,
-      // `Markdig` understands and *does* render highlighted.
-      //
-      // Regex explained:
-      //  - '(?<!\=)' ensures there's no '=' before start of match (Negative Lookbehind)
-      //  - '\={2}' matches exactly two '='
-      //  - '(?!\=)' ensures there's no '=' after end of match (Negative Lookahead)
-      int i = 0;
-      var bookmarkContendTranslated = new Regex(@"(?<!\=)\={2}(?!\=)")
-        .Replace(bookmarkContent, m => i++ % 2 == 0 ? "<mark>" : "</mark>");
-      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated);
-    }
+    [ObservableProperty] private BookmarksListViewModel _bookmarksListViewModel;
 
 
     public MainViewModel(IDialogService dialogService)
@@ -74,6 +48,7 @@ namespace Logic.UI.ViewModels
         .Build();
 
       UiTools = new UITools(dialogService);
+      BookmarksListViewModel = new(UiTools, _appSettingsPath, PINBOARD_FILE_NAME);
     }
 
     [RelayCommand]
@@ -107,15 +82,7 @@ namespace Logic.UI.ViewModels
     [RelayCommand]
     async Task Loaded()
     {
-      Mouse.OverrideCursor = Cursors.Wait;
-
-      UiTools.StatusBar.StatusText = $"Loading bookmarks..";
-      var bookmarks = await loadBookmarks();
-      UiTools.StatusBar.StatusText = $"Processing bookmarks..";
-      Bookmarks = await splitBookmarksTags(bookmarks);
-      UiTools.StatusBar.StatusText = $"{Bookmarks.Count} bookmarks loaded.";
-
-      Mouse.OverrideCursor = null;
+      await BookmarksListViewModel.Load();
     }
 
     private bool CanExecuteExit()
@@ -155,30 +122,6 @@ namespace Logic.UI.ViewModels
         _isAlreadyShutdown = true;
         Application.Current.Shutdown();
       }
-    }
-
-
-    private Task<List<Bookmark>> loadBookmarks()
-    {
-      return Task.Run(() =>
-      {
-        string bookmarkFilePath = Path.Combine(_appSettingsPath, PINBOARD_FILE_NAME);
-        string json = File.ReadAllText(bookmarkFilePath);
-        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
-      });
-    }
-
-    private Task<List<Bookmark>> splitBookmarksTags(List<Bookmark> bookmarks)
-    {
-      return Task.Run(() =>
-      {
-        foreach (var bookmark in bookmarks)
-        {
-          bookmark.TagsArray = bookmark.Tags.Split(' ');
-        }
-
-        return bookmarks;
-      });
     }
 
 

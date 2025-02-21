@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,9 +18,9 @@ namespace UI.Desktop.WPF.Views
   /// <summary>
   /// Interaction logic for BookmarkList.xaml
   /// </summary>
-  public partial class BookmarkList : UserControl
+  public partial class BookmarksListView : UserControl
   {
-    public BookmarkList()
+    public BookmarksListView()
     {
       InitializeComponent();
     }

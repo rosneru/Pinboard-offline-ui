@@ -11,9 +11,9 @@
         Title="Pinboard.in offline viewer"
         Width="1066"
         Height="600"
-        WindowState="Maximized"
         d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
         md:DialogServiceViews.IsRegistered="True"
+        WindowState="Maximized"
         mc:Ignorable="d">
   <Window.InputBindings>
     <KeyBinding Key="P"
@@ -61,9 +61,10 @@
       </MenuItem>
     </Menu>
 
-    <Views:BookmarkList Grid.Column="0"
-                        Grid.Row="1"
-                        Grid.RowSpan="2" />
+    <Views:BookmarksListView Grid.Column="0"
+                             Grid.Row="1"
+                             Grid.RowSpan="2"
+                             DataContext="{Binding BookmarksListViewModel}" />
 
 
     <GridSplitter Grid.Column="1"
