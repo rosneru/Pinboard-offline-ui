@@ -7,7 +7,9 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
-  <ListView ItemsSource="{Binding Bookmarks}" SelectedItem="{Binding SelectedBookmark}">
+  <ListView ItemsSource="{Binding Bookmarks}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            SelectedItem="{Binding SelectedBookmark}">
     <ListView.ItemContainerStyle>
       <Style TargetType="{x:Type ListViewItem}">
         <Setter Property="BorderBrush" Value="LightGray" />
@@ -19,21 +21,23 @@
         <Grid>
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
           <TextBlock Grid.Row="0" Text="{Binding Time}" />
           <TextBlock Grid.Row="1"
                      FontWeight="Bold"
-                     Text="{Binding Description}" />
+                     Text="{Binding Description}"
+                     TextWrapping="Wrap" />
           <ListView Grid.Row="2"
                     Background="Transparent"
                     BorderThickness="0"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     IsHitTestVisible="False"
                     ItemsSource="{Binding TagsArray}">
             <ListView.ItemsPanel>
               <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
+                <WrapPanel Orientation="Horizontal"  />
               </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
