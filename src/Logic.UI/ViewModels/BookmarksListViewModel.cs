@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Logic.UI.Model;
-using Logic.UI.Tools;
+using Logic.UI.Services;
 using Markdig;
 using Newtonsoft.Json;
 
@@ -46,12 +46,11 @@ namespace Logic.UI.ViewModels
 
 
 
-    public BookmarksListViewModel(
-      UITools uiTools, string appSettingPath, string pinboardFileName)
+    public BookmarksListViewModel(UiService uiService, ISettingsService settingsService)
     {
-      _uiTools = uiTools;
-      _appSettingsPath = appSettingPath;
-      _pinboardFileName = pinboardFileName;
+      _uiService = uiService;
+      _appSettingsPath = settingsService.AppSettingsPath;
+      _pinboardFileName = settingsService.PinboardFileName;
     }
 
 
@@ -61,11 +60,11 @@ namespace Logic.UI.ViewModels
     {
       Mouse.OverrideCursor = Cursors.Wait;
 
-      _uiTools.StatusBar.StatusText = $"Loading bookmarks..";
+      _uiService.StatusBar.StatusText = $"Loading bookmarks..";
       var bookmarks = await loadBookmarks();
-      _uiTools.StatusBar.StatusText = $"Processing bookmarks..";
+      _uiService.StatusBar.StatusText = $"Processing bookmarks..";
       Bookmarks = await splitBookmarksTags(bookmarks);
-      _uiTools.StatusBar.StatusText = $"{Bookmarks.Count} bookmarks loaded.";
+      _uiService.StatusBar.StatusText = $"{Bookmarks.Count} bookmarks loaded.";
 
       Mouse.OverrideCursor = null;
     }
@@ -95,7 +94,7 @@ namespace Logic.UI.ViewModels
 
 
 
-    private UITools _uiTools;
+    private UiService _uiService;
     private string _appSettingsPath;
     private string _pinboardFileName;
   }

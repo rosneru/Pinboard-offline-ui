@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Config.Net;
 using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
-using Logic.UI.Tools;
+using Logic.UI.Services;
 using Markdig;
 using Markdig.Parsers;
 using MvvmDialogs;
@@ -23,41 +23,26 @@ namespace Logic.UI.ViewModels
 {
   public partial class MainViewModel : ObservableObject
   {
-    private const string PINBOARD_FILE_NAME = "pinboard_backup.json";
-
-    [ObservableProperty] private UITools _uiTools;
+    [ObservableProperty] private UiService _uiService;
     [ObservableProperty] private BookmarksListViewModel _bookmarksListViewModel;
 
 
-    public MainViewModel(IDialogService dialogService)
+    public MainViewModel(IDialogService dialogService, ISettingsService settingsService)
     {
-      var appDataRoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      var developerName = "tysw";
-      var appName = "Pinboard-offline-ui";
+      _dialogService = dialogService;
+      _settingsService = settingsService;
 
-      _appSettingsPath = Path.Combine(appDataRoamingPath, developerName, appName);
 
-      if (!Directory.Exists(_appSettingsPath))
-      {
-        Directory.CreateDirectory(_appSettingsPath);
-      }
-
-      var appSettingsFile = Path.Combine(_appSettingsPath, "settings.json");
-      _appSettings = new ConfigurationBuilder<IAppSettings>()
-        .UseJsonFile(appSettingsFile)
-        .Build();
-
-      UiTools = new UITools(dialogService);
-      BookmarksListViewModel = new(UiTools, _appSettingsPath, PINBOARD_FILE_NAME);
+      UiService = new UiService();
+      BookmarksListViewModel = new(UiService, settingsService);
     }
 
     [RelayCommand]
     void OpenSettings()
     {
-      var openDialog = new SettingsDialogViewModel(UiTools.DialogService,
-                                                   _appSettings,
-                                                   _appSettingsPath);
-      var success = UiTools.DialogService.ShowDialog(this, openDialog);
+      var openDialog = new SettingsDialogViewModel(_settingsService,
+                                                   _dialogService);
+      var success = _dialogService.ShowDialog(this, openDialog);
       if (success == true)
       {
         // Open the device e.g. by opening openDialog.Id from database
@@ -68,11 +53,9 @@ namespace Logic.UI.ViewModels
     [RelayCommand]
     async Task OpenUpdate()
     {
-      var settingsDialog = new UpdateDialogViewModel(UiTools.DialogService,
-                                                     _appSettings,
-                                                     _appSettingsPath,
-                                                     PINBOARD_FILE_NAME);
-      var success = UiTools.DialogService.ShowDialog(this, settingsDialog);
+      var settingsDialog = new UpdateDialogViewModel(_dialogService,
+                                                     _settingsService);
+      var success = _dialogService.ShowDialog(this, settingsDialog);
       if (success == true)
       {
         await Loaded();
@@ -105,8 +88,7 @@ namespace Logic.UI.ViewModels
       MessageBoxResult result = MessageBoxResult.Yes;
       if (_appSettings.AskBeforeAppExit)
       {
-        result = UiTools
-          .DialogService
+        result = _dialogService
           .ShowMessageBox(this,
                           "Do you really want to quit the application?",
                           "Really exit?",
@@ -125,6 +107,8 @@ namespace Logic.UI.ViewModels
     }
 
 
+    IDialogService _dialogService;
+    ISettingsService _settingsService;
     bool _isAlreadyShutdown = false;
     private readonly string _appSettingsPath;
     private readonly IAppSettings _appSettings;
