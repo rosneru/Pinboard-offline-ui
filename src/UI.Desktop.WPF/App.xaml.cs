@@ -58,6 +58,7 @@ namespace UI.Desktop.WPF
       services
         .AddSingleton<IDialogService, DialogService>(_ => new(dialogTypeLocator: new DialogTypeLocator()))
         .AddSingleton<ISettingsService, SettingsService>()
+        .AddSingleton<IUiService, UiService>()
         .AddTransient<MainViewModel>();
     }
 

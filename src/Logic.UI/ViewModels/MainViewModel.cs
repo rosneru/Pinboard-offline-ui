@@ -23,17 +23,18 @@ namespace Logic.UI.ViewModels
 {
   public partial class MainViewModel : ObservableObject
   {
-    [ObservableProperty] private UiService _uiService;
+    [ObservableProperty] private IUiService _uiService;
     [ObservableProperty] private BookmarksListViewModel _bookmarksListViewModel;
 
 
-    public MainViewModel(IDialogService dialogService, ISettingsService settingsService)
+    public MainViewModel(IDialogService dialogService, 
+                         IUiService uiService,
+                         ISettingsService settingsService)
     {
       _dialogService = dialogService;
       _settingsService = settingsService;
+      UiService = uiService;
 
-
-      UiService = new UiService();
       BookmarksListViewModel = new(UiService, settingsService);
     }
 

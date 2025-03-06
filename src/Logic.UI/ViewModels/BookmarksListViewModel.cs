@@ -46,11 +46,10 @@ namespace Logic.UI.ViewModels
 
 
 
-    public BookmarksListViewModel(UiService uiService, ISettingsService settingsService)
+    public BookmarksListViewModel(IUiService uiService, ISettingsService settingsService)
     {
       _uiService = uiService;
-      _appSettingsPath = settingsService.AppSettingsPath;
-      _pinboardFileName = settingsService.PinboardFileName;
+      _settingsService = settingsService;
     }
 
 
@@ -73,7 +72,8 @@ namespace Logic.UI.ViewModels
     {
       return Task.Run(() =>
       {
-        string bookmarkFilePath = Path.Combine(_appSettingsPath, _pinboardFileName);
+        string bookmarkFilePath = Path.Combine(_settingsService.AppSettingsPath,
+                                               _settingsService.PinboardFileName);
         string json = File.ReadAllText(bookmarkFilePath);
         return JsonConvert.DeserializeObject<List<Bookmark>>(json);
       });
@@ -94,8 +94,7 @@ namespace Logic.UI.ViewModels
 
 
 
-    private UiService _uiService;
-    private string _appSettingsPath;
-    private string _pinboardFileName;
+    private IUiService _uiService;
+    private ISettingsService _settingsService;
   }
 }
