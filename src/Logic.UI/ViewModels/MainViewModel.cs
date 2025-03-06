@@ -86,7 +86,7 @@ namespace Logic.UI.ViewModels
       }
 
       MessageBoxResult result = MessageBoxResult.Yes;
-      if (_appSettings.AskBeforeAppExit)
+      if (_settingsService.AppSettings.AskBeforeAppExit)
       {
         result = _dialogService
           .ShowMessageBox(this,
@@ -110,7 +110,5 @@ namespace Logic.UI.ViewModels
     IDialogService _dialogService;
     ISettingsService _settingsService;
     bool _isAlreadyShutdown = false;
-    private readonly string _appSettingsPath;
-    private readonly IAppSettings _appSettings;
   }
 }
