@@ -29,21 +29,23 @@ namespace Logic.UI.ViewModels
 
     public MainViewModel(IDialogService dialogService, 
                          IUiService uiService,
-                         ISettingsService settingsService)
+                         ISettingsService settingsService,
+                         BookmarksListViewModel bookmarksViewModel,
+                         SettingsDialogViewModel settingsDialogViewModel,
+                         UpdateDialogViewModel updateDialogViewModel)
     {
       _dialogService = dialogService;
-      _settingsService = settingsService;
       UiService = uiService;
-
-      BookmarksListViewModel = new(UiService, settingsService);
+      _settingsService = settingsService;
+      BookmarksListViewModel = bookmarksViewModel;
+      _settingsDialogViewModel = settingsDialogViewModel;
+      _updateDialogViewMode = updateDialogViewModel;
     }
 
     [RelayCommand]
     void OpenSettings()
     {
-      var openDialog = new SettingsDialogViewModel(_settingsService,
-                                                   _dialogService);
-      var success = _dialogService.ShowDialog(this, openDialog);
+      var success = _dialogService.ShowDialog(this, _settingsDialogViewModel);
       if (success == true)
       {
         // Open the device e.g. by opening openDialog.Id from database
@@ -54,9 +56,7 @@ namespace Logic.UI.ViewModels
     [RelayCommand]
     async Task OpenUpdate()
     {
-      var settingsDialog = new UpdateDialogViewModel(_dialogService,
-                                                     _settingsService);
-      var success = _dialogService.ShowDialog(this, settingsDialog);
+      var success = _dialogService.ShowDialog(this, _updateDialogViewMode);
       if (success == true)
       {
         await Loaded();
@@ -110,6 +110,9 @@ namespace Logic.UI.ViewModels
 
     IDialogService _dialogService;
     ISettingsService _settingsService;
+    SettingsDialogViewModel _settingsDialogViewModel;
+    UpdateDialogViewModel _updateDialogViewMode;
+
     bool _isAlreadyShutdown = false;
   }
 }
