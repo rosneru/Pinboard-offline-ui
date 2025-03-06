@@ -9,6 +9,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Logic.UI.Model;
+using Logic.UI.Services;
 using MvvmDialogs;
 
 namespace Logic.UI.DialogViewModels
@@ -20,28 +21,27 @@ namespace Logic.UI.DialogViewModels
     [ObservableProperty] private string _jSONFileURL;
     [ObservableProperty] private bool _askBeforeAppExit;
 
-    public SettingsDialogViewModel(IDialogService dialogService,
-                                   IAppSettings appSettings,
-                                   string appSettingsPath)
+    public SettingsDialogViewModel(ISettingsService settingsService,
+                                   IDialogService dialogService)
     {
       _dialogService = dialogService;
-      _appSettings = appSettings;
+      _settingsService = settingsService;
 
-      JSONFileURL = appSettings.JSONFileURL;
-      AskBeforeAppExit = appSettings.AskBeforeAppExit;
+      JSONFileURL = _settingsService.AppSettings.JSONFileURL;
+      AskBeforeAppExit = _settingsService.AppSettings.AskBeforeAppExit;
     }
 
     private bool CanExecuteApply()
     {
-      return (AskBeforeAppExit != _appSettings.AskBeforeAppExit) ||
-             (JSONFileURL != _appSettings.JSONFileURL);
+      return (AskBeforeAppExit != _settingsService.AppSettings.AskBeforeAppExit) ||
+             (JSONFileURL != _settingsService.AppSettings.JSONFileURL);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteApply))]
     private void Apply()
     {
-      _appSettings.JSONFileURL = JSONFileURL;
-      _appSettings.AskBeforeAppExit = AskBeforeAppExit;
+      _settingsService.AppSettings.JSONFileURL = JSONFileURL;
+      _settingsService.AppSettings.AskBeforeAppExit = AskBeforeAppExit;
 
       DialogResult = true;
       _dialogService.Close(this);
@@ -54,7 +54,7 @@ namespace Logic.UI.DialogViewModels
       _dialogService.Close(this);
     }
 
+    ISettingsService _settingsService;
     IDialogService _dialogService;
-    IAppSettings _appSettings;
   }
 }

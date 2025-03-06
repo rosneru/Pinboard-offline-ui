@@ -12,7 +12,7 @@
     <Style x:Key="NotificationBarStyle" TargetType="TextBlock">
       <Setter Property="Visibility" Value="Visible" />
       <Style.Triggers>
-        <DataTrigger Binding="{Binding Path=UiTools.StatusBar.Notification.Length}" Value="0">
+        <DataTrigger Binding="{Binding Path=UiService.StatusBar.Notification.Length}" Value="0">
           <Setter Property="Visibility" Value="Hidden" />
         </DataTrigger>
         <EventTrigger RoutedEvent="Binding.TargetUpdated">
@@ -53,7 +53,7 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <Separator Grid.Row="0" Margin="0,0,0,0" />
+    <Separator Grid.Row="0" Margin="0 0 0 0" />
 
     <StatusBar Grid.Row="1" Background="#dddddd">
       <StatusBar.ItemsPanel>
@@ -66,7 +66,7 @@
         </ItemsPanelTemplate>
       </StatusBar.ItemsPanel>
       <StatusBarItem Grid.Column="0" HorizontalContentAlignment="Stretch">
-          <TextBlock Text="{Binding UiTools.StatusBar.StatusText}" />
+        <TextBlock Text="{Binding UiService.StatusBar.StatusText}" />
       </StatusBarItem>
       <StatusBarItem Grid.Column="0"
                      Grid.ColumnSpan="3"
@@ -76,11 +76,11 @@
                    FontWeight="Bold"
                    Foreground="#005BAC"
                    Style="{StaticResource NotificationBarStyle}"
-                   Text="{Binding UiTools.StatusBar.Notification,
+                   Text="{Binding UiService.StatusBar.Notification,
                                   NotifyOnTargetUpdated=True}"
                    TextAlignment="Center"
                    TextWrapping="Wrap"
-                   Visibility="{Binding UiTools.StatusBar.Notification,
+                   Visibility="{Binding UiService.StatusBar.Notification,
                                         Converter={StaticResource StringNullOrEmptyVisibilityConverter}}" />
       </StatusBarItem>
     </StatusBar>
