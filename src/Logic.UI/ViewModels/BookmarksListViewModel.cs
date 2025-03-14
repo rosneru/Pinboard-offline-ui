@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,8 @@ namespace Logic.UI.ViewModels
 {
   public partial class BookmarksListViewModel : ObservableObject
   {
-    [ObservableProperty] private List<Bookmark> bookmarks = [];
+    [ObservableProperty] private List<Bookmark> _bookmarks = [];
+    [ObservableProperty] private ObservableCollection<string> _selectedTags = ["paper-freitag", "movie"];
     [ObservableProperty] private Bookmark _selectedBookmark;
     [ObservableProperty] private string _selectedBookmarkHtml;
 

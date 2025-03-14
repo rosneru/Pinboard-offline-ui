@@ -8,12 +8,18 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
   <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <ListView ItemsSource="{Binding Bookmarks}"
+    <ListView Grid.ColumnSpan="2"
+              Grid.Row="0"
+              ItemsSource="{Binding Bookmarks}"
               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
               SelectedItem="{Binding SelectedBookmark}">
       <ListView.ItemContainerStyle>
@@ -65,12 +71,17 @@
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-    <TextBlock Grid.Row="1" Text="Selected tags:"/>
-    <ListView Grid.Row="2"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      ItemsSource="{Binding SelectedTagsArray}"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+    <TextBlock Grid.ColumnSpan="2"
+               Grid.Row="1"
+               Text="Selected tags:" />
+
+    <ListView Grid.Column="0"
+              Grid.Row="2"
+              Background="Transparent"
+              BorderThickness="0"
+              ItemsSource="{Binding SelectedTags}"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       <ListView.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Horizontal" />
@@ -79,18 +90,22 @@
       <ListView.ItemTemplate>
         <DataTemplate>
           <Border Margin="0"
-                          Background="DarkGray"
-                          BorderBrush="DarkGray"
-                          BorderThickness="1"
-                          CornerRadius="5">
+                  Background="DarkGray"
+                  BorderBrush="DarkGray"
+                  BorderThickness="1"
+                  CornerRadius="5">
             <TextBlock Padding="0"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Foreground="White"
-                               Text="{Binding}" />
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="White"
+                       Text="{Binding}" />
           </Border>
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
+    <Button Grid.Column="1"
+            Grid.Row="2"
+            Command="{Binding AddSelectedTagCommand}"
+            Content="+" />
   </Grid>
 </UserControl>
