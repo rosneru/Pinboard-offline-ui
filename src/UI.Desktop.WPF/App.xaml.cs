@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MvvmDialogs;
 using System;
 using System.Windows;
+using Logic.UI.Services;
 
 namespace UI.Desktop.WPF
 {
@@ -56,7 +57,12 @@ namespace UI.Desktop.WPF
     {
       services
         .AddSingleton<IDialogService, DialogService>(_ => new(dialogTypeLocator: new DialogTypeLocator()))
-        .AddTransient<MainViewModel>();
+        .AddSingleton<ISettingsService, SettingsService>()
+        .AddSingleton<IUiService, UiService>()
+        .AddTransient<MainViewModel>()
+        .AddTransient<BookmarksListViewModel>()
+        .AddTransient<SettingsDialogViewModel>()
+        .AddTransient<UpdateDialogViewModel>();
     }
 
     public static T GetService<T>() where T : class

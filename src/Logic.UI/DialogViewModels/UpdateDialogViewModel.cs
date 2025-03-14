@@ -10,6 +10,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Logic.UI.Model;
+using Logic.UI.Services;
 using MvvmDialogs;
 
 namespace Logic.UI.DialogViewModels
@@ -28,15 +29,14 @@ namespace Logic.UI.DialogViewModels
 
 
     public UpdateDialogViewModel(IDialogService dialogService,
-                                 IAppSettings appSettings,
-                                 string appSettingsPath,
-                                 string pinboardFileName)
+                                 ISettingsService settingsService)
     {
       _dialogService = dialogService;
-      _appSettings = appSettings;
+      _settingsService = settingsService;
 
-      JSONFileURL = appSettings.JSONFileURL;
-      CurrentFile = new PinboardDiskFile(appSettingsPath, pinboardFileName);
+      JSONFileURL = _settingsService.AppSettings.JSONFileURL;
+      CurrentFile = new PinboardDiskFile(_settingsService.AppSettingsPath,
+                                         _settingsService.PinboardFileName);
       NewFile = new PinboardMemoryFile();
       HasURL = !string.IsNullOrEmpty(JSONFileURL);
     }
@@ -53,7 +53,7 @@ namespace Logic.UI.DialogViewModels
       IsDownloadInProgress = true;
       Mouse.OverrideCursor = Cursors.Wait;
 
-      HasDownloadSucceeded = await NewFile.Download(_appSettings.JSONFileURL);
+      HasDownloadSucceeded = await NewFile.Download(_settingsService.AppSettings.JSONFileURL);
 
       Mouse.OverrideCursor = null;
       IsDownloadInProgress = false;
@@ -82,7 +82,7 @@ namespace Logic.UI.DialogViewModels
       _dialogService.Close(this);
     }
 
+    ISettingsService _settingsService;
     IDialogService _dialogService;
-    IAppSettings _appSettings;
   }
 }

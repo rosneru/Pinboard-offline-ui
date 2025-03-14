@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Logic.UI.ViewModels.Controls;
 using MvvmDialogs;
 
-namespace Logic.UI.Tools
+namespace Logic.UI.Services
 {
   /// <summary>
   /// Contains commands, properties, a message box, the status bar and
@@ -17,19 +17,16 @@ namespace Logic.UI.Tools
   /// fixed set in a private variable. TODO This could be made a global
   /// setting and loaded from database.
   /// </summary>
-  public partial class UITools : ObservableObject
+  public partial class UiService : ObservableObject, IUiService
   {
-    [ObservableProperty] private IDialogService _dialogService;
-
     [ObservableProperty] private bool _isMenuLocked;
 
     [ObservableProperty] private StatusBarViewModel _statusBar;
 
     [ObservableProperty] private CancellationTokenSource _cancelToken;
 
-    public UITools(IDialogService dialogService)
+    public UiService()
     {
-      DialogService = dialogService;
       _ctsQuit = new CancellationTokenSource();
 
       // The status bar has a permanent running task for the
