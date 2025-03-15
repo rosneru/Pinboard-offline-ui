@@ -17,8 +17,8 @@ namespace Logic.UI.ViewModels
 {
   public partial class BookmarksListViewModel : ObservableObject
   {
-    [ObservableProperty] private List<Bookmark> _bookmarks = [];
-    [ObservableProperty] private ObservableCollection<string> _selectedTags = ["paper-freitag", "movie"];
+    [ObservableProperty] private List<Bookmark> _displayedBookmarks = [];
+    [ObservableProperty] private ObservableCollection<string> _selectedTags = [];
     [ObservableProperty] private Bookmark _selectedBookmark;
     [ObservableProperty] private string _selectedBookmarkHtml;
 
@@ -54,7 +54,23 @@ namespace Logic.UI.ViewModels
       _settingsService = settingsService;
     }
 
+    public void AddFilterTag(string tag)
+    {
+      if(SelectedTags.Contains(tag))
+      {
+        return;
+      }
 
+      SelectedTags.Add(tag);
+      //var sel = from m in _allBookmarks
+      //          where m.Tags.Contains(SelectedTags)
+      //          select m;
+
+      var DestList = _allBookmarks.Where(item => SelectedTags.All(tag =>
+          item.TagsArray.Contains(tag))).ToList();
+
+      DisplayedBookmarks = DestList;
+    }
 
 
     public async Task Load()
@@ -64,8 +80,11 @@ namespace Logic.UI.ViewModels
       _uiService.StatusBar.StatusText = $"Loading bookmarks..";
       var bookmarks = await loadBookmarks();
       _uiService.StatusBar.StatusText = $"Processing bookmarks..";
-      Bookmarks = await splitBookmarksTags(bookmarks);
-      _uiService.StatusBar.StatusText = $"{Bookmarks.Count} bookmarks loaded.";
+      _allBookmarks = await splitBookmarksTags(bookmarks);
+      DisplayedBookmarks = _allBookmarks;
+      _uiService.StatusBar.StatusText = 
+        $"Displaying {DisplayedBookmarks.Count} " +
+        $"of {_allBookmarks.Count} loaded bookmarks.";
 
       Mouse.OverrideCursor = null;
     }
@@ -95,7 +114,7 @@ namespace Logic.UI.ViewModels
     }
 
 
-
+    private List<Bookmark> _allBookmarks;
     private IUiService _uiService;
     private ISettingsService _settingsService;
   }

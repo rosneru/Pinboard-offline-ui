@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Logic.UI.ViewModels;
 
 namespace UI.Desktop.WPF.Views
 {
@@ -23,6 +24,15 @@ namespace UI.Desktop.WPF.Views
     public BookmarksListView()
     {
       InitializeComponent();
+    }
+
+    private void BookmarkTag_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      Console.WriteLine(e.AddedItems);
+      if (DataContext is BookmarksListViewModel vm)
+      {
+        vm.AddFilterTag(e.AddedItems[0].ToString());
+      }
     }
   }
 }
