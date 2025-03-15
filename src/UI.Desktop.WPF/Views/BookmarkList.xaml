@@ -76,13 +76,13 @@
 
     <TextBlock Grid.ColumnSpan="2"
                Grid.Row="1"
-               Text="Selected tags:" />
+               Text="Filtered tags:" />
 
     <ListView Grid.Column="0"
               Grid.Row="2"
               Background="Transparent"
               BorderThickness="0"
-              ItemsSource="{Binding SelectedTags}"
+              ItemsSource="{Binding FilteredTags}"
               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       <ListView.ItemsPanel>
         <ItemsPanelTemplate>
