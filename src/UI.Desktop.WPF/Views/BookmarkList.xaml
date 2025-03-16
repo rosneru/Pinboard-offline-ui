@@ -3,10 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:UI.Desktop.WPF.Views"
+             xmlns:converters="clr-namespace:UI.Desktop.WPF.Converters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
+  <UserControl.Resources>
+    <converters:BackgroundColorConverter x:Key="BackgroundColorConverter"/>
+  </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
@@ -56,10 +60,16 @@
               <ListView.ItemTemplate>
                 <DataTemplate>
                   <Border Margin="0"
-                          Background="DarkGray"
-                          BorderBrush="DarkGray"
                           BorderThickness="1"
                           CornerRadius="5">
+                    <Border.Background>
+                      <MultiBinding Converter="{StaticResource BackgroundColorConverter}">
+                        <Binding Path="." />
+                        <!-- Das aktuelle Item -->
+                        <Binding Path="DataContext.FilteredTags" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}"/>
+                        <!-- Die zweite Liste -->
+                      </MultiBinding>
+                    </Border.Background>
                     <TextBlock Padding="0"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
