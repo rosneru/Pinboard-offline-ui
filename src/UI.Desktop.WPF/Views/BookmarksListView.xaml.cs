@@ -31,7 +31,7 @@ namespace UI.Desktop.WPF.Views
       Console.WriteLine(e.AddedItems);
       if (DataContext is BookmarksListViewModel vm)
       {
-        vm.AddFilterTag(e.AddedItems[0].ToString());
+        vm.ToggleFilterTag(e.AddedItems[0].ToString());
       }
     }
   }
