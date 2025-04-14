@@ -84,16 +84,28 @@ namespace Logic.UI.ViewModels
 
       _uiService.StatusBar.StatusText = $"Loading bookmarks..";
       var bookmarks = await loadBookmarks();
-      _uiService.StatusBar.StatusText = $"Processing bookmarks..";
-      _allBookmarks = await splitBookmarksTags(bookmarks);
-      DisplayedBookmarks = _allBookmarks;
+      if (bookmarks != null)
+      {
+        _uiService.StatusBar.StatusText = $"Processing bookmarks..";
+        _allBookmarks = await splitBookmarksTags(bookmarks);
+        DisplayedBookmarks = _allBookmarks;
+      }
+      else
+      {
+        _uiService.StatusBar.StatusText = $"No bookmarks found.";
+      }
 
-      applyFilters();
+        applyFilters();
       Mouse.OverrideCursor = null;
     }
 
     private void applyFilters()
     {
+      if(_allBookmarks == null)
+      {
+        return;
+      }
+
       var resultList = _allBookmarks;
 
       if (FilteredTags.Count > 0)
@@ -116,13 +128,25 @@ namespace Logic.UI.ViewModels
       {
         string bookmarkFilePath = Path.Combine(_settingsService.AppSettingsPath,
                                                _settingsService.PinboardFileName);
-        string json = File.ReadAllText(bookmarkFilePath);
-        return JsonConvert.DeserializeObject<List<Bookmark>>(json);
+        try
+        {
+          string json = File.ReadAllText(bookmarkFilePath);
+          return JsonConvert.DeserializeObject<List<Bookmark>>(json);
+        }
+        catch (FileNotFoundException e)
+        {
+          return null;
+        }
       });
     }
 
     private Task<List<Bookmark>> splitBookmarksTags(List<Bookmark> bookmarks)
     {
+      if (bookmarks == null)
+      {
+        return null;
+      }
+
       return Task.Run(() =>
       {
         foreach (var bookmark in bookmarks)
