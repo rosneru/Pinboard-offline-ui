@@ -59,6 +59,11 @@
                   Header="_Exit"
                   InputGestureText="Alt+F4" />
       </MenuItem>
+      <MenuItem Header="_Find">
+        <MenuItem Command="{Binding OpenTagFilterCommand}"
+                  Header="Filter by _tags.."
+                  InputGestureText="Alt+T" />
+      </MenuItem>
     </Menu>
 
     <Views:BookmarksListView Grid.Column="0"
