@@ -22,6 +22,9 @@
     <KeyBinding Key="U"
                 Command="{Binding OpenUpdateCommand}"
                 Modifiers="Alt" />
+    <KeyBinding Key="T"
+                Command="{Binding OpenTagFilterCommand}"
+                Modifiers="Alt" />
   </Window.InputBindings>
   <Interactivity:Interaction.Triggers>
     <Interactivity:EventTrigger EventName="Loaded">

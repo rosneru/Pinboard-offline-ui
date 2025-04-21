@@ -32,31 +32,28 @@ namespace Logic.UI.ViewModels
                          ISettingsService settingsService,
                          BookmarksListViewModel bookmarksViewModel,
                          SettingsDialogViewModel settingsDialogViewModel,
-                         UpdateDialogViewModel updateDialogViewModel)
+                         UpdateDialogViewModel updateDialogViewModel,
+                         FilterByTagsDialogViewModel filterByTagsDialogViewModel)
     {
       _dialogService = dialogService;
       UiService = uiService;
       _settingsService = settingsService;
       BookmarksListViewModel = bookmarksViewModel;
       _settingsDialogViewModel = settingsDialogViewModel;
-      _updateDialogViewMode = updateDialogViewModel;
+      _updateDialogViewModel = updateDialogViewModel;
+      _filterByTagsDialogViewModel = filterByTagsDialogViewModel;
     }
 
     [RelayCommand]
     void OpenSettings()
     {
-      var success = _dialogService.ShowDialog(this, _settingsDialogViewModel);
-      if (success == true)
-      {
-        // Open the device e.g. by opening openDialog.Id from database
-        // TODO Load content from JSON
-      }
+      _dialogService.ShowDialog(this, _settingsDialogViewModel);
     }
 
     [RelayCommand]
     async Task OpenUpdate()
     {
-      var success = _dialogService.ShowDialog(this, _updateDialogViewMode);
+      var success = _dialogService.ShowDialog(this, _updateDialogViewModel);
       if (success == true)
       {
         await Loaded();
@@ -107,11 +104,21 @@ namespace Logic.UI.ViewModels
       }
     }
 
+    [RelayCommand]
+    void OpenTagFilter()
+    {
+      var success = _dialogService.ShowDialog(this, _filterByTagsDialogViewModel);
+      if (success == true)
+      {
+        // ??? await Filtered
+      }
+    }
 
     IDialogService _dialogService;
     ISettingsService _settingsService;
     SettingsDialogViewModel _settingsDialogViewModel;
-    UpdateDialogViewModel _updateDialogViewMode;
+    UpdateDialogViewModel _updateDialogViewModel;
+    FilterByTagsDialogViewModel _filterByTagsDialogViewModel;
 
     bool _isAlreadyShutdown = false;
   }

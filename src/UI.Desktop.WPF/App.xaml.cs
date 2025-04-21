@@ -62,7 +62,8 @@ namespace UI.Desktop.WPF
         .AddTransient<MainViewModel>()
         .AddTransient<BookmarksListViewModel>()
         .AddTransient<SettingsDialogViewModel>()
-        .AddTransient<UpdateDialogViewModel>();
+        .AddTransient<UpdateDialogViewModel>()
+        .AddTransient<FilterByTagsDialogViewModel>();
     }
 
     public static T GetService<T>() where T : class
