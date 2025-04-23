@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Logic.UI.Services;
+using Logic.UI.ViewModels;
 using MvvmDialogs;
 
 namespace Logic.UI.DialogViewModels
@@ -13,12 +14,15 @@ namespace Logic.UI.DialogViewModels
   public partial class FilterByTagsDialogViewModel : ObservableObject, IModalDialogViewModel
   {
     [ObservableProperty] private bool? _dialogResult;
+    [ObservableProperty] private BookmarksListViewModel _bookmarksListViewModel;
 
     public FilterByTagsDialogViewModel(ISettingsService settingsService,
-                                       IDialogService dialogService)
+                                       IDialogService dialogService,
+                                       BookmarksListViewModel bookmarksViewModel)
     {
       _settingsService = settingsService;
       _dialogService = dialogService;
+      BookmarksListViewModel = bookmarksViewModel;
     }
 
     private bool CanExecuteApply()
