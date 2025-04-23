@@ -59,8 +59,8 @@ namespace UI.Desktop.WPF
         .AddSingleton<IDialogService, DialogService>(_ => new(dialogTypeLocator: new DialogTypeLocator()))
         .AddSingleton<ISettingsService, SettingsService>()
         .AddSingleton<IUiService, UiService>()
+        .AddSingleton<BookmarksListViewModel>()
         .AddTransient<MainViewModel>()
-        .AddTransient<BookmarksListViewModel>()
         .AddTransient<SettingsDialogViewModel>()
         .AddTransient<UpdateDialogViewModel>()
         .AddTransient<FilterByTagsDialogViewModel>();
