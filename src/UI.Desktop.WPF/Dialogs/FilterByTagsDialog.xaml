@@ -34,7 +34,7 @@
       <Separator />
       <ListView Background="Transparent"
                 BorderThickness="0"
-                ItemsSource="{Binding FilteredTags}"
+                ItemsSource="{Binding BookmarksListViewModel.FilteredTags}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
         <ListView.ItemsPanel>
           <ItemsPanelTemplate>
@@ -65,7 +65,7 @@
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding ApplyCommand}"
-              Content="_Apply" />
+              Content ="_Apply" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding CancelCommand}"
