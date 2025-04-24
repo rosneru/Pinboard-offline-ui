@@ -1,6 +1,10 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Logic.UI.Model;
 using Logic.UI.ViewModels;
+using Markdig;
 
 namespace UI.Desktop.WPF
 {
@@ -22,17 +26,21 @@ namespace UI.Desktop.WPF
       await wv.EnsureCoreWebView2Async();
 
       _mainViewModel = DataContext as MainViewModel;
-      _mainViewModel.BookmarksListViewModel.PropertyChanged += BookmarksVM_PropertyChanged;
+
+      // TODO Re-add
+      //_mainViewModel.BookmarksListViewModel.PropertyChanged += BookmarksVM_PropertyChanged;
 
       wv.NavigateToString("<!DOCTYPE html>\r\n<html>\r\n    <head>\r\n        <title>Example</title>\r\n    </head>\r\n    <body>\r\n        <p>This is an example of a simple HTML page with one paragraph.</p>\r\n    </body>\r\n</html>");
     }
-    private void BookmarksVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-      if (e.PropertyName == nameof(MainViewModel.BookmarksListViewModel.SelectedBookmarkHtml))
-      {
-        wv.NavigateToString(_mainViewModel.BookmarksListViewModel.SelectedBookmarkHtml);
-      }
-    }
+
+    // TODO Re-add
+    //private void BookmarksVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    //{
+    //  if (e.PropertyName == nameof(MainViewModel.BookmarksListViewModel.SelectedBookmarkHtml))
+    //  {
+    //    wv.NavigateToString(_mainViewModel.BookmarksListViewModel.SelectedBookmarkHtml);
+    //  }
+    //}
 
 
     private MainViewModel _mainViewModel;

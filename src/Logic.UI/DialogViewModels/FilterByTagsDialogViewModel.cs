@@ -14,15 +14,15 @@ namespace Logic.UI.DialogViewModels
   public partial class FilterByTagsDialogViewModel : ObservableObject, IModalDialogViewModel
   {
     [ObservableProperty] private bool? _dialogResult;
-    [ObservableProperty] private BookmarksListViewModel _bookmarksListViewModel;
+    [ObservableProperty] private IBookmarkService _bookmarkService;
 
     public FilterByTagsDialogViewModel(ISettingsService settingsService,
                                        IDialogService dialogService,
-                                       BookmarksListViewModel bookmarksViewModel)
+                                       IBookmarkService bookmarkService)
     {
       _settingsService = settingsService;
       _dialogService = dialogService;
-      BookmarksListViewModel = bookmarksViewModel;
+      BookmarkService = bookmarkService;
     }
 
     private bool CanExecuteApply()

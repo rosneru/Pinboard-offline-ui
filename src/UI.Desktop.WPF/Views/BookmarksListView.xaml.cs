@@ -29,10 +29,11 @@ namespace UI.Desktop.WPF.Views
     private void BookmarkTag_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       Console.WriteLine(e.AddedItems);
-      if (DataContext is BookmarksListViewModel vm)
-      {
-        vm.ToggleFilterTag(e.AddedItems[0].ToString());
-      }
+      // TODO remove above and re-add below
+      //if (DataContext is BookmarksListViewModel vm)
+      //{
+      //  vm.ToggleFilterTag(e.AddedItems[0].ToString());
+      //}
     }
   }
 }
