@@ -13,11 +13,13 @@
   </UserControl.Resources>
   <ListView Grid.ColumnSpan="2"
             Grid.Row="0"
+            FocusVisualStyle="{x:Null}"
             ItemsSource="{Binding BookmarkService.FilteredBookmarks}"
+            PreviewMouseWheel="BookmarksListView_PreviewMouseWheel"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            SelectedItem="{Binding SelectedBookmark, ValidatesOnDataErrors=False}"
-            SelectionMode="Single"
-            FocusVisualStyle="{x:Null}">
+            SelectedItem="{Binding SelectedBookmark,
+                                   ValidatesOnDataErrors=False}"
+            SelectionMode="Single">
     <ListView.ItemContainerStyle>
       <Style TargetType="{x:Type ListViewItem}">
         <Setter Property="BorderBrush" Value="LightGray" />
@@ -42,9 +44,10 @@
                     BorderThickness="0"
                     Focusable="False"
                     ItemsSource="{Binding TagsArray}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     PreviewMouseDown="TagsListView_PreviewMouseDown"
-                    SelectionChanged="BookmarkTag_SelectionChanged">
+                    PreviewMouseWheel="TagsListView_PreviewMouseWheel"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    SelectionChanged="TagsListView_SelectionChanged">
             <ListView.ItemsPanel>
               <ItemsPanelTemplate>
                 <WrapPanel Orientation="Horizontal" />
