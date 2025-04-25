@@ -19,21 +19,19 @@ namespace UI.Desktop.WPF.Views
   /// <summary>
   /// Interaction logic for BookmarkList.xaml
   /// </summary>
-  public partial class BookmarksListView : UserControl
+  public partial class BookmarkList : UserControl
   {
-    public BookmarksListView()
+    public BookmarkList()
     {
       InitializeComponent();
     }
 
     private void BookmarkTag_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      Console.WriteLine(e.AddedItems);
-      // TODO remove above and re-add below
-      //if (DataContext is BookmarksListViewModel vm)
-      //{
-      //  vm.ToggleFilterTag(e.AddedItems[0].ToString());
-      //}
+      if (DataContext is MainViewModel vm)
+      {
+        vm.BookmarkService.ToggleFilterTag(e.AddedItems[0].ToString());
+      }
     }
   }
 }

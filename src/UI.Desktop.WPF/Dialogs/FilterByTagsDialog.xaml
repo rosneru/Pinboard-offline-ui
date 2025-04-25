@@ -34,7 +34,7 @@
       <Separator />
       <ListView Background="Transparent"
                 BorderThickness="0"
-                ItemsSource="{Binding BookmarksListViewModel.FilteredTags}"
+                ItemsSource="{Binding BookmarkService.FilteredTags}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
         <ListView.ItemsPanel>
           <ItemsPanelTemplate>

@@ -69,10 +69,9 @@
       </MenuItem>
     </Menu>
 
-    <Views:BookmarksListView Grid.Column="0"
-                             Grid.Row="1"
-                             Grid.RowSpan="2"
-                             DataContext="{Binding BookmarksListViewModel}" />
+    <Views:BookmarkList Grid.Column="0"
+                        Grid.Row="1"
+                        Grid.RowSpan="2" />
 
 
     <GridSplitter Grid.Column="1"
