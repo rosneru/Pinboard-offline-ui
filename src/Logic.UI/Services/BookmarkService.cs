@@ -14,7 +14,7 @@ namespace Logic.UI.Services
   public partial class BookmarkService : ObservableObject, IBookmarkService
   {
     [ObservableProperty] private List<Bookmark> _allBookmarks = [];
-    [ObservableProperty] private List<Bookmark> _displayedBookmarks = [];
+    [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
     [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
 
     public BookmarkService()
@@ -93,7 +93,7 @@ namespace Logic.UI.Services
             item.TagsArray.Contains(tag))).ToList();
       }
 
-      DisplayedBookmarks = resultList;
+      FilteredBookmarks = resultList;
     }
   }
 }

@@ -13,7 +13,7 @@
   </UserControl.Resources>
   <ListView Grid.ColumnSpan="2"
             Grid.Row="0"
-            ItemsSource="{Binding BookmarkService.DisplayedBookmarks}"
+            ItemsSource="{Binding BookmarkService.FilteredBookmarks}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             SelectedItem="{Binding SelectedBookmark}"
             SelectionMode="Single">

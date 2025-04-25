@@ -71,6 +71,7 @@ namespace Logic.UI.ViewModels
       _settingsDialogViewModel = settingsDialogViewModel;
       _updateDialogViewModel = updateDialogViewModel;
       _filterByTagsDialogViewModel = filterByTagsDialogViewModel;
+
     }
 
     [RelayCommand]
@@ -99,7 +100,7 @@ namespace Logic.UI.ViewModels
                                             _settingsService.PinboardFileName);
       Mouse.OverrideCursor = null;
       _uiService.StatusBar.StatusText =
-        $"Displaying {BookmarkService.DisplayedBookmarks.Count} " +
+        $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
         $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
     }
 

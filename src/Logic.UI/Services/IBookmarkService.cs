@@ -13,13 +13,12 @@ namespace Logic.UI.Services
   public interface IBookmarkService
   {
     List<Bookmark> AllBookmarks { get; }
-    List<Bookmark> DisplayedBookmarks { get; }
+    List<Bookmark> FilteredBookmarks { get; }
 
     ObservableCollection<string> FilteredTags { get; }
 
-    Task InitializeAsync(string appSettingsPath, string pinboardFileName);
-
     void ToggleFilterTag(string tag);
 
+    Task InitializeAsync(string appSettingsPath, string pinboardFileName);
   }
 }
