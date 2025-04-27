@@ -21,17 +21,11 @@ namespace Logic.UI.Services
   {
     [ObservableProperty] private bool _isMenuLocked;
 
-    [ObservableProperty] private StatusBarViewModel _statusBar;
-
     [ObservableProperty] private CancellationTokenSource _cancelToken;
 
     public UiService()
     {
       _ctsQuit = new CancellationTokenSource();
-
-      // The status bar has a permanent running task for the
-      // notification queue which can be quit using the given token.
-      StatusBar = new StatusBarViewModel(_ctsQuit.Token);
     }
 
     [RelayCommand]

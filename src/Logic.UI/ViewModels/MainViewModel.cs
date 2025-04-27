@@ -27,6 +27,7 @@ namespace Logic.UI.ViewModels
     [ObservableProperty] private IBookmarkService _bookmarkService;
     [ObservableProperty] private Bookmark _selectedBookmark;
     [ObservableProperty] private string _selectedBookmarkHtml;
+    [ObservableProperty] private string _statusBarText;
 
     partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
     {
@@ -94,14 +95,13 @@ namespace Logic.UI.ViewModels
     async Task Loaded()
     {
       Mouse.OverrideCursor = Cursors.Wait;
-      _uiService.StatusBar.StatusText = $"Loading bookmarks..";
+      StatusBarText = $"Loading bookmarks..";
 
       await BookmarkService.InitializeAsync(_settingsService.AppSettingsPath,
                                             _settingsService.PinboardFileName);
       Mouse.OverrideCursor = null;
-      _uiService.StatusBar.StatusText =
-        $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
-        $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
+      StatusBarText = $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
+                      $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
     }
 
     private bool CanExecuteExit()

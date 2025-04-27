@@ -93,7 +93,11 @@
                   Grid.Column="2"
                   Grid.Row="2" />
 
-    <Views:StatusBarView Grid.ColumnSpan="3" Grid.Row="3" />
+    <StatusBar Grid.ColumnSpan="3" Grid.Row="3">
+      <StatusBarItem>
+        <TextBlock Text="{Binding StatusBarText}" />
+      </StatusBarItem>
+    </StatusBar>
 
   </Grid>
 </Window>

@@ -13,8 +13,6 @@ namespace Logic.UI.Services
   {
     bool IsMenuLocked { get; set; }
 
-    StatusBarViewModel StatusBar { get; set;  }
-
     CancellationTokenSource CancelToken { get; set; }
 
     void QuitAllTasks();
