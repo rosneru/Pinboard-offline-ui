@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,10 +35,23 @@ namespace Logic.UI.Services
         return;
       }
 
-      // Split the tags
       foreach (var bookmark in bookmarks)
       {
+        // Split the tags
         bookmark.TagsArray = bookmark.Tags.Split(' ');
+
+        // `bookmark.Time` contains something like "2025-03-14T07:43:18Z"
+        // Convert it to a DateTimeValue
+        string format = "yyyy-MM-ddTHH:mm:ssZ";
+        bookmark.DateTime = DateTime.ParseExact(
+          bookmark.Time,
+          format,
+          CultureInfo.InvariantCulture,
+          DateTimeStyles.AssumeUniversal);
+
+        // And now overwrite the the bookmark.Time with a better
+        // readable format from the DateTimeValue
+        bookmark.Time = bookmark.DateTime.ToString("dd.MM.yyyy, HH:mm");
       }
 
       AllBookmarks = bookmarks;

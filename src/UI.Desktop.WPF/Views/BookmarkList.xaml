@@ -34,7 +34,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
-          <TextBlock Grid.Row="0" Text="{Binding Time}" />
+          <TextBlock Grid.Row="0" Text="{Binding Time}" FontStyle="Italic" Foreground="SteelBlue"/>
           <TextBlock Grid.Row="1"
                      FontWeight="Bold"
                      Text="{Binding Description}"
