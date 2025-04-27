@@ -17,6 +17,8 @@ namespace Logic.UI.Services
     [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
     [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
 
+    public event EventHandler FilteredBookmarksChanged;
+
     public BookmarkService()
     {
 
@@ -94,6 +96,7 @@ namespace Logic.UI.Services
       }
 
       FilteredBookmarks = resultList;
+      FilteredBookmarksChanged?.Invoke(this, EventArgs.Empty);
     }
   }
 }

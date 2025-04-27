@@ -73,6 +73,12 @@ namespace Logic.UI.ViewModels
       _updateDialogViewModel = updateDialogViewModel;
       _filterByTagsDialogViewModel = filterByTagsDialogViewModel;
 
+
+      BookmarkService.FilteredBookmarksChanged += (sender, e) =>
+      {
+        StatusBarText = $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
+                        $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
+      };
     }
 
     [RelayCommand]
@@ -100,8 +106,6 @@ namespace Logic.UI.ViewModels
       await BookmarkService.InitializeAsync(_settingsService.AppSettingsPath,
                                             _settingsService.PinboardFileName);
       Mouse.OverrideCursor = null;
-      StatusBarText = $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
-                      $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
     }
 
     private bool CanExecuteExit()

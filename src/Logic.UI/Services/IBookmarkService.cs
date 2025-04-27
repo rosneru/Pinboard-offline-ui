@@ -15,9 +15,12 @@ namespace Logic.UI.Services
     List<Bookmark> AllBookmarks { get; }
     List<Bookmark> FilteredBookmarks { get; }
 
+    event EventHandler FilteredBookmarksChanged;
+
     ObservableCollection<string> FilteredTags { get; }
 
     void ToggleFilterTag(string tag);
+
 
     Task InitializeAsync(string appSettingsPath, string pinboardFileName);
   }
