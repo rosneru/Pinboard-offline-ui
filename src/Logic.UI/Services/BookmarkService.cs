@@ -106,7 +106,7 @@ namespace Logic.UI.Services
       {
         resultList = resultList.Where(item =>
           FilteredTags.All(tag =>
-            item.TagsArray.Contains(tag))).ToList();
+            item.TagsArray.Contains(tag, StringComparer.OrdinalIgnoreCase))).ToList();
       }
 
       FilteredBookmarks = resultList;
