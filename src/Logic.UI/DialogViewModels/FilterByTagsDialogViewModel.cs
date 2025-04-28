@@ -36,7 +36,8 @@ namespace Logic.UI.DialogViewModels
     [RelayCommand(CanExecute = nameof(CanExecuteAddTag))]
     private void AddTag()
     {
-      if (BookmarkService.FilteredTags.Any(tag => tag.Equals(TagToAdd)))
+      if (BookmarkService.FilteredTags.Any(
+        tag => tag.Equals(TagToAdd, StringComparison.OrdinalIgnoreCase)))
       {
         _dialogService
           .ShowMessageBox(this,
@@ -44,6 +45,7 @@ namespace Logic.UI.DialogViewModels
                           "Tag already added",
                           MessageBoxButton.OK,
                           MessageBoxImage.Information);
+        return;
       }
 
       if (!BookmarkService.AllBookmarks.Any(
@@ -56,27 +58,15 @@ namespace Logic.UI.DialogViewModels
                           "Tag not found",
                           MessageBoxButton.OK,
                           MessageBoxImage.Information);
+        return;
       }
 
       BookmarkService.ToggleFilterTag(TagToAdd);
       TagToAdd = "";
     }
 
-    private bool CanExecuteApply()
-    {
-      return false;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanExecuteApply))]
-    private void Apply()
-    {
-
-      DialogResult = true;
-      _dialogService.Close(this);
-    }
-
     [RelayCommand]
-    private void Cancel()
+    private void Close()
     {
       DialogResult = false;
       _dialogService.Close(this);

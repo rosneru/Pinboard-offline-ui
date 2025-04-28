@@ -8,6 +8,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         Title="Filter by tags"
+        Loaded="Window_Loaded"
         Width="800"
         Height="450"
         d:DataContext="{d:DesignInstance Type=dvm:SettingsDialogViewModel}"
@@ -17,7 +18,7 @@
         mc:Ignorable="d">
   <Window.InputBindings>
     <KeyBinding Key="Esc"
-                Command="{Binding CancelCommand}" />
+                Command="{Binding CloseCommand}" />
   </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
@@ -27,11 +28,17 @@
     <StackPanel Orientation="Vertical">
       <Label Content="Select tag to add" />
       <TextBox Grid.Row="1"
+               Name="tagToAddTextbox"
                Focusable="True"
                IsTabStop="True"
                Text="{Binding TagToAdd,
                               Mode=TwoWay,
-                              UpdateSourceTrigger=PropertyChanged}" />
+                              UpdateSourceTrigger=PropertyChanged}" >
+        <TextBox.InputBindings>
+          <KeyBinding Key="Enter"
+                      Command="{Binding Path=AddTagCommand}"/> 
+        </TextBox.InputBindings>
+      </TextBox>
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding AddTagCommand}"
               Content="Add" />
@@ -69,11 +76,7 @@
                 Orientation="Horizontal">
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding ApplyCommand}"
-              Content="Apply" />
-
-      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CancelCommand}"
+              Command="{Binding CloseCommand}"
               Content="Cancel" />
     </StackPanel>
 
