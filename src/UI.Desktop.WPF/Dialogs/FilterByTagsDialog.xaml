@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:UI.Desktop.WPF.Dialogs"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-        Title="FilterByTagsDialog"
+        Title="Filter by tags"
         Width="800"
         Height="450"
         d:DataContext="{d:DesignInstance Type=dvm:SettingsDialogViewModel}"
@@ -16,7 +16,8 @@
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
   <Window.InputBindings>
-    <KeyBinding Key="Esc" Command="{Binding CancelCommand}" />
+    <KeyBinding Key="Esc"
+                Command="{Binding CancelCommand}" />
   </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
@@ -28,9 +29,12 @@
       <TextBox Grid.Row="1"
                Focusable="True"
                IsTabStop="True"
-               Text="{Binding JSONFileURL,
+               Text="{Binding TagToAdd,
                               Mode=TwoWay,
                               UpdateSourceTrigger=PropertyChanged}" />
+      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+              Command="{Binding AddTagCommand}"
+              Content="Add" />
       <Separator />
       <ListView Background="Transparent"
                 BorderThickness="0"
@@ -65,11 +69,11 @@
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding ApplyCommand}"
-              Content ="_Apply" />
+              Content="Apply" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding CancelCommand}"
-              Content="_Cancel" />
+              Content="Cancel" />
     </StackPanel>
 
   </Grid>
