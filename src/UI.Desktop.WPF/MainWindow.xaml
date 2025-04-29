@@ -91,7 +91,8 @@
 
     <wv2:WebView2 x:Name="wv"
                   Grid.Column="2"
-                  Grid.Row="2" />
+                  Grid.Row="2"
+                  Loaded="WebView2_Loaded" />
 
     <StatusBar Grid.ColumnSpan="3" Grid.Row="3">
       <StatusBarItem>

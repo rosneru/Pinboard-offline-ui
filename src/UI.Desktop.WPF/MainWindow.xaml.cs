@@ -45,5 +45,17 @@ namespace UI.Desktop.WPF
     }
 
     private MainViewModel _mainViewModel;
+
+    private async void WebView2_Loaded(object sender, RoutedEventArgs e)
+    {
+      if (wv.CoreWebView2 == null)
+      {
+        // Ensure WebView2 is fully initialized
+        await wv.EnsureCoreWebView2Async();
+
+        // Apply Fluent theme or other settings after initialization
+        wv.DefaultBackgroundColor = System.Drawing.Color.SkyBlue;
+      }
+    }
   }
 }
