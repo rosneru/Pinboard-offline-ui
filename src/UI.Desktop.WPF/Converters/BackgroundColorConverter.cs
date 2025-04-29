@@ -26,7 +26,7 @@ namespace UI.Desktop.WPF.Converters
         return Brushes.IndianRed;
       }
 
-      return Brushes.LightGray;
+      return Brushes.DimGray;
     }
 
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
