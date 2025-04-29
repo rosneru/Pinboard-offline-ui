@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
@@ -9,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Logic.UI.Model;
 using Logic.UI.ViewModels;
 using Markdig;
+using Markdig.Extensions.Footnotes;
 
 namespace UI.Desktop.WPF
 {
@@ -17,6 +17,7 @@ namespace UI.Desktop.WPF
   /// </summary>
   public partial class MainWindow : Window
   {
+    static string css = "";
     public MainWindow()
     {
       InitializeComponent();
@@ -34,15 +35,26 @@ namespace UI.Desktop.WPF
         _mainViewModel = vm;
         _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
       }
-
-      wv.NavigateToString("<!DOCTYPE html>\r\n<html>\r\n    <head>\r\n        <title>Example</title>\r\n    </head>\r\n    <body>\r\n        <p>This is an example of a simple HTML page with one paragraph.</p>\r\n    </body>\r\n</html>");
     }
 
     private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(MainViewModel.SelectedBookmarkHtml))
       {
-        wv.NavigateToString(_mainViewModel.SelectedBookmarkHtml);
+        if (!string.IsNullOrEmpty(_mainViewModel.SelectedBookmarkHtml))
+        {
+          string htmlWithCss = $@"
+             <!DOCTYPE html>
+             <html>
+             <head>
+                 {css}
+             </head>
+             <body>
+                 {_mainViewModel.SelectedBookmarkHtml}
+             </body>
+             </html>";
+          wv.NavigateToString(htmlWithCss);
+        }
       }
     }
 
@@ -55,43 +67,34 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
-        // Retrieve the PrimaryBackgroundColor from the current resources
-        var bg = Application.Current.Resources["SystemControlBackgroundBaseHighBrush"]
-              ?? Color.FromRgb(170, 170, 170);  // Fallback
-
-        if (bg is System.Windows.Media.Color primaryBackgroundColor)
+        if (ThemeHelper.IsDarkModeEnabled())
         {
-          wv.DefaultBackgroundColor = System.Drawing.Color.FromArgb(
-              primaryBackgroundColor.A,
-              primaryBackgroundColor.R,
-              primaryBackgroundColor.G,
-              primaryBackgroundColor.B);
-        }
-
-        var fg = Application.Current.Resources["SystemControlForegroundBaseHighBrush"]
-              ?? Color.FromRgb(235, 235, 235);  // Fallback
-        if (fg is System.Windows.Media.Color primaryForegroundColor)
-        {
-          // Inject CSS to set the foreground color
-          string css = $@"
-                    <style>
-                        body {{
-                            color: rgb({primaryForegroundColor.R}, {primaryForegroundColor.G}, {primaryForegroundColor.B});
-                        }}
-                    </style>";
+          //var fg = Color.FromArgb(235, 219, 178); // Gruvbox "white".
+          var fg = GetFluentThemeTextColor();
+          css = $@"
+              <style>
+                  body {{
+                      color: rgb({fg.R}, {fg.G}, {fg.B});
+                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                      font-size: 16px;
+                      line-height: 1.6;
+                  }}
+              </style>";
           wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
         }
       }
     }
 
-    public static Brush GetCurrentBackgroundBrush()
+    private Color GetFluentThemeTextColor()
     {
-      return Application.Current.Resources["SystemControlBackgroundBaseHighBrush"] as Brush;
-    }
+      // Try to retrieve the primary text color from the Fluent Theme resources
+      if (Application.Current.Resources["TextFillColorPrimaryBrush"] is SolidColorBrush brush)
+      {
+        return brush.Color;
+      }
 
-    public static Brush GetCurrentForegroundBrush()
-    {
-      return Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as Brush;
+      // Fallback to a default color if the resource is not found
+      return Colors.Black;
     }
   }
 }
