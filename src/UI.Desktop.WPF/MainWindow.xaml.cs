@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -70,7 +71,7 @@ namespace UI.Desktop.WPF
         if (ThemeHelper.IsDarkModeEnabled())
         {
           //var fg = Color.FromArgb(235, 219, 178); // Gruvbox "white".
-          var fg = GetFluentThemeTextColor();
+          var fg = ThemeHelper.GetFluentThemeTextColor();
           css = $@"
               <style>
                   body {{
@@ -83,18 +84,6 @@ namespace UI.Desktop.WPF
           wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
         }
       }
-    }
-
-    private Color GetFluentThemeTextColor()
-    {
-      // Try to retrieve the primary text color from the Fluent Theme resources
-      if (Application.Current.Resources["TextFillColorPrimaryBrush"] is SolidColorBrush brush)
-      {
-        return brush.Color;
-      }
-
-      // Fallback to a default color if the resource is not found
-      return Colors.Black;
     }
   }
 }
