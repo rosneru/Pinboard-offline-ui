@@ -53,8 +53,16 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
-        // Apply Fluent theme or other settings after initialization
-        wv.DefaultBackgroundColor = System.Drawing.Color.SkyBlue;
+        // Retrieve the PrimaryBackgroundColor from the current resources
+        if (Application.Current.Resources["PrimaryBackgroundColor"] is
+          System.Windows.Media.Color primaryBackgroundColor)
+        {
+          wv.DefaultBackgroundColor = System.Drawing.Color.FromArgb(
+              primaryBackgroundColor.A,
+              primaryBackgroundColor.R,
+              primaryBackgroundColor.G,
+              primaryBackgroundColor.B);
+        }
       }
     }
   }
