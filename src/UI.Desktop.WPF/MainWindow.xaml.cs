@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Logic.UI.Model;
 using Logic.UI.ViewModels;
@@ -54,8 +56,10 @@ namespace UI.Desktop.WPF
         await wv.EnsureCoreWebView2Async();
 
         // Retrieve the PrimaryBackgroundColor from the current resources
-        if (Application.Current.Resources["PrimaryBackgroundColor"] is
-          System.Windows.Media.Color primaryBackgroundColor)
+        var bg = Application.Current.Resources["SystemControlBackgroundBaseHighBrush"]
+              ?? Color.FromRgb(170, 170, 170);  // Fallback
+
+        if (bg is System.Windows.Media.Color primaryBackgroundColor)
         {
           wv.DefaultBackgroundColor = System.Drawing.Color.FromArgb(
               primaryBackgroundColor.A,
@@ -63,7 +67,31 @@ namespace UI.Desktop.WPF
               primaryBackgroundColor.G,
               primaryBackgroundColor.B);
         }
+
+        var fg = Application.Current.Resources["SystemControlForegroundBaseHighBrush"]
+              ?? Color.FromRgb(235, 235, 235);  // Fallback
+        if (fg is System.Windows.Media.Color primaryForegroundColor)
+        {
+          // Inject CSS to set the foreground color
+          string css = $@"
+                    <style>
+                        body {{
+                            color: rgb({primaryForegroundColor.R}, {primaryForegroundColor.G}, {primaryForegroundColor.B});
+                        }}
+                    </style>";
+          wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
+        }
       }
+    }
+
+    public static Brush GetCurrentBackgroundBrush()
+    {
+      return Application.Current.Resources["SystemControlBackgroundBaseHighBrush"] as Brush;
+    }
+
+    public static Brush GetCurrentForegroundBrush()
+    {
+      return Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as Brush;
     }
   }
 }
