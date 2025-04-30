@@ -18,7 +18,8 @@ namespace UI.Desktop.WPF
   /// </summary>
   public partial class MainWindow : Window
   {
-    static string css = "";
+    private static string css = "";
+    private bool isBookmarkChanging = false;
     public MainWindow()
     {
       InitializeComponent();
@@ -52,6 +53,8 @@ namespace UI.Desktop.WPF
                {_mainViewModel.SelectedBookmarkHtml}
            </body>
            </html>";
+
+        isBookmarkChanging = true;
         wv.NavigateToString(htmlWithCss);
       }
     }
@@ -64,21 +67,6 @@ namespace UI.Desktop.WPF
       {
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
-
-        // Handle the NewWindowRequested event
-        wv.CoreWebView2.NewWindowRequested += (s, args) =>
-        {
-          // Prevent the WebView2 from opening a new window
-          args.Handled = true;
-
-          // Open the requested URL in the Opera browser
-          Process.Start(new ProcessStartInfo
-          {
-            FileName = "opera", // Specify Opera as the browser
-            Arguments = args.Uri, // Pass the URL as an argument
-            UseShellExecute = true
-          });
-        };
 
         // Set the default background color based on the theme using
         // 'fake' colors: When the dark/bright theme changes, these
@@ -107,6 +95,25 @@ namespace UI.Desktop.WPF
           wv.DefaultBackgroundColor = brightBackground;
         }
       }
+    }
+
+    private void WebView2_NavigationStarting(
+      object sender,
+      Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
+    {
+      if(isBookmarkChanging)
+      {
+        isBookmarkChanging = false;
+        return;
+      }
+
+      Process.Start(new ProcessStartInfo
+      {
+        FileName = "opera",
+        Arguments = e.Uri.ToString(),
+        UseShellExecute = true
+      });
+      e.Cancel = true;
     }
   }
 }
