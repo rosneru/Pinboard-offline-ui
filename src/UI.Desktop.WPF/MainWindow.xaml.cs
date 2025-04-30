@@ -42,20 +42,17 @@ namespace UI.Desktop.WPF
     {
       if (e.PropertyName == nameof(MainViewModel.SelectedBookmarkHtml))
       {
-        if (!string.IsNullOrEmpty(_mainViewModel.SelectedBookmarkHtml))
-        {
-          string htmlWithCss = $@"
-             <!DOCTYPE html>
-             <html>
-             <head>
-                 {css}
-             </head>
-             <body>
-                 {_mainViewModel.SelectedBookmarkHtml}
-             </body>
-             </html>";
-          wv.NavigateToString(htmlWithCss);
-        }
+        string htmlWithCss = $@"
+           <!DOCTYPE html>
+           <html>
+           <head>
+               {css}
+           </head>
+           <body>
+               {_mainViewModel.SelectedBookmarkHtml}
+           </body>
+           </html>";
+        wv.NavigateToString(htmlWithCss);
       }
     }
 
