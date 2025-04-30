@@ -68,9 +68,16 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
+        // Set the default background color based on the theme using
+        // 'fake' colors: When the dark/bright theme changes, these
+        // colors won't fit anymore. Also, on the fly theme switch
+        // isn't detected here for the WebView2 control. TODO: fix.
+        var brightBackground = System.Drawing.Color.FromArgb(240, 244, 249);
+        var darkBackground = System.Drawing.Color.FromArgb(30, 32, 35);
+
         if (ThemeHelper.IsDarkModeEnabled())
         {
-          //var fg = Color.FromArgb(235, 219, 178); // Gruvbox "white".
+          wv.DefaultBackgroundColor = darkBackground;
           var fg = ThemeHelper.GetFluentThemeTextColor();
           css = $@"
               <style>
@@ -82,6 +89,10 @@ namespace UI.Desktop.WPF
                   }}
               </style>";
           wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
+        }
+        else
+        {
+          wv.DefaultBackgroundColor = brightBackground;
         }
       }
     }
