@@ -72,7 +72,7 @@ namespace UI.Desktop.WPF
         // 'fake' colors: When the dark/bright theme changes, these
         // colors won't fit anymore. Also, on the fly theme switch
         // isn't detected here for the WebView2 control. TODO: fix.
-        var brightBackground = System.Drawing.Color.FromArgb(240, 244, 249);
+        var brightBackground = System.Drawing.Color.FromArgb(235, 246, 249);
         var darkBackground = System.Drawing.Color.FromArgb(30, 32, 35);
 
         if (ThemeHelper.IsDarkModeEnabled())
