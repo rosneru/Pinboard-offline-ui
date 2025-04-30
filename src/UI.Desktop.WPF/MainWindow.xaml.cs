@@ -68,6 +68,21 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
+        // Handle the NewWindowRequested event
+        wv.CoreWebView2.NewWindowRequested += (s, args) =>
+        {
+          // Prevent the WebView2 from opening a new window
+          args.Handled = true;
+
+          // Open the requested URL in the Opera browser
+          Process.Start(new ProcessStartInfo
+          {
+            FileName = "opera", // Specify Opera as the browser
+            Arguments = args.Uri, // Pass the URL as an argument
+            UseShellExecute = true
+          });
+        };
+
         // Set the default background color based on the theme using
         // 'fake' colors: When the dark/bright theme changes, these
         // colors won't fit anymore. Also, on the fly theme switch
