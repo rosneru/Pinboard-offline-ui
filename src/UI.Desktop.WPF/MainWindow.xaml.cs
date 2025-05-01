@@ -88,6 +88,7 @@ namespace UI.Desktop.WPF
                       line-height: 1.6;
                   }}
               </style>";
+          isBookmarkChanging = true;
           wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
         }
         else
