@@ -81,6 +81,27 @@ namespace Logic.UI.ViewModels
       };
     }
 
+    private bool CanExecuteOpenSelectedBookmarkUrl()
+    {
+      if(SelectedBookmark is null)
+      {
+        return false;
+      }
+
+      return !string.IsNullOrEmpty(SelectedBookmark.HRef);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExecuteOpenSelectedBookmarkUrl))]
+    private void OpenSelectedBookmarkUrl(CancelEventArgs cancelEventArgs)
+    {
+      Process.Start(new ProcessStartInfo
+      {
+        FileName = "opera",
+        Arguments = SelectedBookmark.HRef,
+        UseShellExecute = true
+      });
+    }
+
     [RelayCommand]
     void OpenSettings()
     {
