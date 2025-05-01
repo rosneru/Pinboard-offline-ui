@@ -19,5 +19,6 @@ namespace Logic.UI.Model
     public string Tags { get; set; }
 
     public String[] TagsArray { get; set; }
+    public DateTime DateTime;
   }
 }

@@ -1,0 +1,84 @@
+﻿<Window x:Class="UI.Desktop.WPF.Dialogs.FilterByTagsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Input="clr-namespace:CommunityToolkit.Mvvm.Input"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dvm="clr-namespace:Logic.UI.DialogViewModels;assembly=Logic.UI"
+        xmlns:local="clr-namespace:UI.Desktop.WPF.Dialogs"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        Title="Filter by tags"
+        Loaded="Window_Loaded"
+        Width="800"
+        Height="450"
+        d:DataContext="{d:DesignInstance Type=dvm:SettingsDialogViewModel}"
+        md:DialogServiceViews.IsRegistered="True"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+  <Window.InputBindings>
+    <KeyBinding Key="Esc"
+                Command="{Binding CloseCommand}" />
+  </Window.InputBindings>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <StackPanel Orientation="Vertical">
+      <Label Content="Select tag to add" />
+      <TextBox Grid.Row="1"
+               Name="tagToAddTextbox"
+               Focusable="True"
+               IsTabStop="True"
+               Text="{Binding TagToAdd,
+                              Mode=TwoWay,
+                              UpdateSourceTrigger=PropertyChanged}" >
+        <TextBox.InputBindings>
+          <KeyBinding Key="Enter"
+                      Command="{Binding Path=AddTagCommand}"/> 
+        </TextBox.InputBindings>
+      </TextBox>
+      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+              Command="{Binding AddTagCommand}"
+              Content="Add" />
+      <Separator />
+      <ListView Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding BookmarkService.FilteredTags}"
+                SelectionChanged="TagsListView_SelectionChanged"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListView.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ListView.ItemsPanel>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <Border Margin="0"
+                    Background="DarkGray"
+                    BorderBrush="DarkGray"
+                    BorderThickness="1"
+                    CornerRadius="5">
+              <TextBlock Padding="0"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Foreground="White"
+                         Text="{Binding}" />
+            </Border>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackPanel>
+    <StackPanel Grid.Row="1"
+                Margin="0 6 3 0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+
+      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+              Command="{Binding CloseCommand}"
+              Content="Cancel" />
+    </StackPanel>
+
+  </Grid>
+</Window>

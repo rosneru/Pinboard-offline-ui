@@ -1,6 +1,15 @@
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Logic.UI.Model;
 using Logic.UI.ViewModels;
+using Markdig;
+using Markdig.Extensions.Footnotes;
 
 namespace UI.Desktop.WPF
 {
@@ -9,6 +18,8 @@ namespace UI.Desktop.WPF
   /// </summary>
   public partial class MainWindow : Window
   {
+    private static string css = "";
+    private bool isBookmarkChanging = false;
     public MainWindow()
     {
       InitializeComponent();
@@ -21,20 +32,88 @@ namespace UI.Desktop.WPF
     {
       await wv.EnsureCoreWebView2Async();
 
-      _mainViewModel = DataContext as MainViewModel;
-      _mainViewModel.BookmarksListViewModel.PropertyChanged += BookmarksVM_PropertyChanged;
-
-      wv.NavigateToString("<!DOCTYPE html>\r\n<html>\r\n    <head>\r\n        <title>Example</title>\r\n    </head>\r\n    <body>\r\n        <p>This is an example of a simple HTML page with one paragraph.</p>\r\n    </body>\r\n</html>");
-    }
-    private void BookmarksVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-      if (e.PropertyName == nameof(MainViewModel.BookmarksListViewModel.SelectedBookmarkHtml))
+      if (DataContext is MainViewModel vm)
       {
-        wv.NavigateToString(_mainViewModel.BookmarksListViewModel.SelectedBookmarkHtml);
+        _mainViewModel = vm;
+        _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
       }
     }
 
+    private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(MainViewModel.SelectedBookmarkHtml))
+      {
+        string htmlWithCss = $@"
+           <!DOCTYPE html>
+           <html>
+           <head>
+               {css}
+           </head>
+           <body>
+               {_mainViewModel.SelectedBookmarkHtml}
+           </body>
+           </html>";
+
+        isBookmarkChanging = true;
+        wv.NavigateToString(htmlWithCss);
+      }
+    }
 
     private MainViewModel _mainViewModel;
+
+    private async void WebView2_Loaded(object sender, RoutedEventArgs e)
+    {
+      if (wv.CoreWebView2 == null)
+      {
+        // Ensure WebView2 is fully initialized
+        await wv.EnsureCoreWebView2Async();
+
+        // Set the default background color based on the theme using
+        // 'fake' colors: When the dark/bright theme changes, these
+        // colors won't fit anymore. Also, on the fly theme switch
+        // isn't detected here for the WebView2 control. TODO: fix.
+        var brightBackground = System.Drawing.Color.FromArgb(235, 246, 249);
+        var darkBackground = System.Drawing.Color.FromArgb(30, 32, 35);
+
+        if (ThemeHelper.IsDarkModeEnabled())
+        {
+          wv.DefaultBackgroundColor = darkBackground;
+          var fg = ThemeHelper.GetFluentThemeTextColor();
+          css = $@"
+              <style>
+                  body {{
+                      color: rgb({fg.R}, {fg.G}, {fg.B});
+                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                      font-size: 16px;
+                      line-height: 1.6;
+                  }}
+              </style>";
+          wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
+        }
+        else
+        {
+          wv.DefaultBackgroundColor = brightBackground;
+        }
+      }
+    }
+
+    private void WebView2_NavigationStarting(
+      object sender,
+      Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
+    {
+      if(isBookmarkChanging)
+      {
+        isBookmarkChanging = false;
+        return;
+      }
+
+      Process.Start(new ProcessStartInfo
+      {
+        FileName = "opera",
+        Arguments = e.Uri.ToString(),
+        UseShellExecute = true
+      });
+      e.Cancel = true;
+    }
   }
 }

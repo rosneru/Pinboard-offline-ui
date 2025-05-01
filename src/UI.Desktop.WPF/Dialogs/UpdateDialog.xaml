@@ -17,7 +17,8 @@
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
   <Window.InputBindings>
-    <KeyBinding Key="Esc" Command="{Binding CancelCommand}" />
+    <KeyBinding Key="Esc"
+                Command="{Binding CancelCommand}" />
   </Window.InputBindings>
   <Grid>
     <Grid.RowDefinitions>
@@ -25,33 +26,44 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <StackPanel Orientation="Vertical">
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Text="Current Pinboard file date:" />
-        <TextBlock FontWeight="Bold" Text="{Binding CurrentFile.DateStr}" />
-      </StackPanel>
+      <TextBlock Text="Current Pinboard file date:" />
+      <TextBlock FontWeight="Bold"
+                 Text="{Binding CurrentFile.DateStr}" />
+      <Separator />
       <Label Content="The new Pinboard.in backup file will be downloaded from:"
-             Visibility="{Binding HasURL, Converter={StaticResource BoolVisibilityConverter}}"/>
+             Visibility="{Binding HasURL,
+                                  Converter={StaticResource BoolVisibilityConverter}}" />
       <Label x:Name="tbxJSONFileURL"
-             FontStyle="Italic"
              Content="{Binding JSONFileURL,
                                Mode=OneWay}"
              Focusable="True"
+             FontStyle="Italic"
              IsTabStop="True"
-             Visibility="{Binding HasURL, Converter={StaticResource BoolVisibilityConverter}}"/>
+             Visibility="{Binding HasURL,
+                                  Converter={StaticResource BoolVisibilityConverter}}" />
       <Label Content="No download URL set!"
-             Foreground="Red"
              FontWeight="Bold"
-             Visibility="{Binding HasURL, Converter={StaticResource BoolInverseVisibilityConverter}}"/>
+             Foreground="Red"
+             Visibility="{Binding HasURL,
+                                  Converter={StaticResource BoolInverseVisibilityConverter}}" />
       <Label Content="Download URL can be changed in settings." />
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding DownloadCommand}"
-              Content="_Download" />
+              Content="Download" />
       <TextBlock FontWeight="Bold"
-                 Text="Download failed. Try to change the URL in settings and download again."
+                 Text="Download failed."
                  Visibility="{Binding HasDownloadFailed,
                                       Converter={StaticResource BoolVisibilityConverter}}" />
       <TextBlock FontWeight="Bold"
-                 Text="Download succeeded. Click on `Save` to apply the new data file."
+                 Text="Try to change the URL in settings and download again."
+                 Visibility="{Binding HasDownloadFailed,
+                                      Converter={StaticResource BoolVisibilityConverter}}" />
+      <TextBlock FontWeight="Bold"
+                 Text="Download succeeded."
+                 Visibility="{Binding HasDownloadSucceeded,
+                                      Converter={StaticResource BoolVisibilityConverter}}" />
+      <TextBlock FontWeight="Bold"
+                 Text="Click on `Save` to apply the new data file."
                  Visibility="{Binding HasDownloadSucceeded,
                                       Converter={StaticResource BoolVisibilityConverter}}" />
     </StackPanel>
@@ -62,11 +74,11 @@
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding SaveCommand}"
-              Content="_Save" />
+              Content="Save" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding CancelCommand}"
-              Content="_Cancel" />
+              Content="Cancel" />
     </StackPanel>
 
   </Grid>

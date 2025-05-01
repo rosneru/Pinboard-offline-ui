@@ -42,11 +42,11 @@
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding ApplyCommand}"
-              Content="_Apply" />
+              Content="Apply" />
 
       <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
               Command="{Binding CancelCommand}"
-              Content="_Cancel" />
+              Content="Cancel" />
     </StackPanel>
 
   </Grid>

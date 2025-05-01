@@ -24,39 +24,73 @@ namespace Logic.UI.ViewModels
   public partial class MainViewModel : ObservableObject
   {
     [ObservableProperty] private IUiService _uiService;
-    [ObservableProperty] private BookmarksListViewModel _bookmarksListViewModel;
+    [ObservableProperty] private IBookmarkService _bookmarkService;
+    [ObservableProperty] private Bookmark _selectedBookmark;
+    [ObservableProperty] private string _selectedBookmarkHtml;
+    [ObservableProperty] private string _statusBarText;
+
+    partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
+    {
+      if (newValue is null)
+      {
+        return;
+      }
+
+      var bookmarkContent = newValue!.Extended;
+
+      // Translate the '==' around '==Highlighted==' passages with into
+      // '<mark>Highlighted</mark>'.
+      //
+      // Because this is the syntax, `Markdig` understands and *does*
+      // render highlighted.
+      //
+      // Regex explained:
+      //  - '(?<!\=)' ensures there's no '=' before start of match
+      //    (Negative Lookbehind)
+      //  - '\={2}' matches exactly two '='
+      //  - '(?!\=)' ensures there's no '=' after end of match (Negative
+      //    Lookahead)
+      int i = 0;
+      var bookmarkContendTranslated = new Regex(@"(?<!\=)\={2}(?!\=)")
+        .Replace(bookmarkContent, m => i++ % 2 == 0 ? "<mark>" : "</mark>");
+      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated);
+    }
 
 
     public MainViewModel(IDialogService dialogService, 
                          IUiService uiService,
                          ISettingsService settingsService,
-                         BookmarksListViewModel bookmarksViewModel,
+                         IBookmarkService bookmarkService,
                          SettingsDialogViewModel settingsDialogViewModel,
-                         UpdateDialogViewModel updateDialogViewModel)
+                         UpdateDialogViewModel updateDialogViewModel,
+                         FilterByTagsDialogViewModel filterByTagsDialogViewModel)
     {
       _dialogService = dialogService;
       UiService = uiService;
       _settingsService = settingsService;
-      BookmarksListViewModel = bookmarksViewModel;
+      BookmarkService = bookmarkService;
       _settingsDialogViewModel = settingsDialogViewModel;
-      _updateDialogViewMode = updateDialogViewModel;
+      _updateDialogViewModel = updateDialogViewModel;
+      _filterByTagsDialogViewModel = filterByTagsDialogViewModel;
+
+
+      BookmarkService.FilteredBookmarksChanged += (sender, e) =>
+      {
+        StatusBarText = $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
+                        $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
+      };
     }
 
     [RelayCommand]
     void OpenSettings()
     {
-      var success = _dialogService.ShowDialog(this, _settingsDialogViewModel);
-      if (success == true)
-      {
-        // Open the device e.g. by opening openDialog.Id from database
-        // TODO Load content from JSON
-      }
+      _dialogService.ShowDialog(this, _settingsDialogViewModel);
     }
 
     [RelayCommand]
     async Task OpenUpdate()
     {
-      var success = _dialogService.ShowDialog(this, _updateDialogViewMode);
+      var success = _dialogService.ShowDialog(this, _updateDialogViewModel);
       if (success == true)
       {
         await Loaded();
@@ -66,7 +100,12 @@ namespace Logic.UI.ViewModels
     [RelayCommand]
     async Task Loaded()
     {
-      await BookmarksListViewModel.Load();
+      Mouse.OverrideCursor = Cursors.Wait;
+      StatusBarText = $"Loading bookmarks..";
+
+      await BookmarkService.InitializeAsync(_settingsService.AppSettingsPath,
+                                            _settingsService.PinboardFileName);
+      Mouse.OverrideCursor = null;
     }
 
     private bool CanExecuteExit()
@@ -107,11 +146,21 @@ namespace Logic.UI.ViewModels
       }
     }
 
+    [RelayCommand]
+    void OpenTagFilter()
+    {
+      var success = _dialogService.ShowDialog(this, _filterByTagsDialogViewModel);
+      if (success == true)
+      {
+        // ??? await Filtered
+      }
+    }
 
     IDialogService _dialogService;
     ISettingsService _settingsService;
     SettingsDialogViewModel _settingsDialogViewModel;
-    UpdateDialogViewModel _updateDialogViewMode;
+    UpdateDialogViewModel _updateDialogViewModel;
+    FilterByTagsDialogViewModel _filterByTagsDialogViewModel;
 
     bool _isAlreadyShutdown = false;
   }
