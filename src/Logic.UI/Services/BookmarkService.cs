@@ -18,6 +18,9 @@ namespace Logic.UI.Services
     [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
     [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
 
+    public string BookmarkFileDateInfo { get; private set; }
+    public string LatestBookmarkDateInfo { get; private set; }
+
     public event EventHandler FilteredBookmarksChanged;
 
     public BookmarkService()
@@ -35,6 +38,7 @@ namespace Logic.UI.Services
         return;
       }
 
+      var latestBookmarkDate = DateTime.MinValue;
       foreach (var bookmark in bookmarks)
       {
         // Split the tags
@@ -49,9 +53,31 @@ namespace Logic.UI.Services
           CultureInfo.InvariantCulture,
           DateTimeStyles.AssumeUniversal);
 
+        if(bookmark.DateTime > latestBookmarkDate)
+        {
+          latestBookmarkDate = bookmark.DateTime;
+        }
+
         // And now overwrite the the bookmark.Time with a better
         // readable format from the DateTimeValue
         bookmark.Time = bookmark.DateTime.ToString("dd.MM.yyyy, HH:mm");
+      }
+
+      var bookmarkFileLastWriteTime = GetBookMarkFileDate(bookmarkFilePath);
+      if (bookmarkFileLastWriteTime.HasValue)
+      {
+        var writeTime = bookmarkFileLastWriteTime.Value;
+        int dayDifference = (int)DateTime.Now.Subtract(writeTime).TotalDays;
+        var dateStr = writeTime.ToString("dd.MM.yyyy");
+
+        BookmarkFileDateInfo = $"Bookmark file from {dateStr} ({dayDifference} days ago)";
+      }
+
+      if(latestBookmarkDate > DateTime.MinValue)
+      {
+        int dayDifference = (int)DateTime.Now.Subtract(latestBookmarkDate).TotalDays;
+        var dateStr = latestBookmarkDate.ToString("dd.MM.yyyy");
+        LatestBookmarkDateInfo = $"Latest bookmark from {dateStr} ({dayDifference} days ago)";
       }
 
       AllBookmarks = bookmarks;
@@ -75,6 +101,18 @@ namespace Logic.UI.Services
       }
 
       ApplyFilters();
+    }
+
+    private DateTime? GetBookMarkFileDate(string bookmarkFilePath)
+    {
+      try
+      {
+        return System.IO.File.GetLastWriteTime(bookmarkFilePath);
+      }
+      catch(Exception e)
+      {
+        return null;
+      }
     }
 
     private Task<List<Bookmark>> LoadBookmarks(string bookmarkFilePath)

@@ -64,17 +64,10 @@ namespace Logic.UI.Model
       }
 
       var writeTime = File.GetLastWriteTime(_fileFullPath);
-      int dayDifference = calculateDayDifference(writeTime, DateTime.Now);
-
+      int dayDifference = (int)DateTime.Now.Subtract(writeTime).TotalDays;
       var dateStr = writeTime.ToString("dd.MM.yyyy");
 
       return $"{dateStr} ({dayDifference} days ago)";
-    }
-
-    private int calculateDayDifference(DateTime d1, DateTime d2)
-    {
-      TimeSpan span = d2.Subtract(d1);
-      return (int)span.TotalDays;
     }
 
     string _path;

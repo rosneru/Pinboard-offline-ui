@@ -118,7 +118,9 @@
       <StatusBarItem>
         <TextBlock Text="{Binding StatusBarText}" />
       </StatusBarItem>
+      <StatusBarItem HorizontalAlignment="Right" >
+        <TextBlock Text="{Binding LatestBookmarkDateInfo}" />
+      </StatusBarItem>
     </StatusBar>
-
   </Grid>
 </Window>

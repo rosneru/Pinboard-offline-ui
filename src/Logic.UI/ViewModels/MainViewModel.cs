@@ -28,6 +28,9 @@ namespace Logic.UI.ViewModels
     [ObservableProperty] private Bookmark _selectedBookmark;
     [ObservableProperty] private string _selectedBookmarkHtml;
     [ObservableProperty] private string _statusBarText;
+    
+    [ObservableProperty] private string _bookmarkFileDateInfo;
+    [ObservableProperty] private string _latestBookmarkDateInfo;
 
     partial void OnSelectedBookmarkChanged(Bookmark oldValue, Bookmark newValue)
     {
@@ -126,6 +129,10 @@ namespace Logic.UI.ViewModels
 
       await BookmarkService.InitializeAsync(_settingsService.AppSettingsPath,
                                             _settingsService.PinboardFileName);
+
+      BookmarkFileDateInfo = BookmarkService.BookmarkFileDateInfo;
+      LatestBookmarkDateInfo = BookmarkService.LatestBookmarkDateInfo;
+
       Mouse.OverrideCursor = null;
     }
 

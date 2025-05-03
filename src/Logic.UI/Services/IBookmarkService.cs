@@ -19,6 +19,9 @@ namespace Logic.UI.Services
 
     ObservableCollection<string> FilteredTags { get; }
 
+    string BookmarkFileDateInfo { get;  }
+    string LatestBookmarkDateInfo { get;  }
+
     void ToggleFilterTag(string tag);
 
 
