@@ -30,7 +30,7 @@ namespace UI.Desktop.WPF.Dialogs
     {
       if (DataContext is FilterByTagsDialogViewModel vm)
       {
-        if(e.AddedItems.Count == 0)
+        if (e.AddedItems.Count == 0)
         {
           return;
         }
