@@ -33,12 +33,19 @@ namespace Logic.UI.DialogViewModels
     {
       _dialogService = dialogService;
       _settingsService = settingsService;
-
       JSONFileURL = _settingsService.AppSettings.JSONFileURL;
+    }
+
+    public void Initialize()
+    {
       CurrentFile = new PinboardDiskFile(_settingsService.AppSettingsPath,
                                          _settingsService.PinboardFileName);
       NewFile = new PinboardMemoryFile();
       HasURL = !string.IsNullOrEmpty(JSONFileURL);
+
+      IsDownloadInProgress = false;
+      HasDownloadSucceeded = false;
+      HasDownloadFailed = false;
     }
 
     private bool CanExecuteDownload()
