@@ -15,14 +15,14 @@ using System.Windows.Shapes;
 
 namespace UI.Desktop.WPF.Dialogs
 {
-    /// <summary>
-    /// Interaction logic for UpdateDialog.xaml
-    /// </summary>
-    public partial class UpdateDialog : Window
+  /// <summary>
+  /// Interaction logic for UpdateDialog.xaml
+  /// </summary>
+  public partial class UpdateDialog : Window
+  {
+    public UpdateDialog()
     {
-        public UpdateDialog()
-        {
-            InitializeComponent();
-        }
+      InitializeComponent();
     }
+  }
 }
