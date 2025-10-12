@@ -3,24 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Desktop="clr-namespace:UI.Desktop.WPF"
              ThemeMode="System">
-  <Application.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.xaml" />
-        <ResourceDictionary Source="Resources\Buttons.xaml" />
-        <ResourceDictionary Source="Resources\CheckBoxes.xaml" />
-        <ResourceDictionary Source="Resources\ComboBoxes.xaml" />
-        <ResourceDictionary Source="Resources\Converters.xaml" />
-        <ResourceDictionary Source="Resources\DataGrids.xaml" />
-        <ResourceDictionary Source="Resources\GroupBoxes.xaml" />
-        <ResourceDictionary Source="Resources\ImageButtons.xaml" />
-        <ResourceDictionary Source="Resources\Labels.xaml" />
-        <ResourceDictionary Source="Resources\PasswordBoxes.xaml" />
-        <ResourceDictionary Source="Resources\Separators.xaml" />
-        <ResourceDictionary Source="Resources\StackPanels.xaml" />
-        <ResourceDictionary Source="Resources\TextBlocks.xaml" />
-        <ResourceDictionary Source="Resources\TextBoxes.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </Application.Resources>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.xaml" />
+                <ResourceDictionary Source="Resources\Buttons.xaml" />
+                <ResourceDictionary Source="Resources\CheckBoxes.xaml" />
+                <ResourceDictionary Source="Resources\ComboBoxes.xaml" />
+                <ResourceDictionary Source="Resources\Converters.xaml" />
+                <ResourceDictionary Source="Resources\DataGrids.xaml" />
+                <ResourceDictionary Source="Resources\GroupBoxes.xaml" />
+                <ResourceDictionary Source="Resources\ImageButtons.xaml" />
+                <ResourceDictionary Source="Resources\Labels.xaml" />
+                <ResourceDictionary Source="Resources\PasswordBoxes.xaml" />
+                <ResourceDictionary Source="Resources\Separators.xaml" />
+                <ResourceDictionary Source="Resources\StackPanels.xaml" />
+                <ResourceDictionary Source="Resources\TextBlocks.xaml" />
+                <ResourceDictionary Source="Resources\TextBoxes.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

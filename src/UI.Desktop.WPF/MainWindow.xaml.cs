@@ -94,6 +94,11 @@ namespace UI.Desktop.WPF
         else
         {
           wv.DefaultBackgroundColor = brightBackground;
+          //if (Application.Current.Resources["TextFillColorPrimaryBrush"] is SolidColorBrush brush)
+          //{
+          //  var col = System.Drawing.Color.FromArgb(brush.Color.R, brush.Color.G, brush.Color.B);
+          //  wv.DefaultBackgroundColor = col;
+          //}
         }
       }
     }
