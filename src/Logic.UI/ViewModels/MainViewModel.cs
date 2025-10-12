@@ -114,6 +114,7 @@ namespace Logic.UI.ViewModels
     [RelayCommand]
     async Task OpenUpdate()
     {
+      _updateDialogViewModel.Initialize();
       var success = _dialogService.ShowDialog(this, _updateDialogViewModel);
       if (success == true)
       {
