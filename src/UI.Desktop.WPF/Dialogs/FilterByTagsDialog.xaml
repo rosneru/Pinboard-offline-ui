@@ -7,78 +7,78 @@
         xmlns:local="clr-namespace:UI.Desktop.WPF.Dialogs"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        xmlns:ucc="clr-namespace:UI.CustomControls;assembly=UI.CustomControls"
         Title="Filter by tags"
-        Loaded="Window_Loaded"
         Width="800"
         Height="450"
         d:DataContext="{d:DesignInstance Type=dvm:SettingsDialogViewModel}"
         md:DialogServiceViews.IsRegistered="True"
+        Loaded="Window_Loaded"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
-  <Window.InputBindings>
-    <KeyBinding Key="Esc"
-                Command="{Binding CloseCommand}" />
-  </Window.InputBindings>
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <StackPanel Orientation="Vertical">
-      <Label Content="Select tag to add" />
-      <TextBox Grid.Row="1"
-               Name="tagToAddTextbox"
-               Focusable="True"
-               IsTabStop="True"
-               Text="{Binding TagToAdd,
-                              Mode=TwoWay,
-                              UpdateSourceTrigger=PropertyChanged}" >
-        <TextBox.InputBindings>
-          <KeyBinding Key="Enter"
-                      Command="{Binding Path=AddTagCommand}"/> 
-        </TextBox.InputBindings>
-      </TextBox>
-      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding AddTagCommand}"
-              Content="Add" />
-      <Separator />
-      <ListView Background="Transparent"
-                BorderThickness="0"
-                ItemsSource="{Binding BookmarkService.FilteredTags}"
-                SelectionChanged="TagsListView_SelectionChanged"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-        <ListView.ItemsPanel>
-          <ItemsPanelTemplate>
-            <WrapPanel Orientation="Horizontal" />
-          </ItemsPanelTemplate>
-        </ListView.ItemsPanel>
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <Border Margin="0"
-                    Background="DarkGray"
-                    BorderBrush="DarkGray"
-                    BorderThickness="1"
-                    CornerRadius="5">
-              <TextBlock Padding="0"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         Foreground="White"
-                         Text="{Binding}" />
-            </Border>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-    </StackPanel>
-    <StackPanel Grid.Row="1"
-                Margin="0 6 3 0"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
+    <Window.InputBindings>
+        <KeyBinding Key="Esc"
+                    Command="{Binding CloseCommand}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical">
+            <Label Content="Select tag to add" />
+            <ucc:FilteringCombobox Name="cbxTagToAdd"
+                                   Grid.Row="1"
+                                   Focusable="True"
+                                   IsTabStop="True"
+                                   ItemsSource="{Binding SymbolsList}"
+                                   SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
+                <!--<ucc:FilteringCombobox.InputBindings>
+                    <KeyBinding Key="Enter"
+                                Command="{Binding Path=Add-->TagCommand}" />
+                <!--</ucc:FilteringCombobox.InputBindings>-->
+            </ucc:FilteringCombobox>
+            <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+                    Command="{Binding AddTagCommand}"
+                    Content="Add" />
+            <Separator />
+            <ListView Background="Transparent"
+                      BorderThickness="0"
+                      ItemsSource="{Binding BookmarkService.FilteredTags}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      SelectionChanged="TagsListView_SelectionChanged">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0"
+                                Background="DarkGray"
+                                BorderBrush="DarkGray"
+                                BorderThickness="1"
+                                CornerRadius="5">
+                            <TextBlock Padding="0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="White"
+                                       Text="{Binding}" />
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+        <StackPanel Grid.Row="1"
+                    Margin="0 6 3 0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
 
-      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CloseCommand}"
-              Content="Cancel" />
-    </StackPanel>
+            <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+                    Command="{Binding CloseCommand}"
+                    Content="Cancel" />
+        </StackPanel>
 
-  </Grid>
+    </Grid>
 </Window>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,9 @@ namespace Logic.UI.DialogViewModels
 
     [ObservableProperty] private string _tagToAdd;
 
+    [ObservableProperty] ObservableCollection<string> _symbolsList;
+    //[ObservableProperty] private string _tagToAdd;
+
     public FilterByTagsDialogViewModel(ISettingsService settingsService,
                                        IDialogService dialogService,
                                        IBookmarkService bookmarkService)
@@ -26,6 +30,8 @@ namespace Logic.UI.DialogViewModels
       _settingsService = settingsService;
       _dialogService = dialogService;
       BookmarkService = bookmarkService;
+      _symbolsList = new ObservableCollection<string>(
+        new List<string> { "stage", "theatre", "dev" });
     }
 
     private bool CanExecuteAddTag()
@@ -33,37 +39,44 @@ namespace Logic.UI.DialogViewModels
       return !string.IsNullOrEmpty(TagToAdd);
     }
 
-    [RelayCommand(CanExecute = nameof(CanExecuteAddTag))]
-    private void AddTag()
+    public void AddTag(object tag)
     {
-      if (BookmarkService.FilteredTags.Any(
-        tag => tag.Equals(TagToAdd, StringComparison.OrdinalIgnoreCase)))
-      {
-        _dialogService
-          .ShowMessageBox(this,
-                          $"The tag '{TagToAdd}' is already filtered",
-                          "Tag already added",
-                          MessageBoxButton.OK,
-                          MessageBoxImage.Information);
-        return;
-      }
+      BookmarkService.ToggleFilterTag(tag as string);
+      SymbolsList.Remove(tag as string);
 
-      if (!BookmarkService.AllBookmarks.Any(
-        bm => bm.TagsArray.Any(tag => tag.Equals(
-          TagToAdd, StringComparison.OrdinalIgnoreCase))))
-      {
-        _dialogService
-          .ShowMessageBox(this,
-                          $"The tag '{TagToAdd}' not found in any bookmark.",
-                          "Tag not found",
-                          MessageBoxButton.OK,
-                          MessageBoxImage.Information);
-        return;
-      }
-
-      BookmarkService.ToggleFilterTag(TagToAdd);
-      TagToAdd = "";
     }
+
+    //[RelayCommand(CanExecute = nameof(CanExecuteAddTag))]
+    //private void AddTag()
+    //{
+    //  if (BookmarkService.FilteredTags.Any(
+    //    tag => tag.Equals(TagToAdd, StringComparison.OrdinalIgnoreCase)))
+    //  {
+    //    _dialogService
+    //      .ShowMessageBox(this,
+    //                      $"The tag '{TagToAdd}' is already filtered",
+    //                      "Tag already added",
+    //                      MessageBoxButton.OK,
+    //                      MessageBoxImage.Information);
+    //    return;
+    //  }
+
+    //  if (!BookmarkService.AllBookmarks.Any(
+    //    bm => bm.TagsArray.Any(tag => tag.Equals(
+    //      TagToAdd, StringComparison.OrdinalIgnoreCase))))
+    //  {
+    //    _dialogService
+    //      .ShowMessageBox(this,
+    //                      $"The tag '{TagToAdd}' not found in any bookmark.",
+    //                      "Tag not found",
+    //                      MessageBoxButton.OK,
+    //                      MessageBoxImage.Information);
+    //    return;
+    //  }
+
+    //  BookmarkService.ToggleFilterTag(TagToAdd);
+    //  TagToAdd = "";
+    //}
 
     [RelayCommand]
     private void Close()
