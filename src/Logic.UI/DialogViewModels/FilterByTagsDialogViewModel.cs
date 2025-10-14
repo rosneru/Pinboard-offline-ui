@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Logic.UI.DialogViewModels
 
     [ObservableProperty] private string _tagToAdd;
 
-    [ObservableProperty] ObservableCollection<string> _symbolsList;
+    [ObservableProperty] List<string> _symbolsList;
     //[ObservableProperty] private string _tagToAdd;
 
     public FilterByTagsDialogViewModel(ISettingsService settingsService,
@@ -30,8 +31,12 @@ namespace Logic.UI.DialogViewModels
       _settingsService = settingsService;
       _dialogService = dialogService;
       BookmarkService = bookmarkService;
-      _symbolsList = new ObservableCollection<string>(
-        new List<string> { "stage", "theatre", "dev" });
+      //SymbolsList = new ObservableCollection<string>(
+      //  new List<string> { "stage", "theatre", "dev" });
+      SymbolsList = BookmarkService.AllTags
+        .Select(kvp => kvp.Key)
+        .ToList();
+      Debug.WriteLine($"[FilterByTagsDialogViewModel] SymbolsList count: {SymbolsList.Count}");
     }
 
     private bool CanExecuteAddTag()
@@ -42,8 +47,7 @@ namespace Logic.UI.DialogViewModels
     public void AddTag(object tag)
     {
       BookmarkService.ToggleFilterTag(tag as string);
-      SymbolsList.Remove(tag as string);
-
+      //SymbolsList.Remove(tag as string);
     }
 
     //[RelayCommand(CanExecute = nameof(CanExecuteAddTag))]

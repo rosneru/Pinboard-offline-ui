@@ -17,6 +17,7 @@ namespace Logic.UI.Services
     [ObservableProperty] private List<Bookmark> _allBookmarks = [];
     [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
     [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
+    [ObservableProperty] private List<KeyValuePair<string, int>> _allTags = [];
 
     public string BookmarkFileDateInfo { get; private set; }
     public string LatestBookmarkDateInfo { get; private set; }
@@ -81,6 +82,13 @@ namespace Logic.UI.Services
       }
 
       AllBookmarks = bookmarks;
+      AllTags = AllBookmarks
+        .SelectMany(bm => bm.TagsArray)
+        .GroupBy(tag => tag, StringComparer.OrdinalIgnoreCase)
+        .Select(g => new KeyValuePair<string, int>(g.Key, g.Count()))
+        .OrderByDescending(kvp => kvp.Value)
+        .ThenBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
+        .ToList();
       ApplyFilters();
     }
 

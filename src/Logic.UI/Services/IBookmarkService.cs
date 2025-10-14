@@ -15,9 +15,10 @@ namespace Logic.UI.Services
     List<Bookmark> AllBookmarks { get; }
     List<Bookmark> FilteredBookmarks { get; }
 
-    event EventHandler FilteredBookmarksChanged;
-
     ObservableCollection<string> FilteredTags { get; }
+    List<KeyValuePair<string, int>> AllTags { get; }
+
+    event EventHandler FilteredBookmarksChanged;
 
     string BookmarkFileDateInfo { get;  }
     string LatestBookmarkDateInfo { get;  }

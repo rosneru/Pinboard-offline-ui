@@ -34,6 +34,7 @@
                                    IsTabStop="True"
                                    ItemsSource="{Binding SymbolsList}"
                                    SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
+
             </ucc:FilteringCombobox>
             <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
                     Command="{Binding AddTagCommand}"
