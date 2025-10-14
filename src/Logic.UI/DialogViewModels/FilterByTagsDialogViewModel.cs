@@ -31,12 +31,6 @@ namespace Logic.UI.DialogViewModels
       _settingsService = settingsService;
       _dialogService = dialogService;
       BookmarkService = bookmarkService;
-      //SymbolsList = new ObservableCollection<string>(
-      //  new List<string> { "stage", "theatre", "dev" });
-      SymbolsList = BookmarkService.AllTags
-        .Select(kvp => kvp.Key)
-        .ToList();
-      Debug.WriteLine($"[FilterByTagsDialogViewModel] SymbolsList count: {SymbolsList.Count}");
     }
 
     private bool CanExecuteAddTag()

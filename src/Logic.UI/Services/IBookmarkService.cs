@@ -16,7 +16,7 @@ namespace Logic.UI.Services
     List<Bookmark> FilteredBookmarks { get; }
 
     ObservableCollection<string> FilteredTags { get; }
-    List<KeyValuePair<string, int>> AllTags { get; }
+    ObservableCollection<KeyValuePair<string, int>> TagsInVisibleBookmarks { get; }
 
     event EventHandler FilteredBookmarksChanged;
 
