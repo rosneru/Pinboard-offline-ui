@@ -34,10 +34,6 @@
                                    IsTabStop="True"
                                    ItemsSource="{Binding SymbolsList}"
                                    SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
-                <!--<ucc:FilteringCombobox.InputBindings>
-                    <KeyBinding Key="Enter"
-                                Command="{Binding Path=Add-->TagCommand}" />
-                <!--</ucc:FilteringCombobox.InputBindings>-->
             </ucc:FilteringCombobox>
             <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
                     Command="{Binding AddTagCommand}"
