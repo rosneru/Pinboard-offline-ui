@@ -42,9 +42,6 @@
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
             </ucc:FilteringCombobox>
-            <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-                    Command="{Binding AddTagCommand}"
-                    Content="Add" />
             <Separator />
             <ListView Background="Transparent"
                       BorderThickness="0"
