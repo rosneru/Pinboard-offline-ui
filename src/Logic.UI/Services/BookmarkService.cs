@@ -84,10 +84,29 @@ namespace Logic.UI.Services
       AllBookmarks = bookmarks;
       DisplayedTags = new ObservableCollection<KeyValuePair<string, int>>(
         AllBookmarks
+          // Flatten the list of tagsArray arrays from all bookmarks to a single list of all tags
+          // create something like ["tag1", "tag2", "tag3", "tag1", "tag4", ...]
           .SelectMany(bm => bm.TagsArray)
+          //   Group the same tags together, case-insensitive to something like:
+          //   { "tag1": ["tag1", "tag1"] }
+          //   { "tag2": ["tag2", "tag2", "tag2"]}
+          //   { "tag3": ["tag3"] }
           .GroupBy(tag => tag, StringComparer.OrdinalIgnoreCase)
+          // Create a countable structure from the tag groups. `g`is an
+          // `IGrouping<string, string>`, i.e. a group of tags with the
+          // same name. Example:
+          //      g.Key = "culture"
+          //      g = ["culture", "Culture", "CULTURE"]
+          // We create a KeyValuePair<string, int> from it, where the key
+          // is the tag name and the value is the count of tags in the
+          // group:
+          //      new KeyValuePair<string, int>(g.Key, g.Count())
+          // which results in:
+          //      new KeyValuePair<string, int>("culture", 3)
           .Select(g => new KeyValuePair<string, int>(g.Key, g.Count()))
+          // Sort for value, `count`, primarily
           .OrderByDescending(kvp => kvp.Value)
+          // and by key, `tag name`, secondarily
           .ThenBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
           .ToList()
       );
