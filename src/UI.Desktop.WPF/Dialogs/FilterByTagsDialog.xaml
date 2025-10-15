@@ -32,9 +32,15 @@
                                    Grid.Row="1"
                                    Focusable="True"
                                    IsTabStop="True"
-                                   ItemsSource="{Binding SymbolsList}"
+                                   ItemsSource="{Binding BookmarkService.DisplayedTags}"
+                                   DisplayMemberPath="Key"
+                                   SelectedValuePath="Key"
                                    SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
-
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
             </ucc:FilteringCombobox>
             <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
                     Command="{Binding AddTagCommand}"
