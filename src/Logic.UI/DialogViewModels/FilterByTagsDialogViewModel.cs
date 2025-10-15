@@ -19,11 +19,6 @@ namespace Logic.UI.DialogViewModels
     [ObservableProperty] private bool? _dialogResult;
     [ObservableProperty] private IBookmarkService _bookmarkService;
 
-    [ObservableProperty] private string _tagToAdd;
-
-    [ObservableProperty] List<string> _symbolsList;
-    //[ObservableProperty] private string _tagToAdd;
-
     public FilterByTagsDialogViewModel(ISettingsService settingsService,
                                        IDialogService dialogService,
                                        IBookmarkService bookmarkService)
@@ -33,48 +28,15 @@ namespace Logic.UI.DialogViewModels
       BookmarkService = bookmarkService;
     }
 
-    private bool CanExecuteAddTag()
-    {
-      return !string.IsNullOrEmpty(TagToAdd);
-    }
 
     public void AddTag(object tag)
     {
-      BookmarkService.ToggleFilterTag(tag as string);
-      //SymbolsList.Remove(tag as string);
+      if(tag is KeyValuePair<string, int> kvp)
+      {
+        BookmarkService.ToggleFilterTag(kvp.Key);
+      }
     }
 
-    //[RelayCommand(CanExecute = nameof(CanExecuteAddTag))]
-    //private void AddTag()
-    //{
-    //  if (BookmarkService.FilteredTags.Any(
-    //    tag => tag.Equals(TagToAdd, StringComparison.OrdinalIgnoreCase)))
-    //  {
-    //    _dialogService
-    //      .ShowMessageBox(this,
-    //                      $"The tag '{TagToAdd}' is already filtered",
-    //                      "Tag already added",
-    //                      MessageBoxButton.OK,
-    //                      MessageBoxImage.Information);
-    //    return;
-    //  }
-
-    //  if (!BookmarkService.AllBookmarks.Any(
-    //    bm => bm.TagsArray.Any(tag => tag.Equals(
-    //      TagToAdd, StringComparison.OrdinalIgnoreCase))))
-    //  {
-    //    _dialogService
-    //      .ShowMessageBox(this,
-    //                      $"The tag '{TagToAdd}' not found in any bookmark.",
-    //                      "Tag not found",
-    //                      MessageBoxButton.OK,
-    //                      MessageBoxImage.Information);
-    //    return;
-    //  }
-
-    //  BookmarkService.ToggleFilterTag(TagToAdd);
-    //  TagToAdd = "";
-    //}
 
     [RelayCommand]
     private void Close()
