@@ -17,7 +17,7 @@ namespace Logic.UI.Services
     [ObservableProperty] private List<Bookmark> _allBookmarks = [];
     [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
     [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
-    [ObservableProperty] private ObservableCollection<KeyValuePair<string, int>> _tagsInVisibleBookmarks = [];
+    [ObservableProperty] private ObservableCollection<KeyValuePair<string, int>> _displayedTags = [];
 
     public string BookmarkFileDateInfo { get; private set; }
     public string LatestBookmarkDateInfo { get; private set; }
@@ -82,13 +82,16 @@ namespace Logic.UI.Services
       }
 
       AllBookmarks = bookmarks;
-      TagsInVisibleBookmarks = AllBookmarks
-        .SelectMany(bm => bm.TagsArray)
-        .GroupBy(tag => tag, StringComparer.OrdinalIgnoreCase)
-        .Select(g => new KeyValuePair<string, int>(g.Key, g.Count()))
-        .OrderByDescending(kvp => kvp.Value)
-        .ThenBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
-        .ToList();
+      DisplayedTags = new ObservableCollection<KeyValuePair<string, int>>(
+        AllBookmarks
+          .SelectMany(bm => bm.TagsArray)
+          .GroupBy(tag => tag, StringComparer.OrdinalIgnoreCase)
+          .Select(g => new KeyValuePair<string, int>(g.Key, g.Count()))
+          .OrderByDescending(kvp => kvp.Value)
+          .ThenBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
+          .ToList()
+      );
+
       ApplyFilters();
     }
 
@@ -106,6 +109,19 @@ namespace Logic.UI.Services
       else
       {
         FilteredTags.Add(tag);
+      }
+
+      DisplayedTags.Clear();
+      foreach(var kvp in FilteredBookmarks
+        .SelectMany(bm => bm.TagsArray)
+        .Where(t => !FilteredTags.Contains(t, StringComparer.OrdinalIgnoreCase))
+        .GroupBy(tag => tag, StringComparer.OrdinalIgnoreCase)
+        .Select(g => new KeyValuePair<string, int>(g.Key, g.Count()))
+        .OrderByDescending(kvp => kvp.Value)
+        .ThenBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
+        .ToList())
+      {
+        DisplayedTags.Add(kvp);
       }
 
       ApplyFilters();
