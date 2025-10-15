@@ -12,10 +12,24 @@ namespace Logic.UI.Services
 {
   public interface IBookmarkService
   {
+    /// <summary>
+    /// List of all bookmarks
+    /// </summary>
     List<Bookmark> AllBookmarks { get; }
+
+    /// <summary>
+    /// List of the currently displayed bookmarks
+    /// </summary>
     List<Bookmark> FilteredBookmarks { get; }
 
+    /// <summary>
+    /// Collection of the all tag names of the currently displayed bookmarks
+    /// </summary>
     ObservableCollection<string> FilteredTags { get; }
+
+    /// <summary>
+    /// Collection of the <names, occurrence count> of the currently displayed tags
+    /// </summary>
     ObservableCollection<KeyValuePair<string, int>> DisplayedTags { get; }
 
     event EventHandler FilteredBookmarksChanged;
