@@ -17,7 +17,7 @@ namespace Logic.UI.Services
     [ObservableProperty] private List<Bookmark> _allBookmarks = [];
     [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
     [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
-    [ObservableProperty] private ObservableCollection<KeyValuePair<string, int>> _displayedTags = [];
+    [ObservableProperty] private ObservableCollection<DisplayedTag> _displayedTags = [];
 
     public string BookmarkFileDateInfo { get; private set; }
     public string LatestBookmarkDateInfo { get; private set; }
@@ -209,16 +209,17 @@ namespace Logic.UI.Services
 
       int maxCount = groupedTags.Max(kvp => kvp.Value);
 
-      DisplayedTags = new ObservableCollection<KeyValuePair<string, int>>(
+      DisplayedTags = new ObservableCollection<DisplayedTag>(
         groupedTags
-          .Select(kvp => new KeyValuePair<string, int>(
-            kvp.Key,
-            Math.Max(1, kvp.Value * 100 / maxCount)
+          .Select(dt => new DisplayedTag(
+            dt.Key,
+            dt.Value,
+            Math.Max(1, dt.Value * 100 / maxCount)
           ))
           // Sort for value, `count`, primarily
-          .OrderByDescending(kvp => kvp.Value)
+          .OrderByDescending(dt => dt.OccurrenceCount)
           // and by key, `tag name`, secondarily
-          .ThenBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
+          .ThenBy(dt => dt.Name, StringComparer.OrdinalIgnoreCase)
           .Take(10)
           .ToList()
       );

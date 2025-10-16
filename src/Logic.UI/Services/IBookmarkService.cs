@@ -30,7 +30,7 @@ namespace Logic.UI.Services
     /// <summary>
     /// Collection of the <names, occurrence count> of the currently displayed tags
     /// </summary>
-    ObservableCollection<KeyValuePair<string, int>> DisplayedTags { get; }
+    ObservableCollection<DisplayedTag> DisplayedTags { get; }
 
     event EventHandler FilteredBookmarksChanged;
 

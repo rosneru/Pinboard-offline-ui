@@ -89,13 +89,13 @@
                                        VerticalAlignment="Bottom"
                                        FontSize="10"
                                        Foreground="SteelBlue"
-                                       Text="{Binding Value}" />
+                                       Text="{Binding OccurrenceCount}" />
                             <Rectangle Width="30"
-                                       Height="{Binding Value}"
+                                       Height="{Binding Height}"
                                        Fill="SteelBlue" />
                             <TextBlock Margin="0 2 0 0"
                                        HorizontalAlignment="Center"
-                                       Text="{Binding Key}" />
+                                       Text="{Binding Name}" />
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
