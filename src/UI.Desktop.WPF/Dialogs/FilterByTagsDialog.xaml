@@ -78,17 +78,24 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical" Margin="4" MouseDown="StackPanel_MouseDown">
-                            <Grid Width="60" Height="{Binding Value}">
-                                <TextBlock Text="{Binding Value}"
-                                           Foreground="White"
-                                           FontSize="10"
-                                           VerticalAlignment="Bottom"
-                                           HorizontalAlignment="Center"
-                                           Margin="0 0 0 2"/>
-                                <Rectangle Fill="SteelBlue"/>
-                            </Grid>
-                            <TextBlock Text="{Binding Key}" HorizontalAlignment="Center"/>
+                        <StackPanel Width="70"
+                                    Margin="2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Bottom"
+                                    MouseDown="StackPanel_MouseDown"
+                                    Orientation="Vertical">
+                            <TextBlock Margin="0 0 0 2"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Bottom"
+                                       FontSize="10"
+                                       Foreground="SteelBlue"
+                                       Text="{Binding Value}" />
+                            <Rectangle Width="30"
+                                       Height="{Binding Value}"
+                                       Fill="SteelBlue" />
+                            <TextBlock Margin="0 2 0 0"
+                                       HorizontalAlignment="Center"
+                                       Text="{Binding Key}" />
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
