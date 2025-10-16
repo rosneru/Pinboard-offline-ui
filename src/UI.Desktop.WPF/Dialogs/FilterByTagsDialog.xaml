@@ -30,11 +30,11 @@
             <Label Content="Select tag to add" />
             <ucc:FilteringCombobox Name="cbxTagToAdd"
                                    Grid.Row="1"
-                                   DisplayMemberPath="Key"
+                                   DisplayMemberPath="Name"
                                    Focusable="True"
                                    IsTabStop="True"
                                    ItemsSource="{Binding BookmarkService.DisplayedTags}"
-                                   SelectedValuePath="Key"
+                                   SelectedValuePath="Name"
                                    SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -42,33 +42,6 @@
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
             </ucc:FilteringCombobox>
-            <Separator />
-            <ListView Background="Transparent"
-                      BorderThickness="0"
-                      ItemsSource="{Binding BookmarkService.FilteredTags}"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                      SelectionChanged="TagsListView_SelectionChanged">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="0"
-                                Background="DarkGray"
-                                BorderBrush="DarkGray"
-                                BorderThickness="1"
-                                CornerRadius="5">
-                            <TextBlock Padding="0"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="White"
-                                       Text="{Binding}" />
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
             <ItemsControl ItemsSource="{Binding BookmarkService.DisplayedTags}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -100,6 +73,33 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <Separator />
+            <ListView Background="Transparent"
+                      BorderThickness="0"
+                      ItemsSource="{Binding BookmarkService.FilteredTags}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      SelectionChanged="TagsListView_SelectionChanged">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0"
+                                Background="DarkGray"
+                                BorderBrush="DarkGray"
+                                BorderThickness="1"
+                                CornerRadius="5">
+                            <TextBlock Padding="0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="White"
+                                       Text="{Binding}" />
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackPanel>
         <StackPanel Grid.Row="1"
                     Margin="0 6 3 0"
