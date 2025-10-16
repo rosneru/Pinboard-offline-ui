@@ -53,5 +53,10 @@ namespace UI.Desktop.WPF.Dialogs
 
       cbxTagToAdd.SelectedIndex = -1;
     }
+
+    private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+
+    }
   }
 }

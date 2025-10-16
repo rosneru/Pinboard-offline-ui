@@ -30,10 +30,10 @@
             <Label Content="Select tag to add" />
             <ucc:FilteringCombobox Name="cbxTagToAdd"
                                    Grid.Row="1"
+                                   DisplayMemberPath="Key"
                                    Focusable="True"
                                    IsTabStop="True"
                                    ItemsSource="{Binding BookmarkService.DisplayedTags}"
-                                   DisplayMemberPath="Key"
                                    SelectedValuePath="Key"
                                    SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
                 <ComboBox.ItemsPanel>
@@ -69,6 +69,30 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <ItemsControl ItemsSource="{Binding BookmarkService.DisplayedTags}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical" Margin="4" MouseDown="StackPanel_MouseDown">
+                            <Grid Width="60" Height="{Binding Value}">
+                                <TextBlock Text="{Binding Value}"
+                                           Foreground="White"
+                                           FontSize="10"
+                                           VerticalAlignment="Bottom"
+                                           HorizontalAlignment="Center"
+                                           Margin="0 0 0 2"/>
+                                <Rectangle Fill="SteelBlue"/>
+                            </Grid>
+                            <TextBlock Text="{Binding Key}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
         <StackPanel Grid.Row="1"
                     Margin="0 6 3 0"
@@ -77,7 +101,7 @@
 
             <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
                     Command="{Binding CloseCommand}"
-                    Content="Cancel" />
+                    Content="Close" />
         </StackPanel>
 
     </Grid>
