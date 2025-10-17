@@ -33,7 +33,7 @@
                                    DisplayMemberPath="Name"
                                    Focusable="True"
                                    IsTabStop="True"
-                                   ItemsSource="{Binding BookmarkService.DisplayedTags}"
+                                   ItemsSource="{Binding BookmarkService.TopTenTags}"
                                    SelectedValuePath="Name"
                                    SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
                 <ComboBox.ItemsPanel>
@@ -42,7 +42,7 @@
                     </ItemsPanelTemplate>
                 </ComboBox.ItemsPanel>
             </ucc:FilteringCombobox>
-            <ItemsControl ItemsSource="{Binding BookmarkService.DisplayedTags}">
+            <ItemsControl ItemsSource="{Binding BookmarkService.TopTenTags}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" />
@@ -76,7 +76,7 @@
             <Separator />
             <ListView Background="Transparent"
                       BorderThickness="0"
-                      ItemsSource="{Binding BookmarkService.FilteredTags}"
+                      ItemsSource="{Binding BookmarkService.SelectedTagNames}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       SelectionChanged="TagsListView_SelectionChanged">
                 <ListView.ItemsPanel>

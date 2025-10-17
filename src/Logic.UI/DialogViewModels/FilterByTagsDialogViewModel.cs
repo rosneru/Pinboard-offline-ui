@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Logic.UI.Model;
 using Logic.UI.Services;
 using Logic.UI.ViewModels;
 using MvvmDialogs;
@@ -31,9 +32,9 @@ namespace Logic.UI.DialogViewModels
 
     public void AddTag(object tag)
     {
-      if(tag is KeyValuePair<string, int> kvp)
+      if(tag is DisplayedTag displayedTag)
       {
-        BookmarkService.ToggleFilterTag(kvp.Key);
+        BookmarkService.ToggleFilterTag(displayedTag.Name);
       }
     }
 

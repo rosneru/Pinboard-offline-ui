@@ -79,7 +79,7 @@ namespace Logic.UI.ViewModels
 
       BookmarkService.FilteredBookmarksChanged += (sender, e) =>
       {
-        StatusBarText = $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
+        StatusBarText = $"Displaying {BookmarkService.SelectedBookmarks.Count} " +
                         $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
       };
     }

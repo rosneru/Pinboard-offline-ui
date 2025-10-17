@@ -20,17 +20,17 @@ namespace Logic.UI.Services
     /// <summary>
     /// List of the currently displayed bookmarks
     /// </summary>
-    List<Bookmark> FilteredBookmarks { get; }
+    List<Bookmark> SelectedBookmarks { get; }
 
     /// <summary>
     /// Collection of the all tag names of the currently displayed bookmarks
     /// </summary>
-    ObservableCollection<string> FilteredTags { get; }
+    ObservableCollection<string> SelectedTagNames { get; }
 
     /// <summary>
     /// Collection of the <names, occurrence count> of the currently displayed tags
     /// </summary>
-    ObservableCollection<DisplayedTag> DisplayedTags { get; }
+    ObservableCollection<DisplayedTag> TopTenTags { get; }
 
     event EventHandler FilteredBookmarksChanged;
 

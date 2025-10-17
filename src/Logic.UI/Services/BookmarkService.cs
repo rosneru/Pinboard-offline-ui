@@ -15,9 +15,9 @@ namespace Logic.UI.Services
   public partial class BookmarkService : ObservableObject, IBookmarkService
   {
     [ObservableProperty] private List<Bookmark> _allBookmarks = [];
-    [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
-    [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
-    [ObservableProperty] private ObservableCollection<DisplayedTag> _displayedTags = [];
+    [ObservableProperty] private List<Bookmark> _selectedBookmarks = [];
+    [ObservableProperty] private ObservableCollection<string> _selectedTagNames = [];
+    [ObservableProperty] private ObservableCollection<DisplayedTag> _topTenTags = [];
 
     public string BookmarkFileDateInfo { get; private set; }
     public string LatestBookmarkDateInfo { get; private set; }
@@ -92,13 +92,13 @@ namespace Logic.UI.Services
         return;
       }
 
-      if (FilteredTags.Contains(tag))
+      if (SelectedTagNames.Contains(tag))
       {
-        FilteredTags.Remove(tag);
+        SelectedTagNames.Remove(tag);
       }
       else
       {
-        FilteredTags.Add(tag);
+        SelectedTagNames.Add(tag);
       }
 
       ApplyFilters();
@@ -141,53 +141,23 @@ namespace Logic.UI.Services
 
       var resultList = AllBookmarks;
 
-      if (FilteredTags.Count > 0)
+      if (SelectedTagNames.Count > 0)
       {
         resultList = resultList.Where(item =>
-          FilteredTags.All(tag =>
+          SelectedTagNames.All(tag =>
             item.TagsArray.Contains(tag, StringComparer.OrdinalIgnoreCase))).ToList();
       }
 
-      FilteredBookmarks = resultList;
+      SelectedBookmarks = resultList;
       FilteredBookmarksChanged?.Invoke(this, EventArgs.Empty);
 
-      DisplayedTags.Clear();
-      //DisplayedTags = new ObservableCollection<KeyValuePair<string, int>>(
-      //  FilteredBookmarks
-      //    // Flatten the list of tagsArray arrays from all bookmarks to a single list of all tags
-      //    // create something like ["tag1", "tag2", "tag3", "tag1", "tag4", ...]
-      //    .SelectMany(bm => bm.TagsArray)
-      //    // Filter out tags that are already in the FilteredTags collection
-      //    .Where(t => !FilteredTags.Contains(t, StringComparer.OrdinalIgnoreCase))
-      //    //   Group the same tags together, case-insensitive to something like:
-      //    //   { "tag1": ["tag1", "tag1"] }
-      //    //   { "tag2": ["tag2", "tag2", "tag2"]}
-      //    //   { "tag3": ["tag3"] }
-      //    .GroupBy(tag => tag, StringComparer.OrdinalIgnoreCase)
-      //    // Create a countable structure from the tag groups. `g`is an
-      //    // `IGrouping<string, string>`, i.e. a group of tags with the
-      //    // same name. Example:
-      //    //      g.Key = "culture"
-      //    //      g = ["culture", "Culture", "CULTURE"]
-      //    // We create a KeyValuePair<string, int> from it, where the key
-      //    // is the tag name and the value is the count of tags in the
-      //    // group:
-      //    //      new KeyValuePair<string, int>(g.Key, g.Count())
-      //    // which results in:
-      //    //      new KeyValuePair<string, int>("culture", 3)
-      //    .Select(g => new KeyValuePair<string, int>(g.Key, g.Count()))
-      //    // Sort for value, `count`, primarily
-      //    .OrderByDescending(kvp => kvp.Value)
-      //    // and by key, `tag name`, secondarily
-      //    .ThenBy(kvp => kvp.Key, StringComparer.OrdinalIgnoreCase)
-      //    .ToList()
-      //);
-      var groupedTags = AllBookmarks
+      TopTenTags.Clear();
+      var groupedTags = SelectedBookmarks
           // Flatten the list of tagsArray arrays from all bookmarks to a single list of all tags
           // create something like ["tag1", "tag2", "tag3", "tag1", "tag4", ...]
           .SelectMany(bm => bm.TagsArray)
-          // Filter out tags that are already in the FilteredTags collection
-          .Where(t => !FilteredTags.Contains(t, StringComparer.OrdinalIgnoreCase))
+          // Filter out tags that are already in the SelectedTagNames collection
+          .Where(t => !SelectedTagNames.Contains(t, StringComparer.OrdinalIgnoreCase))
           //   Group the same tags together, case-insensitive to something like:
           //   { "tag1": ["tag1", "tag1"] }
           //   { "tag2": ["tag2", "tag2", "tag2"]}
@@ -209,7 +179,7 @@ namespace Logic.UI.Services
 
       int maxCount = groupedTags.Max(kvp => kvp.Value);
 
-      DisplayedTags = new ObservableCollection<DisplayedTag>(
+      TopTenTags = new ObservableCollection<DisplayedTag>(
         groupedTags
           .Select(dt => new DisplayedTag(
             dt.Key,
