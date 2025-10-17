@@ -18,29 +18,37 @@ namespace Logic.UI.Services
     List<Bookmark> AllBookmarks { get; }
 
     /// <summary>
-    /// List of the currently displayed bookmarks
+    /// List of the currently displayed bookmarks - a subset of `AllBookmarks`
+    /// created by a filtering (selection by tag) operation.
     /// </summary>
     List<Bookmark> SelectedBookmarks { get; }
 
 
     /// <summary>
-    /// Tag names that are selected. They are reduceing the
-    /// `AllBookmarks` to `SelectedBookmarks` collection
+    /// Tag names that are selected. They are used to create `SelectedBookmarks`
+    /// as a subset of `AllBookmarks` where only bookmarksw which contain these
+    /// tags are included.
     /// </summary>
-    ObservableCollection<string> FilteredTagNames { get; }
+    ObservableCollection<string> SelectedTags { get; }
 
     /// <summary>
-    /// Tag names that are available in the reduced-by-filtering
-    /// collection `SelectedBookmarks`
+    /// Tags of the remaining bookmarks after the filtering (tag selection)
+    /// operation.
     /// </summary>
     ObservableCollection<string> AvailableTagNames { get; }
 
     /// <summary>
-    /// Collection of the <names, occurrence count> of the currently displayed tags
+    /// Top ten tags of the currently selected bookmarks, sorted by
+    /// `Occurrence`. Also contains the `Occurrence` normalized to [1..100] in
+    /// the `Height` field. This can be used to draw the tags.
     /// </summary>
     ObservableCollection<DisplayedTag> TopTenTags { get; }
 
-    event EventHandler FilteredBookmarksChanged;
+    /// <summary>
+    /// Event is sent when either the bookmarks are loaded newly or when as a
+    /// result of a filtering operation the displayed bookmarks changed,
+    /// </summary>
+    event EventHandler DisplayedBookmarksChanged;
 
     string BookmarkFileDateInfo { get;  }
     string LatestBookmarkDateInfo { get;  }

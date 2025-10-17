@@ -16,7 +16,7 @@ namespace Logic.UI.Services
   {
     [ObservableProperty] private List<Bookmark> _allBookmarks = [];
     [ObservableProperty] private List<Bookmark> _selectedBookmarks = [];
-    [ObservableProperty] private ObservableCollection<string> _filteredTagNames = [];
+    [ObservableProperty] private ObservableCollection<string> _selectedTags = [];
     [ObservableProperty] private ObservableCollection<string> _availableTagNames = [];
     [ObservableProperty] private ObservableCollection<DisplayedTag> _topTenTags = [];
 
@@ -24,7 +24,7 @@ namespace Logic.UI.Services
     public string LatestBookmarkDateInfo { get; private set; }
 
 
-    public event EventHandler FilteredBookmarksChanged;
+    public event EventHandler DisplayedBookmarksChanged;
 
     public BookmarkService()
     {
@@ -94,13 +94,13 @@ namespace Logic.UI.Services
         return;
       }
 
-      if (FilteredTagNames.Contains(tag))
+      if (SelectedTags.Contains(tag))
       {
-        FilteredTagNames.Remove(tag);
+        SelectedTags.Remove(tag);
       }
       else
       {
-        FilteredTagNames.Add(tag);
+        SelectedTags.Add(tag);
       }
 
       ApplyFilters();
@@ -143,23 +143,23 @@ namespace Logic.UI.Services
 
       var resultList = AllBookmarks;
 
-      if (FilteredTagNames.Count > 0)
+      if (SelectedTags.Count > 0)
       {
         resultList = resultList.Where(item =>
-          FilteredTagNames.All(tag =>
+          SelectedTags.All(tag =>
             item.TagsArray.Contains(tag, StringComparer.OrdinalIgnoreCase))).ToList();
       }
 
       SelectedBookmarks = resultList;
-      FilteredBookmarksChanged?.Invoke(this, EventArgs.Empty);
+      DisplayedBookmarksChanged?.Invoke(this, EventArgs.Empty);
 
       TopTenTags.Clear();
       var groupedTags = SelectedBookmarks
           // Flatten the list of tagsArray arrays from all bookmarks to a single list of all tags
           // create something like ["tag1", "tag2", "tag3", "tag1", "tag4", ...]
           .SelectMany(bm => bm.TagsArray)
-          // Filter out tags that are already in the FilteredTagNames collection
-          .Where(t => !FilteredTagNames.Contains(t, StringComparer.OrdinalIgnoreCase))
+          // Filter out tags that are already in the SelectedTags collection
+          .Where(t => !SelectedTags.Contains(t, StringComparer.OrdinalIgnoreCase))
           //   Group the same tags together, case-insensitive to something like:
           //   { "tag1": ["tag1", "tag1"] }
           //   { "tag2": ["tag2", "tag2", "tag2"]}

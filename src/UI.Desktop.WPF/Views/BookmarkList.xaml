@@ -62,7 +62,7 @@
                     <MultiBinding Converter="{StaticResource BackgroundColorConverter}">
                       <Binding Path="." />
                       <!--  Das aktuelle Item  -->
-                      <Binding Path="DataContext.BookmarkService.FilteredTagNames" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
+                      <Binding Path="DataContext.BookmarkService.SelectedTags" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
                       <!--  Die zweite Liste  -->
                     </MultiBinding>
                   </Border.Background>
