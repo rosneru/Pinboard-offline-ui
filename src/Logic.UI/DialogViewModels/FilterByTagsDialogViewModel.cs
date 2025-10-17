@@ -32,9 +32,9 @@ namespace Logic.UI.DialogViewModels
 
     public void AddTag(object tag)
     {
-      if(tag is DisplayedTag displayedTag)
+      if(tag is string displayedTag)
       {
-        BookmarkService.ToggleFilterTag(displayedTag.Name);
+        BookmarkService.ToggleFilterTag(displayedTag);
       }
     }
 

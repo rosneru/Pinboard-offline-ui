@@ -22,10 +22,18 @@ namespace Logic.UI.Services
     /// </summary>
     List<Bookmark> SelectedBookmarks { get; }
 
+
     /// <summary>
-    /// Collection of the all tag names of the currently displayed bookmarks
+    /// Tag names that are selected. They are reduceing the
+    /// `AllBookmarks` to `SelectedBookmarks` collection
     /// </summary>
-    ObservableCollection<string> SelectedTagNames { get; }
+    ObservableCollection<string> FilteredTagNames { get; }
+
+    /// <summary>
+    /// Tag names that are available in the reduced-by-filtering
+    /// collection `SelectedBookmarks`
+    /// </summary>
+    ObservableCollection<string> AvailableTagNames { get; }
 
     /// <summary>
     /// Collection of the <names, occurrence count> of the currently displayed tags

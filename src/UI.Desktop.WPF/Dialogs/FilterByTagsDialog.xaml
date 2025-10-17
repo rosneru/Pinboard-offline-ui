@@ -30,11 +30,9 @@
             <Label Content="Select tag to add" />
             <ucc:FilteringCombobox Name="cbxTagToAdd"
                                    Grid.Row="1"
-                                   DisplayMemberPath="Name"
                                    Focusable="True"
                                    IsTabStop="True"
-                                   ItemsSource="{Binding BookmarkService.TopTenTags}"
-                                   SelectedValuePath="Name"
+                                   ItemsSource="{Binding BookmarkService.AvailableTagNames}"
                                    SelectionEffectivelyChanged="cbxTagToAdd_SelectionEffectivelyChanged">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -76,7 +74,7 @@
             <Separator />
             <ListView Background="Transparent"
                       BorderThickness="0"
-                      ItemsSource="{Binding BookmarkService.SelectedTagNames}"
+                      ItemsSource="{Binding BookmarkService.FilteredTagNames}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       SelectionChanged="TagsListView_SelectionChanged">
                 <ListView.ItemsPanel>
