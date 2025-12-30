@@ -37,13 +37,26 @@ namespace UI.Desktop.WPF.Dialogs
 
         string tag = e.AddedItems[0].ToString();
         vm.BookmarkService.ToggleFilterTag(tag);
-        tagToAddTextbox.Focus();
+        cbxTagToAdd.Focus();
       }
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-      tagToAddTextbox.Focus();
+      cbxTagToAdd.Focus();
+    }
+
+    private void cbxTagToAdd_SelectionEffectivelyChanged(CustomControls.FilteringCombobox arg1, object arg2)
+    {
+      var vm = DataContext as FilterByTagsDialogViewModel;
+      vm.AddTag(cbxTagToAdd.EffectivelySelectedItem);
+
+      cbxTagToAdd.SelectedIndex = -1;
+    }
+
+    private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+
     }
   }
 }

@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Logic.UI\Logic.UI.csproj" />
+    <ProjectReference Include="..\UI.CustomControls\UI.CustomControls.csproj" />
   </ItemGroup>
 
 </Project>

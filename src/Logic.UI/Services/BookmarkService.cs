@@ -15,13 +15,16 @@ namespace Logic.UI.Services
   public partial class BookmarkService : ObservableObject, IBookmarkService
   {
     [ObservableProperty] private List<Bookmark> _allBookmarks = [];
-    [ObservableProperty] private List<Bookmark> _FilteredBookmarks = [];
-    [ObservableProperty] private ObservableCollection<string> _filteredTags = [];
+    [ObservableProperty] private List<Bookmark> _selectedBookmarks = [];
+    [ObservableProperty] private ObservableCollection<string> _selectedTags = [];
+    [ObservableProperty] private ObservableCollection<string> _availableTagNames = [];
+    [ObservableProperty] private ObservableCollection<DisplayedTag> _topTenTags = [];
 
     public string BookmarkFileDateInfo { get; private set; }
     public string LatestBookmarkDateInfo { get; private set; }
 
-    public event EventHandler FilteredBookmarksChanged;
+
+    public event EventHandler DisplayedBookmarksChanged;
 
     public BookmarkService()
     {
@@ -91,13 +94,13 @@ namespace Logic.UI.Services
         return;
       }
 
-      if (FilteredTags.Contains(tag))
+      if (SelectedTags.Contains(tag))
       {
-        FilteredTags.Remove(tag);
+        SelectedTags.Remove(tag);
       }
       else
       {
-        FilteredTags.Add(tag);
+        SelectedTags.Add(tag);
       }
 
       ApplyFilters();
@@ -140,15 +143,63 @@ namespace Logic.UI.Services
 
       var resultList = AllBookmarks;
 
-      if (FilteredTags.Count > 0)
+      if (SelectedTags.Count > 0)
       {
         resultList = resultList.Where(item =>
-          FilteredTags.All(tag =>
+          SelectedTags.All(tag =>
             item.TagsArray.Contains(tag, StringComparer.OrdinalIgnoreCase))).ToList();
       }
 
-      FilteredBookmarks = resultList;
-      FilteredBookmarksChanged?.Invoke(this, EventArgs.Empty);
+      SelectedBookmarks = resultList;
+      DisplayedBookmarksChanged?.Invoke(this, EventArgs.Empty);
+
+      TopTenTags.Clear();
+      var groupedTags = SelectedBookmarks
+          // Flatten the list of tagsArray arrays from all bookmarks to a single list of all tags
+          // create something like ["tag1", "tag2", "tag3", "tag1", "tag4", ...]
+          .SelectMany(bm => bm.TagsArray)
+          // Filter out tags that are already in the SelectedTags collection
+          .Where(t => !SelectedTags.Contains(t, StringComparer.OrdinalIgnoreCase))
+          //   Group the same tags together, case-insensitive to something like:
+          //   { "tag1": ["tag1", "tag1"] }
+          //   { "tag2": ["tag2", "tag2", "tag2"]}
+          //   { "tag3": ["tag3"] }
+          .GroupBy(tag => tag, StringComparer.OrdinalIgnoreCase)
+          // Create a countable structure from the tag groups. `g`is an
+          // `IGrouping<string, string>`, i.e. a group of tags with the
+          // same name. Example:
+          //      g.Key = "culture"
+          //      g = ["culture", "Culture", "CULTURE"]
+          // We create a KeyValuePair<string, int> from it, where the key
+          // is the tag name and the value is the count of tags in the
+          // group:
+          //      new KeyValuePair<string, int>(g.Key, g.Count())
+          // which results in:
+          //      new KeyValuePair<string, int>("culture", 3)
+          .Select(g => new KeyValuePair<string, int>(g.Key, g.Count()))
+          .ToList();
+
+      int maxCount = groupedTags.Max(kvp => kvp.Value);
+      AvailableTagNames.Clear();
+      foreach(var kvp in groupedTags.OrderBy(kvp => kvp.Key))
+      {
+        AvailableTagNames.Add(kvp.Key);
+      }
+
+      TopTenTags = new ObservableCollection<DisplayedTag>(
+        groupedTags
+          .Select(dt => new DisplayedTag(
+            dt.Key,
+            dt.Value,
+            Math.Max(1, dt.Value * 100 / maxCount)
+          ))
+          // Sort for value, `count`, primarily
+          .OrderByDescending(dt => dt.OccurrenceCount)
+          // and by key, `tag name`, secondarily
+          .ThenBy(dt => dt.Name, StringComparer.OrdinalIgnoreCase)
+          .Take(10)
+          .ToList()
+      );
     }
   }
 }

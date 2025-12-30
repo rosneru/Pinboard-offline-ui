@@ -77,9 +77,9 @@ namespace Logic.UI.ViewModels
       _filterByTagsDialogViewModel = filterByTagsDialogViewModel;
 
 
-      BookmarkService.FilteredBookmarksChanged += (sender, e) =>
+      BookmarkService.DisplayedBookmarksChanged += (sender, e) =>
       {
-        StatusBarText = $"Displaying {BookmarkService.FilteredBookmarks.Count} " +
+        StatusBarText = $"Displaying {BookmarkService.SelectedBookmarks.Count} " +
                         $"of {BookmarkService.AllBookmarks.Count} loaded bookmarks.";
       };
     }

@@ -9,7 +9,8 @@
                 <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.xaml" />
                 <ResourceDictionary Source="Resources\Buttons.xaml" />
                 <ResourceDictionary Source="Resources\CheckBoxes.xaml" />
-                <ResourceDictionary Source="Resources\ComboBoxes.xaml" />
+                <!--<ResourceDictionary Source="Resources\ComboBoxes.xaml" />-->
+                <ResourceDictionary Source="Resources\FilteringCombobox.xaml" />
                 <ResourceDictionary Source="Resources\Converters.xaml" />
                 <ResourceDictionary Source="Resources\DataGrids.xaml" />
                 <ResourceDictionary Source="Resources\GroupBoxes.xaml" />

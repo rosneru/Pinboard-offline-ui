@@ -10,7 +10,7 @@ indent_style = space
 indent_size = 2
 insert_final_newline = true
 charset = utf-8
-guidelines = 72
+guidelines = 80
 guidelines_style = 1px solid 40ebdbb2
 ###############################
 # .NET Coding Conventions     #
