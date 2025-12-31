@@ -1,11 +1,12 @@
 # About
 
-This tool allows to view the `JSON` backup of a [Pinboard.in](pinboard.in)
-account offline. Pinboard.in is a cloud-based bookmark service I use for many
-years. I felt the need for it because over the years my bookmarks grow more into
-a *knowledge base* kind of thing, and I used the description field for bookmarks
-more frequently and extensively. Additionally, I started writing *Markdown* into 
-this field and this is not rendered by Pinboard web client.
+This tool allows to view the `JSON` backup of a
+[https://pinboard.in](https://pinboard.in) account offline.
+[Pinboard.in](https://pinboard.in) is a cloud-based bookmarking service I use
+for many years. I felt the need for it because over the years my bookmarks grow
+more into a *knowledge base* kind of thing, and I used the description field for
+bookmarks more frequently and extensively. Additionally, I started writing
+*Markdown* into this field and this is not rendered by Pinboard web client.
 
 So, I started writing this tool which is in its early state and at the moment
 has these features:
