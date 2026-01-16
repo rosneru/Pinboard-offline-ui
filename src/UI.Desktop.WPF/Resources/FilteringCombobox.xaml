@@ -1,20 +1,196 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ucc="clr-namespace:UI.CustomControls;assembly=UI.CustomControls">
-    <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ucc:FilteringCombobox}">
-        <Setter Property="MinWidth" Value="80" />
-        <Setter Property="Margin" Value="3 0 3 3" />
 
-        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-        <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
-        <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+    <!-- Toggle Button using Fluent theme colors -->
+    <ControlTemplate x:Key="FilteringComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="32" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="Border"
+                    Grid.ColumnSpan="2"
+                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4" />
+            <Border x:Name="InnerBorder"
+                    Grid.Column="0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    CornerRadius="4,0,0,4" />
+            <Path x:Name="Arrow"
+                  Grid.Column="1"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Data="M 0 0 L 5 5 L 10 0 Z"
+                  Fill="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Border" Property="Background" 
+                        Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="Border" Property="Background" 
+                        Value="{DynamicResource ControlFillColorTertiaryBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="Border" Property="Background" 
+                        Value="{DynamicResource ControlFillColorDisabledBrush}" />
+                <Setter TargetName="Arrow" Property="Fill" 
+                        Value="{DynamicResource TextFillColorDisabledBrush}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- TextBox Template for editable portion -->
+    <ControlTemplate x:Key="FilteringComboBoxTextBox" TargetType="{x:Type TextBox}">
+        <Border x:Name="PART_ContentHost" 
+                Focusable="False" 
+                Background="{TemplateBinding Background}" />
+    </ControlTemplate>
+
+    <!-- Main ControlTemplate with Virtualization Support -->
+    <ControlTemplate x:Key="FilteringComboBoxTemplate" TargetType="{x:Type ucc:FilteringCombobox}">
+        <Grid>
+            <ToggleButton x:Name="ToggleButton"
+                          Template="{StaticResource FilteringComboBoxToggleButton}"
+                          Focusable="False"
+                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                          ClickMode="Press" />
+            <ContentPresenter x:Name="ContentSite"
+                              IsHitTestVisible="False"
+                              Content="{TemplateBinding SelectionBoxItem}"
+                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                              Margin="8,4,32,4"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Left"
+                              TextBlock.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+            <TextBox x:Name="PART_EditableTextBox"
+                     Template="{StaticResource FilteringComboBoxTextBox}"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Center"
+                     Margin="8,4,32,4"
+                     Focusable="True"
+                     Background="IndianRed"
+                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                     CaretBrush="{DynamicResource TextFillColorPrimaryBrush}"
+                     Visibility="Visible"
+                     IsReadOnly="{TemplateBinding IsReadOnly}" />
+            <Popup x:Name="Popup"
+                   Placement="Bottom"
+                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                   AllowsTransparency="True"
+                   Focusable="False"
+                   PopupAnimation="Slide">
+                <Grid x:Name="DropDown"
+                      SnapsToDevicePixels="True"
+                      MinWidth="{TemplateBinding ActualWidth}"
+                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                    <Border x:Name="DropDownBorder"
+                            Background="{DynamicResource AcrylicBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{DynamicResource SurfaceStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="2">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="4" 
+                                              BlurRadius="16" 
+                                              Opacity="0.24" 
+                                              Direction="270" />
+                        </Border.Effect>
+                        <!-- CRITICAL: CanContentScroll="True" enables virtualization -->
+                        <ScrollViewer SnapsToDevicePixels="True"
+                                      CanContentScroll="True"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Popup>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsEditable" Value="True">
+                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="ContentSite" Property="TextBlock.Foreground" 
+                        Value="{DynamicResource TextFillColorDisabledBrush}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- ItemContainerStyle for ComboBoxItems with Fluent styling -->
+    <Style x:Key="FilteringComboBoxItemStyle" TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="4"
+                            Margin="2,1">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" 
+                                    Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" 
+                                    Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" 
+                                    Value="{DynamicResource TextFillColorDisabledBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Main Style for FilteringCombobox -->
+    <Style TargetType="{x:Type ucc:FilteringCombobox}">
+        <Setter Property="MinWidth" Value="80" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Margin" Value="3,0,3,3" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="Background" Value="Yellow" />
+        <Setter Property="BorderBrush" Value="Cyan" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MaxDropDownHeight" Value="400" />
+        
+        <!-- Virtualization settings -->
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+        <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+        <Setter Property="VirtualizingPanel.CacheLength" Value="1,2" />
+        <Setter Property="VirtualizingPanel.CacheLengthUnit" Value="Page" />
 
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <VirtualizingStackPanel/>
+                    <VirtualizingStackPanel IsVirtualizing="True" 
+                                            VirtualizationMode="Recycling" />
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
+
+        <Setter Property="ItemContainerStyle" Value="{StaticResource FilteringComboBoxItemStyle}" />
+        <Setter Property="Template" Value="{StaticResource FilteringComboBoxTemplate}" />
     </Style>
 </ResourceDictionary>
