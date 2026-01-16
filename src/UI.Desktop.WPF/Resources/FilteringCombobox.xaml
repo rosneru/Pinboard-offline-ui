@@ -56,7 +56,7 @@
                         <Border.Effect>
                             <DropShadowEffect ShadowDepth="4" 
                                               BlurRadius="16" 
-                                              Opacity="0.3" 
+                                              Opacity="0.8" 
                                               Direction="270" />
                         </Border.Effect>
                         <!-- CRITICAL: CanContentScroll="True" enables virtualization -->

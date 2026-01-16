@@ -194,10 +194,6 @@ namespace UI.CustomControls
       {
         var isDropDownOpen = IsDropDownOpen;
 
-        //always hide because showing it enables the user to pick with
-        //up and down keys, otherwise it's not working because of the
-        //glitch in view.Refresh()
-        isIsDropDownOpenUC.Set(false);
         view.Refresh();
 
         if (!string.IsNullOrEmpty(currentFilter) || isDropDownOpen)
