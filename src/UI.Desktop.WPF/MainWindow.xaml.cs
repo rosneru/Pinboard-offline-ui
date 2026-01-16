@@ -1,15 +1,8 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Logic.UI.Model;
 using Logic.UI.ViewModels;
-using Markdig;
-using Markdig.Extensions.Footnotes;
 
 namespace UI.Desktop.WPF
 {
@@ -68,31 +61,65 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
-        var fg = ThemeHelper.GetFluentThemeTextColor();
+        Color fg; // = ThemeHelper.GetFluentThemeTextColor();
+        System.Drawing.Color bg;
+        Color link;
+        Color linkVisited;
+        Color linkHover;
+        Color linkActive;
+        if (ThemeHelper.IsDarkModeEnabled())
+        {
+          fg = Color.FromRgb(235, 219, 178);
+          bg = System.Drawing.Color.FromArgb(
+              255,  // WebView2 doens't support semi-transparence
+              40,
+              40,
+              40);
+          link = Color.FromRgb(69, 133, 136);
+          linkVisited = Color.FromRgb(131, 165, 152);
+          linkHover = Color.FromRgb(104, 157, 106);
+          linkActive = Color.FromRgb(142, 192, 124);
+        }
+        else
+        {
+          fg = Color.FromRgb(235, 219, 178);
+          bg = System.Drawing.Color.FromArgb(
+              255,  // WebView2 doens't support semi-transparence
+              251,
+              241,
+              199);
+          link = Color.FromRgb(7, 102, 120);
+          linkVisited = Color.FromRgb(66, 123, 88);
+          linkHover = Color.FromRgb(60, 56, 44);
+          linkActive = Color.FromRgb(157, 0, 6);
+        }
+
         css = $@"
               <style>
                   body {{
+                      background-color: rgb({bg.R}, {bg.G}, {bg.B});
                       color: rgb({fg.R}, {fg.G}, {fg.B});
                       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                       font-size: 16px;
                       line-height: 1.6;
                   }}
                   a {{
-                      color: #00BFFF;
+                      color: rgb({link.R}, {link.G}, {link.B});
                   }}
                   a:visited {{
-                      color: #87CEEB;
+                      color: rgb({linkVisited.R}, {linkVisited.G}, {linkVisited.B});
                   }}
                   a:hover {{
-                      color: #00DFFF;
+                      color: rgb({linkHover.R}, {linkHover.G}, {linkHover.B});
                   }}
                   a:active {{
-                      color: #00FFFF;
+                      color: rgb({linkActive.R}, {linkActive.G}, {linkActive.B});
                   }}
               </style>";
+
         isBookmarkChanging = true;
         wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
-        UpdateWebViewBackground();
+        wv.DefaultBackgroundColor = bg;
       }
     }
 
