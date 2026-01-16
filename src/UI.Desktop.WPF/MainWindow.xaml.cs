@@ -68,18 +68,8 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
-        // Set the default background color based on the theme using
-        // 'fake' colors: When the dark/bright theme changes, these
-        // colors won't fit anymore. Also, on the fly theme switch
-        // isn't detected here for the WebView2 control. TODO: fix.
-        var brightBackground = System.Drawing.Color.FromArgb(235, 246, 249);
-        var darkBackground = System.Drawing.Color.FromArgb(30, 32, 35);
-
-        if (ThemeHelper.IsDarkModeEnabled())
-        {
-          wv.DefaultBackgroundColor = darkBackground;
-          var fg = ThemeHelper.GetFluentThemeTextColor();
-          css = $@"
+        var fg = ThemeHelper.GetFluentThemeTextColor();
+        css = $@"
               <style>
                   body {{
                       color: rgb({fg.R}, {fg.G}, {fg.B});
@@ -87,19 +77,22 @@ namespace UI.Desktop.WPF
                       font-size: 16px;
                       line-height: 1.6;
                   }}
+                  a {{
+                      color: #00BFFF;
+                  }}
+                  a:visited {{
+                      color: #87CEEB;
+                  }}
+                  a:hover {{
+                      color: #00DFFF;
+                  }}
+                  a:active {{
+                      color: #00FFFF;
+                  }}
               </style>";
-          isBookmarkChanging = true;
-          wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
-        }
-        else
-        {
-          wv.DefaultBackgroundColor = brightBackground;
-          //if (Application.Current.Resources["TextFillColorPrimaryBrush"] is SolidColorBrush brush)
-          //{
-          //  var col = System.Drawing.Color.FromArgb(brush.Color.R, brush.Color.G, brush.Color.B);
-          //  wv.DefaultBackgroundColor = col;
-          //}
-        }
+        isBookmarkChanging = true;
+        wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
+        UpdateWebViewBackground();
       }
     }
 
@@ -107,7 +100,7 @@ namespace UI.Desktop.WPF
       object sender,
       Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
     {
-      if(isBookmarkChanging)
+      if (isBookmarkChanging)
       {
         isBookmarkChanging = false;
         return;
@@ -120,6 +113,27 @@ namespace UI.Desktop.WPF
         UseShellExecute = true
       });
       e.Cancel = true;
+    }
+
+    private Color? UpdateWebViewBackground()
+    {
+      if (wv.CoreWebView2 == null) return null;
+
+      if (Application.Current.Resources["ControlFillColorDefaultBrush"] is SolidColorBrush brush)
+      {
+        var mediaColor = brush.Color;
+        // Force alpha to 255 (fully opaque) since WebView2 doesn't support semi-transparent backgrounds
+        var drawingColor = System.Drawing.Color.FromArgb(
+            255,  // Use 255 instead of mediaColor.A
+            mediaColor.R,
+            mediaColor.G,
+            mediaColor.B);
+
+        wv.DefaultBackgroundColor = drawingColor;
+        return mediaColor;
+      }
+
+      return null;
     }
   }
 }
