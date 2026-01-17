@@ -82,7 +82,7 @@ namespace UI.Desktop.WPF
         }
         else
         {
-          fg = Color.FromRgb(235, 219, 178);
+          fg = Color.FromRgb(60, 56, 54);
           bg = System.Drawing.Color.FromArgb(
               255,  // WebView2 doens't support semi-transparence
               251,
