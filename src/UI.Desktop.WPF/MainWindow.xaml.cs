@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Media;
 using Logic.UI.ViewModels;
+using static UI.Desktop.WPF.ThemeColors;
 
 namespace UI.Desktop.WPF
 {
@@ -19,7 +19,6 @@ namespace UI.Desktop.WPF
       Loaded += MainWindow_Loaded;
 
     }
-
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
@@ -61,66 +60,41 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
-        Color fg; // = ThemeHelper.GetFluentThemeTextColor();
-        System.Drawing.Color bg;
-        Color link;
-        Color linkVisited;
-        Color linkHover;
-        Color linkActive;
-        if (ThemeHelper.IsDarkModeEnabled())
-        {
-          fg = Color.FromRgb(235, 219, 178);
-          bg = System.Drawing.Color.FromArgb(
-              255,  // WebView2 doens't support semi-transparence
-              40,
-              40,
-              40);
-          link = Color.FromRgb(69, 133, 136);
-          linkVisited = Color.FromRgb(131, 165, 152);
-          linkHover = Color.FromRgb(104, 157, 106);
-          linkActive = Color.FromRgb(142, 192, 124);
-        }
-        else
-        {
-          fg = Color.FromRgb(60, 56, 54);
-          bg = System.Drawing.Color.FromArgb(
-              255,  // WebView2 doens't support semi-transparence
-              251,
-              241,
-              199);
-          link = Color.FromRgb(7, 102, 120);
-          linkVisited = Color.FromRgb(66, 123, 88);
-          linkHover = Color.FromRgb(60, 56, 44);
-          linkActive = Color.FromRgb(157, 0, 6);
-        }
+        var themeColors = new ThemeColors(ThemeType.GRUVBOX);
+        var colors = themeColors.GetCurrentTheme();
 
-        css = $@"
+        css = GenerateThemeCss(colors);
+
+        isBookmarkChanging = true;
+        wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
+        wv.DefaultBackgroundColor = colors.BackgroundColor;
+      }
+    }
+
+    private string GenerateThemeCss(ThemeColors colors)
+    {
+      return $@"
               <style>
                   body {{
-                      background-color: rgb({bg.R}, {bg.G}, {bg.B});
-                      color: rgb({fg.R}, {fg.G}, {fg.B});
+                      background-color: rgb({colors.BackgroundColor.R}, {colors.BackgroundColor.G}, {colors.BackgroundColor.B});
+                      color: rgb({colors.ForegroundColor.R}, {colors.ForegroundColor.G}, {colors.ForegroundColor.B});
                       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                       font-size: 16px;
                       line-height: 1.6;
                   }}
                   a {{
-                      color: rgb({link.R}, {link.G}, {link.B});
+                      color: rgb({colors.LinkColor.R}, {colors.LinkColor.G}, {colors.LinkColor.B});
                   }}
                   a:visited {{
-                      color: rgb({linkVisited.R}, {linkVisited.G}, {linkVisited.B});
+                      color: rgb({colors.LinkVisitedColor.R}, {colors.LinkVisitedColor.G}, {colors.LinkVisitedColor.B});
                   }}
                   a:hover {{
-                      color: rgb({linkHover.R}, {linkHover.G}, {linkHover.B});
+                      color: rgb({colors.LinkHoverColor.R}, {colors.LinkHoverColor.G}, {colors.LinkHoverColor.B});
                   }}
                   a:active {{
-                      color: rgb({linkActive.R}, {linkActive.G}, {linkActive.B});
+                      color: rgb({colors.LinkActiveColor.R}, {colors.LinkActiveColor.G}, {colors.LinkActiveColor.B});
                   }}
               </style>";
-
-        isBookmarkChanging = true;
-        wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
-        wv.DefaultBackgroundColor = bg;
-      }
     }
 
     private void WebView2_NavigationStarting(
@@ -140,27 +114,6 @@ namespace UI.Desktop.WPF
         UseShellExecute = true
       });
       e.Cancel = true;
-    }
-
-    private Color? UpdateWebViewBackground()
-    {
-      if (wv.CoreWebView2 == null) return null;
-
-      if (Application.Current.Resources["ControlFillColorDefaultBrush"] is SolidColorBrush brush)
-      {
-        var mediaColor = brush.Color;
-        // Force alpha to 255 (fully opaque) since WebView2 doesn't support semi-transparent backgrounds
-        var drawingColor = System.Drawing.Color.FromArgb(
-            255,  // Use 255 instead of mediaColor.A
-            mediaColor.R,
-            mediaColor.G,
-            mediaColor.B);
-
-        wv.DefaultBackgroundColor = drawingColor;
-        return mediaColor;
-      }
-
-      return null;
     }
   }
 }
