@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using Logic.UI.Model;
 using Logic.UI.ViewModels;
 using static UI.Desktop.WPF.ThemeColors;
 

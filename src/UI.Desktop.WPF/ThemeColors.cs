@@ -1,15 +1,10 @@
 using System.Windows.Media;
+using Logic.UI.Model;
 
 namespace UI.Desktop.WPF
 {
   internal class ThemeColors
   {
-    public enum ThemeType
-    {
-      SYS,
-      GRUVBOX
-    }
-
     public Color ForegroundColor { get; }
     public System.Drawing.Color BackgroundColor { get; }
     public Color LinkColor { get; }

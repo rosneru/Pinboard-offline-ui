@@ -20,6 +20,7 @@ namespace Logic.UI.DialogViewModels
 
     [ObservableProperty] private string _jSONFileURL;
     [ObservableProperty] private bool _askBeforeAppExit;
+    [ObservableProperty] private ThemeType _readerTheme;
 
     public SettingsDialogViewModel(ISettingsService settingsService,
                                    IDialogService dialogService)
@@ -29,11 +30,13 @@ namespace Logic.UI.DialogViewModels
 
       JSONFileURL = _settingsService.AppSettings.JSONFileURL;
       AskBeforeAppExit = _settingsService.AppSettings.AskBeforeAppExit;
+      ReaderTheme = _settingsService.AppSettings.ReaderTheme;
     }
 
     private bool CanExecuteApply()
     {
       return (AskBeforeAppExit != _settingsService.AppSettings.AskBeforeAppExit) ||
+             (ReaderTheme != _settingsService.AppSettings.ReaderTheme) ||
              (JSONFileURL != _settingsService.AppSettings.JSONFileURL);
     }
 
@@ -42,6 +45,7 @@ namespace Logic.UI.DialogViewModels
     {
       _settingsService.AppSettings.JSONFileURL = JSONFileURL;
       _settingsService.AppSettings.AskBeforeAppExit = AskBeforeAppExit;
+      _settingsService.AppSettings.ReaderTheme = ReaderTheme;
 
       DialogResult = true;
       _dialogService.Close(this);
