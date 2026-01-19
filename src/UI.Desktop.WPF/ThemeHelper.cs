@@ -17,41 +17,53 @@ namespace UI.Desktop.WPF
 
     public static Color GetFluentThemeTextColor()
     {
-      // Try to retrieve the primary text color from the Fluent Theme resources
-      if (Application.Current.Resources["TextFillColorPrimaryBrush"] is SolidColorBrush brush)
+      // Try to retrieve the primary text color from WPF Fluent Theme resources
+      // Note: WPF uses different resource keys than WinUI 3
+      string[] textColorKeys = new[]
       {
-        return brush.Color;
+        "SystemControlForegroundBaseHighBrush",   // WPF Fluent primary text
+        "SystemControlPageTextBaseHighBrush",     // WPF page text
+        "TextFillColorPrimaryBrush"               // WinUI 3 style (if custom resources)
+      };
+
+      foreach (var key in textColorKeys)
+      {
+        if (Application.Current.Resources[key] is SolidColorBrush brush)
+        {
+          return brush.Color;
+        }
       }
 
-      // Fallback to a default color if the resource is not found
-      return Colors.Black;
+      // Fallback to system text color based on theme
+      return IsDarkModeEnabled() ? Colors.White : Colors.Black;
     }
 
     public static System.Drawing.Color GetFluentThemeBackgroundDrawingColor()
     {
-      if (Application.Current.Resources["ControlFillColorDefaultBrush"] is SolidColorBrush brush)
+      // Try these in order of preference:
+      string[] backgroundKeys = new[]
       {
-        // WebView2 doesn't support transparency. Set alpha to full 255.
-        var webViewColor = System.Drawing.Color.FromArgb(
-          255,
-          brush.Color.R,
-          brush.Color.G,
-          brush.Color.B);
+          "LayerFillColorDefaultBrush",           // Primary background layer
+          "SolidBackgroundFillColorBaseBrush",    // Base solid background
+          "ApplicationPageBackgroundThemeBrush"   // Legacy fallback
+      };
 
-        return webViewColor;
+      foreach (var key in backgroundKeys)
+      {
+          if (Application.Current.Resources[key] is SolidColorBrush brush)
+          {
+              return System.Drawing.Color.FromArgb(
+                  255,
+                  brush.Color.R,
+                  brush.Color.G,
+                  brush.Color.B);
+          }
       }
 
-      // TODO: The above seems not to work. Consider to change it in DarkMode to:
-
-
-      //// Set the default background color based on the theme using
-      //// 'fake' colors: When the dark/bright theme changes, these
-      //// colors won't fit anymore. Also, on the fly theme switch
-      //// isn't detected here for the WebView2 control. TODO: fix.
-      //var brightBackground = System.Drawing.Color.FromArgb(235, 246, 249);
-      //var darkBackground = System.Drawing.Color.FromArgb(30, 32, 35);
-
-      return System.Drawing.Color.IndianRed;
+      // Final fallback based on dark mode detection
+      return IsDarkModeEnabled() 
+          ? System.Drawing.Color.FromArgb(255, 32, 32, 32)  // Dark background
+          : System.Drawing.Color.FromArgb(255, 243, 243, 243); // Light background
     }
   }
 }

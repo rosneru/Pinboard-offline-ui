@@ -60,7 +60,7 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
-        var themeColors = new ThemeColors(ThemeType.GRUVBOX);
+        var themeColors = new ThemeColors(ThemeType.SYS);
         var colors = themeColors.GetCurrentTheme();
 
         css = GenerateThemeCss(colors);
