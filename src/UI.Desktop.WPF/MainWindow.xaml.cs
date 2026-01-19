@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Windows;
 using Logic.UI.Model;
 using Logic.UI.ViewModels;
-using static UI.Desktop.WPF.ThemeColors;
 
 namespace UI.Desktop.WPF
 {
@@ -29,6 +28,7 @@ namespace UI.Desktop.WPF
       {
         _mainViewModel = vm;
         _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+        ReloadWebViewTheme(_mainViewModel.CurrentTheme);
       }
     }
 
@@ -50,6 +50,10 @@ namespace UI.Desktop.WPF
         isBookmarkChanging = true;
         wv.NavigateToString(htmlWithCss);
       }
+      else if (e.PropertyName == nameof(MainViewModel.CurrentTheme))
+      {
+        ReloadWebViewTheme(_mainViewModel.CurrentTheme);
+      }
     }
 
     private MainViewModel _mainViewModel;
@@ -69,6 +73,38 @@ namespace UI.Desktop.WPF
         isBookmarkChanging = true;
         wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
         wv.DefaultBackgroundColor = colors.BackgroundColor;
+      }
+    }
+
+    private void ReloadWebViewTheme(ThemeType themeType)
+    {
+      if (wv.CoreWebView2 == null)
+      {
+        return;
+      }
+
+      var themeColors = new ThemeColors(themeType);
+      var colors = themeColors.GetCurrentTheme();
+
+      css = GenerateThemeCss(colors);
+      wv.DefaultBackgroundColor = colors.BackgroundColor;
+
+      // Reload current content with new theme
+      if (!string.IsNullOrEmpty(_mainViewModel?.SelectedBookmarkHtml))
+      {
+        string htmlWithCss = $@"
+           <!DOCTYPE html>
+           <html>
+           <head>
+               {css}
+           </head>
+           <body>
+               {_mainViewModel.SelectedBookmarkHtml}
+           </body>
+           </html>";
+
+        isBookmarkChanging = true;
+        wv.NavigateToString(htmlWithCss);
       }
     }
 
