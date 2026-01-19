@@ -1,23 +1,16 @@
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Config.Net;
 using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
 using Logic.UI.Services;
 using Markdig;
-using Markdig.Parsers;
 using MvvmDialogs;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 
 namespace Logic.UI.ViewModels
 {
@@ -28,7 +21,8 @@ namespace Logic.UI.ViewModels
     [ObservableProperty] private Bookmark _selectedBookmark;
     [ObservableProperty] private string _selectedBookmarkHtml;
     [ObservableProperty] private string _statusBarText;
-    
+    [ObservableProperty] private ThemeType _currentTheme;
+
     [ObservableProperty] private string _bookmarkFileDateInfo;
     [ObservableProperty] private string _latestBookmarkDateInfo;
 
@@ -60,7 +54,7 @@ namespace Logic.UI.ViewModels
     }
 
 
-    public MainViewModel(IDialogService dialogService, 
+    public MainViewModel(IDialogService dialogService,
                          IUiService uiService,
                          ISettingsService settingsService,
                          IBookmarkService bookmarkService,
@@ -76,6 +70,8 @@ namespace Logic.UI.ViewModels
       _updateDialogViewModel = updateDialogViewModel;
       _filterByTagsDialogViewModel = filterByTagsDialogViewModel;
 
+      // Initialize current theme
+      CurrentTheme = _settingsService.AppSettings.ReaderTheme;
 
       BookmarkService.DisplayedBookmarksChanged += (sender, e) =>
       {
@@ -86,7 +82,7 @@ namespace Logic.UI.ViewModels
 
     private bool CanExecuteOpenSelectedBookmarkUrl()
     {
-      if(SelectedBookmark is null)
+      if (SelectedBookmark is null)
       {
         return false;
       }
@@ -108,7 +104,12 @@ namespace Logic.UI.ViewModels
     [RelayCommand]
     void OpenSettings()
     {
-      _dialogService.ShowDialog(this, _settingsDialogViewModel);
+      var result = _dialogService.ShowDialog(this, _settingsDialogViewModel);
+      if (result == true)
+      {
+        // Update theme if it changed
+        CurrentTheme = _settingsService.AppSettings.ReaderTheme;
+      }
     }
 
     [RelayCommand]

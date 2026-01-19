@@ -34,7 +34,13 @@
                               UpdateSourceTrigger=PropertyChanged}" />
       <Separator />
       <CheckBox Content="Ask before application exit" IsChecked="{Binding AskBeforeAppExit}" />
-    </StackPanel>
+      <Separator />
+            <TextBlock Text="Reader theme"/>
+            <ComboBox ItemsSource="{Binding ThemeOptions}"
+          SelectedValue="{Binding ReaderTheme}"
+          SelectedValuePath="Value"
+          DisplayMemberPath="Key"/>
+        </StackPanel>
     <StackPanel Grid.Row="1"
                 Margin="0 6 3 0"
                 HorizontalAlignment="Right"

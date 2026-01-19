@@ -1,11 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Logic.UI.Model;
@@ -20,6 +14,9 @@ namespace Logic.UI.DialogViewModels
 
     [ObservableProperty] private string _jSONFileURL;
     [ObservableProperty] private bool _askBeforeAppExit;
+    [ObservableProperty] private ThemeType _readerTheme;
+
+    [ObservableProperty] private ObservableCollection<KeyValuePair<string, ThemeType>> _themeOptions;
 
     public SettingsDialogViewModel(ISettingsService settingsService,
                                    IDialogService dialogService)
@@ -29,11 +26,19 @@ namespace Logic.UI.DialogViewModels
 
       JSONFileURL = _settingsService.AppSettings.JSONFileURL;
       AskBeforeAppExit = _settingsService.AppSettings.AskBeforeAppExit;
+      ReaderTheme = _settingsService.AppSettings.ReaderTheme;
+
+      ThemeOptions = new ObservableCollection<KeyValuePair<string, ThemeType>>
+      {
+        new KeyValuePair<string, ThemeType>("System", ThemeType.SYS),
+        new KeyValuePair<string, ThemeType>("Gruvbox", ThemeType.GRUVBOX)
+      };
     }
 
     private bool CanExecuteApply()
     {
       return (AskBeforeAppExit != _settingsService.AppSettings.AskBeforeAppExit) ||
+             (ReaderTheme != _settingsService.AppSettings.ReaderTheme) ||
              (JSONFileURL != _settingsService.AppSettings.JSONFileURL);
     }
 
@@ -42,6 +47,7 @@ namespace Logic.UI.DialogViewModels
     {
       _settingsService.AppSettings.JSONFileURL = JSONFileURL;
       _settingsService.AppSettings.AskBeforeAppExit = AskBeforeAppExit;
+      _settingsService.AppSettings.ReaderTheme = ReaderTheme;
 
       DialogResult = true;
       _dialogService.Close(this);

@@ -12,6 +12,6 @@ namespace Logic.UI.Model
   {
     public string JSONFileURL { get; set; }
     public bool AskBeforeAppExit { get; set; }
-
+    public ThemeType ReaderTheme { get; set; }
   }
 }

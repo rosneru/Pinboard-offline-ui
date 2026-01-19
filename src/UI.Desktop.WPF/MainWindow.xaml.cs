@@ -1,15 +1,8 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Logic.UI.Model;
 using Logic.UI.ViewModels;
-using Markdig;
-using Markdig.Extensions.Footnotes;
 
 namespace UI.Desktop.WPF
 {
@@ -27,7 +20,6 @@ namespace UI.Desktop.WPF
 
     }
 
-
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
       await wv.EnsureCoreWebView2Async();
@@ -36,6 +28,7 @@ namespace UI.Desktop.WPF
       {
         _mainViewModel = vm;
         _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+        ReloadWebViewTheme(_mainViewModel.CurrentTheme);
       }
     }
 
@@ -57,6 +50,10 @@ namespace UI.Desktop.WPF
         isBookmarkChanging = true;
         wv.NavigateToString(htmlWithCss);
       }
+      else if (e.PropertyName == nameof(MainViewModel.CurrentTheme))
+      {
+        ReloadWebViewTheme(_mainViewModel.CurrentTheme);
+      }
     }
 
     private MainViewModel _mainViewModel;
@@ -68,46 +65,80 @@ namespace UI.Desktop.WPF
         // Ensure WebView2 is fully initialized
         await wv.EnsureCoreWebView2Async();
 
-        // Set the default background color based on the theme using
-        // 'fake' colors: When the dark/bright theme changes, these
-        // colors won't fit anymore. Also, on the fly theme switch
-        // isn't detected here for the WebView2 control. TODO: fix.
-        var brightBackground = System.Drawing.Color.FromArgb(235, 246, 249);
-        var darkBackground = System.Drawing.Color.FromArgb(30, 32, 35);
+        var themeColors = new ThemeColors(ThemeType.SYS);
+        var colors = themeColors.GetCurrentTheme();
 
-        if (ThemeHelper.IsDarkModeEnabled())
-        {
-          wv.DefaultBackgroundColor = darkBackground;
-          var fg = ThemeHelper.GetFluentThemeTextColor();
-          css = $@"
+        css = GenerateThemeCss(colors);
+
+        isBookmarkChanging = true;
+        wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
+        wv.DefaultBackgroundColor = colors.BackgroundColor;
+      }
+    }
+
+    private void ReloadWebViewTheme(ThemeType themeType)
+    {
+      if (wv.CoreWebView2 == null)
+      {
+        return;
+      }
+
+      var themeColors = new ThemeColors(themeType);
+      var colors = themeColors.GetCurrentTheme();
+
+      css = GenerateThemeCss(colors);
+      wv.DefaultBackgroundColor = colors.BackgroundColor;
+
+      // Reload current content with new theme
+      if (!string.IsNullOrEmpty(_mainViewModel?.SelectedBookmarkHtml))
+      {
+        string htmlWithCss = $@"
+           <!DOCTYPE html>
+           <html>
+           <head>
+               {css}
+           </head>
+           <body>
+               {_mainViewModel.SelectedBookmarkHtml}
+           </body>
+           </html>";
+
+        isBookmarkChanging = true;
+        wv.NavigateToString(htmlWithCss);
+      }
+    }
+
+    private string GenerateThemeCss(ThemeColors colors)
+    {
+      return $@"
               <style>
                   body {{
-                      color: rgb({fg.R}, {fg.G}, {fg.B});
+                      background-color: rgb({colors.BackgroundColor.R}, {colors.BackgroundColor.G}, {colors.BackgroundColor.B});
+                      color: rgb({colors.ForegroundColor.R}, {colors.ForegroundColor.G}, {colors.ForegroundColor.B});
                       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                       font-size: 16px;
                       line-height: 1.6;
                   }}
+                  a {{
+                      color: rgb({colors.LinkColor.R}, {colors.LinkColor.G}, {colors.LinkColor.B});
+                  }}
+                  a:visited {{
+                      color: rgb({colors.LinkVisitedColor.R}, {colors.LinkVisitedColor.G}, {colors.LinkVisitedColor.B});
+                  }}
+                  a:hover {{
+                      color: rgb({colors.LinkHoverColor.R}, {colors.LinkHoverColor.G}, {colors.LinkHoverColor.B});
+                  }}
+                  a:active {{
+                      color: rgb({colors.LinkActiveColor.R}, {colors.LinkActiveColor.G}, {colors.LinkActiveColor.B});
+                  }}
               </style>";
-          isBookmarkChanging = true;
-          wv.NavigateToString($"<!DOCTYPE html><html><head>{css}</head><body></body></html>");
-        }
-        else
-        {
-          wv.DefaultBackgroundColor = brightBackground;
-          //if (Application.Current.Resources["TextFillColorPrimaryBrush"] is SolidColorBrush brush)
-          //{
-          //  var col = System.Drawing.Color.FromArgb(brush.Color.R, brush.Color.G, brush.Color.B);
-          //  wv.DefaultBackgroundColor = col;
-          //}
-        }
-      }
     }
 
     private void WebView2_NavigationStarting(
       object sender,
       Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
     {
-      if(isBookmarkChanging)
+      if (isBookmarkChanging)
       {
         isBookmarkChanging = false;
         return;
