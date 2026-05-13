@@ -16,6 +16,10 @@ namespace Logic.UI.ViewModels
 {
   public partial class MainViewModel : ObservableObject
   {
+    private static readonly MarkdownPipeline _markdownPipeline = new MarkdownPipelineBuilder()
+      .UseAdvancedExtensions()
+      .Build();
+
     [ObservableProperty] private IUiService _uiService;
     [ObservableProperty] private IBookmarkService _bookmarkService;
     [ObservableProperty] private Bookmark _selectedBookmark;
@@ -50,7 +54,7 @@ namespace Logic.UI.ViewModels
       int i = 0;
       var bookmarkContendTranslated = new Regex(@"(?<!\=)\={2}(?!\=)")
         .Replace(bookmarkContent, m => i++ % 2 == 0 ? "<mark>" : "</mark>");
-      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated);
+      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated, _markdownPipeline);
     }
 
 

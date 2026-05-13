@@ -111,27 +111,40 @@ namespace UI.Desktop.WPF
     private string GenerateThemeCss(ThemeColors colors)
     {
       return $@"
-              <style>
-                  body {{
-                      background-color: rgb({colors.BackgroundColor.R}, {colors.BackgroundColor.G}, {colors.BackgroundColor.B});
-                      color: rgb({colors.ForegroundColor.R}, {colors.ForegroundColor.G}, {colors.ForegroundColor.B});
-                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                      font-size: 16px;
-                      line-height: 1.6;
-                  }}
-                  a {{
-                      color: rgb({colors.LinkColor.R}, {colors.LinkColor.G}, {colors.LinkColor.B});
-                  }}
-                  a:visited {{
-                      color: rgb({colors.LinkVisitedColor.R}, {colors.LinkVisitedColor.G}, {colors.LinkVisitedColor.B});
-                  }}
-                  a:hover {{
-                      color: rgb({colors.LinkHoverColor.R}, {colors.LinkHoverColor.G}, {colors.LinkHoverColor.B});
-                  }}
-                  a:active {{
-                      color: rgb({colors.LinkActiveColor.R}, {colors.LinkActiveColor.G}, {colors.LinkActiveColor.B});
-                  }}
-              </style>";
+          <style>
+              body {{
+                  background-color: rgb({colors.BackgroundColor.R}, {colors.BackgroundColor.G}, {colors.BackgroundColor.B});
+                  color: rgb({colors.ForegroundColor.R}, {colors.ForegroundColor.G}, {colors.ForegroundColor.B});
+                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                  font-size: 16px;
+                  line-height: 1.6;
+              }}
+              a {{
+                  color: rgb({colors.LinkColor.R}, {colors.LinkColor.G}, {colors.LinkColor.B});
+              }}
+              a:visited {{
+                  color: rgb({colors.LinkVisitedColor.R}, {colors.LinkVisitedColor.G}, {colors.LinkVisitedColor.B});
+              }}
+              a:hover {{
+                  color: rgb({colors.LinkHoverColor.R}, {colors.LinkHoverColor.G}, {colors.LinkHoverColor.B});
+              }}
+              a:active {{
+                  color: rgb({colors.LinkActiveColor.R}, {colors.LinkActiveColor.G}, {colors.LinkActiveColor.B});
+              }}
+              table {{
+                  border-collapse: collapse;
+                  margin: 0.75em 0;
+              }}
+              th, td {{
+                  border: 1px solid rgba({colors.ForegroundColor.R}, {colors.ForegroundColor.G}, {colors.ForegroundColor.B}, 0.35);
+                  padding: 0.35em 0.6em;
+                  text-align: left;
+                  vertical-align: top;
+              }}
+              th {{
+                  background-color: rgba({colors.ForegroundColor.R}, {colors.ForegroundColor.G}, {colors.ForegroundColor.B}, 0.08);
+              }}
+          </style>";
     }
 
     private void WebView2_NavigationStarting(
