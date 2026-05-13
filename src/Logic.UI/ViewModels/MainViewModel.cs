@@ -38,23 +38,7 @@ namespace Logic.UI.ViewModels
       }
 
       var bookmarkContent = newValue!.Extended;
-
-      // Translate the '==' around '==Highlighted==' passages with into
-      // '<mark>Highlighted</mark>'.
-      //
-      // Because this is the syntax, `Markdig` understands and *does*
-      // render highlighted.
-      //
-      // Regex explained:
-      //  - '(?<!\=)' ensures there's no '=' before start of match
-      //    (Negative Lookbehind)
-      //  - '\={2}' matches exactly two '='
-      //  - '(?!\=)' ensures there's no '=' after end of match (Negative
-      //    Lookahead)
-      int i = 0;
-      var bookmarkContendTranslated = new Regex(@"(?<!\=)\={2}(?!\=)")
-        .Replace(bookmarkContent, m => i++ % 2 == 0 ? "<mark>" : "</mark>");
-      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContendTranslated, _markdownPipeline);
+      SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContent, _markdownPipeline);
     }
 
 
