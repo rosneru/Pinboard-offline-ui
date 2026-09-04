@@ -11,6 +11,7 @@ namespace Logic.UI.Model
   public interface IAppSettings : INotifyPropertyChanged
   {
     public string JSONFileURL { get; set; }
+    public string PictureDirectoryPath { get; set; }
     public bool AskBeforeAppExit { get; set; }
     public ThemeType ReaderTheme { get; set; }
   }

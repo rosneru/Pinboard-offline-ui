@@ -13,7 +13,7 @@
 
  ### Steps
 
- - [ ] Add picture location to settings dialog
+ - [x] Add picture location to settings dialog
  - [ ] Add receiving a picture at `<Ctrl + v>` or `Drag'n drop`
  - [ ] Add saving the picture at storage location (with overwrite warning)
  - [ ] Add matching the picture on bookmark selection

@@ -16,44 +16,52 @@
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
-  <Window.InputBindings>
-    <KeyBinding Key="Esc" Command="{Binding CancelCommand}" />
-  </Window.InputBindings>
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <StackPanel Orientation="Vertical">
-      <Label Content="URL of Pinboard.in backup file in JSON format" />
-      <TextBox Grid.Row="1"
-               Focusable="True"
-               IsTabStop="True"
-               Text="{Binding JSONFileURL,
-                              Mode=TwoWay,
-                              UpdateSourceTrigger=PropertyChanged}" />
-      <Separator />
-      <CheckBox Content="Ask before application exit" IsChecked="{Binding AskBeforeAppExit}" />
-      <Separator />
-            <TextBlock Text="Reader theme"/>
-            <ComboBox ItemsSource="{Binding ThemeOptions}"
-          SelectedValue="{Binding ReaderTheme}"
-          SelectedValuePath="Value"
-          DisplayMemberPath="Key"/>
+    <Window.InputBindings>
+        <KeyBinding Key="Esc"
+                    Command="{Binding CancelCommand}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical">
+            <Label Content="URL of Pinboard.in backup file in JSON format" />
+            <TextBox Grid.Row="1"
+                     Focusable="True"
+                     IsTabStop="True"
+                     Text="{Binding JSONFileURL,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}" />
+            <Label Content="Path to the directory with the pictures" />
+            <TextBox Focusable="True"
+                     IsTabStop="True"
+                     Text="{Binding PictureDirectoryPath,
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged}"/>
+            <Separator />
+            <TextBlock Text="Reader theme" />
+            <ComboBox DisplayMemberPath="Key"
+                      ItemsSource="{Binding ThemeOptions}"
+                      SelectedValue="{Binding ReaderTheme}"
+                      SelectedValuePath="Value" />
+            <Separator />
+            <CheckBox Content="Ask before application exit"
+                      IsChecked="{Binding AskBeforeAppExit}" />
         </StackPanel>
-    <StackPanel Grid.Row="1"
-                Margin="0 6 3 0"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
+        <StackPanel Grid.Row="1"
+                    Margin="0 6 3 0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
 
-      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding ApplyCommand}"
-              Content="Apply" />
+            <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+                    Command="{Binding ApplyCommand}"
+                    Content="Apply" />
 
-      <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
-              Command="{Binding CancelCommand}"
-              Content="Cancel" />
-    </StackPanel>
+            <Button Input:RelayCommandExtensions.IsCommandUpdateEnabled="True"
+                    Command="{Binding CancelCommand}"
+                    Content="Cancel" />
+        </StackPanel>
 
-  </Grid>
+    </Grid>
 </Window>

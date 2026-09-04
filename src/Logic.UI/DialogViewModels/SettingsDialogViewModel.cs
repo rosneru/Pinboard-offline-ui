@@ -13,6 +13,7 @@ namespace Logic.UI.DialogViewModels
     [ObservableProperty] private bool? _dialogResult;
 
     [ObservableProperty] private string _jSONFileURL;
+    [ObservableProperty] private string _pictureDirectoryPath;
     [ObservableProperty] private bool _askBeforeAppExit;
     [ObservableProperty] private ThemeType _readerTheme;
 
@@ -25,6 +26,7 @@ namespace Logic.UI.DialogViewModels
       _settingsService = settingsService;
 
       JSONFileURL = _settingsService.AppSettings.JSONFileURL;
+      PictureDirectoryPath = _settingsService.AppSettings.PictureDirectoryPath;
       AskBeforeAppExit = _settingsService.AppSettings.AskBeforeAppExit;
       ReaderTheme = _settingsService.AppSettings.ReaderTheme;
 
@@ -39,6 +41,7 @@ namespace Logic.UI.DialogViewModels
     {
       return (AskBeforeAppExit != _settingsService.AppSettings.AskBeforeAppExit) ||
              (ReaderTheme != _settingsService.AppSettings.ReaderTheme) ||
+             (PictureDirectoryPath != _settingsService.AppSettings.PictureDirectoryPath) ||
              (JSONFileURL != _settingsService.AppSettings.JSONFileURL);
     }
 
@@ -46,6 +49,7 @@ namespace Logic.UI.DialogViewModels
     private void Apply()
     {
       _settingsService.AppSettings.JSONFileURL = JSONFileURL;
+      _settingsService.AppSettings.PictureDirectoryPath = PictureDirectoryPath;
       _settingsService.AppSettings.AskBeforeAppExit = AskBeforeAppExit;
       _settingsService.AppSettings.ReaderTheme = ReaderTheme;
 
