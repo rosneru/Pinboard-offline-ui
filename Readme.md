@@ -1,20 +1,10 @@
 # About
 
-This tool allows to view the `JSON` backup of a
-[https://pinboard.in](https://pinboard.in) account offline.
-[Pinboard.in](https://pinboard.in) is a cloud-based bookmarking service I use
-for many years. I felt the need for such a tool because over the years my
-bookmarks grow more into a *knowledge base* kind of thing, and I used the
-description field for bookmarks more frequently and extensively. Additionally, I
-started writing *Markdown* into this field and this is not rendered by Pinboard
-web client.
+This tool allows to view the `JSON` backup of a [https://pinboard.in](https://pinboard.in) account offline. [Pinboard.in](https://pinboard.in) is a cloud-based bookmarking service I use for many years. I felt the need for such a tool because over the years my bookmarks grow more into a *knowledge base* kind of thing, and I used the description field for bookmarks more frequently and extensively. Additionally, I started writing *Markdown* into this field and this is not rendered by Pinboard web client.
 
-So, I started writing this tool which is in its early state and at the moment
-has these features:
+So, I started writing this tool which is in its early state and at the moment has these features:
 
-- .NET9.0 app with WPF/FluentDesign that adapts well to switching between dark
-  and light themes, which is done on my Windows system using the third-party
-  tool [AutoDarkMode](https://github.com/AutoDarkMode/Windows-Auto-Night-Mode).
+- .NET9.0 app with WPF/FluentDesign that adapts well to switching between dark and light themes, which is done on my Windows system using the third-party tool [AutoDarkMode](https://github.com/AutoDarkMode/Windows-Auto-Night-Mode).
 - Allows download of the JSON backup file from a cloud share
 - Displays the bookmarks and renders them in Markdown
 - Supports tag filtering
@@ -30,6 +20,4 @@ has these features:
 
 # Known issues
 
-- In tag window I use a custom Combobox control that doesn't work well with the
-  *FluentDesign*. So said, it loses its `Virtualization` ability and is slow when
-  many tags are in the Pinboard file. I have that on my list.
+- In tag window I use a custom Combobox control that doesn't work well with the *FluentDesign*. So said, it loses its `Virtualization` ability and is slow when many tags are in the Pinboard file. I have that on my list.
