@@ -78,7 +78,23 @@ namespace Logic.UI.ViewModels
             return !string.IsNullOrEmpty(SelectedBookmark.HRef);
         }
 
-        [RelayCommand(CanExecute = nameof(CanExecuteOpenSelectedBookmarkUrl))]
+      [RelayCommand]
+      private void ImportDroppedFiles(DragEventArgs e)
+      {
+        if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+          return;
+
+        var filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+        foreach (var path in filePaths)
+        {
+          Debug.WriteLine($"Importing dropped file: {path}");
+      }
+
+        e.Handled = true;
+      }
+
+    [RelayCommand(CanExecute = nameof(CanExecuteOpenSelectedBookmarkUrl))]
         private void OpenSelectedBookmarkUrl(CancelEventArgs cancelEventArgs)
         {
             Process.Start(new ProcessStartInfo
