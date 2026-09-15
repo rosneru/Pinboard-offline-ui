@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
+using Logic.UI.Pictures;
 using Logic.UI.Services;
 using Markdig;
 using MvvmDialogs;
@@ -76,22 +77,6 @@ namespace Logic.UI.ViewModels
       }
 
       return !string.IsNullOrEmpty(SelectedBookmark.HRef);
-    }
-
-    [RelayCommand]
-    private void ImportDroppedFiles(DragEventArgs e)
-    {
-      if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-        return;
-
-      var filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-      foreach (var path in filePaths)
-      {
-        Debug.WriteLine($"Importing dropped file: {path}");
-      }
-
-      e.Handled = true;
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteOpenSelectedBookmarkUrl))]
@@ -187,6 +172,44 @@ namespace Logic.UI.ViewModels
       if (success == true)
       {
         // ??? await Filtered
+      }
+    }
+
+    [RelayCommand]
+    private void ImportDroppedFiles(DragEventArgs e)
+    {
+      e.Handled = true;
+
+      if (SelectedBookmark is null)
+      {
+        StatusBarText = "Select a bookmark before dropping a picture.";
+        return;
+      }
+
+      // Reading the picture must happen synchronously here because the
+      // dropped data object is released once this handler returns. When
+      // it comes from a browser that includes downloading it, so the
+      // wait cursor is not cosmetic.
+      Mouse.OverrideCursor = Cursors.Wait;
+
+      try
+      {
+        var picture = DroppedPictureReader.Read(e.Data);
+
+        if (picture is null)
+        {
+          StatusBarText = "The dropped item is not a supported picture.";
+          return;
+        }
+
+        // TODO Save the picture below AppSettings.PictureDirectoryPath,
+        // named after the SHA-256 hash of the bookmark title.
+        StatusBarText = $"Received {picture.FileName} " +
+                        $"({picture.Bytes.Length / 1024} KB).";
+      }
+      finally
+      {
+        Mouse.OverrideCursor = null;
       }
     }
 
