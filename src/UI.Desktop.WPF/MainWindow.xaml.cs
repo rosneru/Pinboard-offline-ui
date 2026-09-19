@@ -172,7 +172,8 @@ namespace UI.Desktop.WPF
               .bookmark-picture {{
                   display: block;
                   margin: 0 auto 1em auto;
-                  max-width: 100%;
+                  max-width: min(1000px, 100%);
+                  height: auto;
               }}
               table {{
                   border-collapse: collapse;
