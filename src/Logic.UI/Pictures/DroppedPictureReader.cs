@@ -1,6 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using Logic.UI.Model;
 
@@ -58,10 +61,16 @@ namespace Logic.UI.Pictures
         }
       }
 
-      // TODO As a last resort the picture URL could be taken from the
-      // UniformResourceLocatorW format and downloaded directly. That is
-      // only needed for sources where FileContents stays empty, for
-      // example pictures behind a blob: URL.
+      // Sites that suppress dragging the picture itself still let their
+      // link or the address bar be dragged, which offers the URL only.
+      var url = GetUrl(data);
+
+      if (url is not null)
+      {
+        return ReadFromUrl(url);
+      }
+
+      Debug.WriteLine($"No picture in dropped formats: {string.Join(", ", data.GetFormats())}");
       return null;
     }
 
@@ -80,6 +89,91 @@ namespace Logic.UI.Pictures
                                                   or UnauthorizedAccessException)
       {
         Debug.WriteLine($"Cannot read dropped file '{filePath}': {exception.Message}");
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Returns the http(s) URL offered by the drop, or null if there is none.
+    /// </summary>
+    private static string GetUrl(IDataObject data)
+    {
+      string[] formats =
+      [
+        "UniformResourceLocatorW",
+        "UniformResourceLocator",
+        DataFormats.UnicodeText,
+        DataFormats.Text
+      ];
+
+      foreach (var format in formats)
+      {
+        if (!data.GetDataPresent(format))
+        {
+          continue;
+        }
+
+        var candidate = AsText(data.GetData(format), format)?.Trim();
+
+        if (Uri.TryCreate(candidate, UriKind.Absolute, out var uri)
+            && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+        {
+          return candidate;
+        }
+      }
+
+      return null;
+    }
+
+    private static string AsText(object value, string format)
+    {
+      if (value is string text)
+      {
+        return text;
+      }
+
+      if (value is not MemoryStream stream)
+      {
+        return null;
+      }
+
+      // The URL formats carry raw, null terminated bytes.
+      var encoding = format == "UniformResourceLocatorW"
+        ? Encoding.Unicode
+        : Encoding.ASCII;
+
+      return encoding.GetString(stream.ToArray()).TrimEnd('\0');
+    }
+
+    private static DroppedPicture ReadFromUrl(string url)
+    {
+      try
+      {
+        using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
+
+        // Task.Run keeps the await off the blocked UI thread.
+        var bytes = Task.Run(() => client.GetByteArrayAsync(url)).GetAwaiter().GetResult();
+        var extension = ImageFormatDetector.GetExtension(bytes);
+
+        if (extension is null)
+        {
+          return null;
+        }
+
+        var fileName = Path.GetFileName(new Uri(url).LocalPath);
+
+        return new DroppedPicture(
+          string.IsNullOrEmpty(fileName)
+            ? $"picture{extension}"
+            : Path.ChangeExtension(fileName, extension),
+          extension,
+          bytes);
+      }
+      catch (Exception exception) when (exception is HttpRequestException
+                                                  or TaskCanceledException
+                                                  or UriFormatException)
+      {
+        Debug.WriteLine($"Cannot download dropped url '{url}': {exception.Message}");
         return null;
       }
     }
