@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -186,6 +188,14 @@ namespace Logic.UI.ViewModels
         return;
       }
 
+      var pictureDirectory = _settingsService.AppSettings.PictureDirectoryPath;
+
+      if (string.IsNullOrEmpty(pictureDirectory))
+      {
+        StatusBarText = "Set the picture directory in the settings before dropping a picture.";
+        return;
+      }
+
       // Reading the picture must happen synchronously here because the
       // dropped data object is released once this handler returns. When
       // it comes from a browser that includes downloading it, so the
@@ -202,9 +212,34 @@ namespace Logic.UI.ViewModels
           return;
         }
 
-        // TODO Save the picture below AppSettings.PictureDirectoryPath,
-        // named after the SHA-256 hash of the bookmark title.
-        StatusBarText = $"Received {picture.FileName} " +
+        var picturePath = Path.Combine(pictureDirectory,
+                                       SelectedBookmark.Hash + picture.Extension);
+
+        try
+        {
+          Directory.CreateDirectory(pictureDirectory);
+          File.WriteAllBytes(picturePath, picture.Bytes);
+
+          // A picture dropped earlier in a different format keeps its own
+          // extension and would make the lookup by hash ambiguous.
+          foreach (var supersededPath in Directory.GetFiles(
+                     pictureDirectory, SelectedBookmark.Hash + ".*"))
+          {
+            if (!supersededPath.Equals(picturePath, StringComparison.OrdinalIgnoreCase))
+            {
+              File.Delete(supersededPath);
+            }
+          }
+        }
+        catch (Exception exception) when (exception is IOException
+                                                    or UnauthorizedAccessException)
+        {
+          Debug.WriteLine($"Cannot store picture '{picturePath}': {exception.Message}");
+          StatusBarText = $"Cannot store the picture in {pictureDirectory}.";
+          return;
+        }
+
+        StatusBarText = $"Saved {picture.FileName} as {Path.GetFileName(picturePath)} " +
                         $"({picture.Bytes.Length / 1024} KB).";
       }
       finally
