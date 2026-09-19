@@ -2,7 +2,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using Logic.UI.Model;
+using Logic.UI.Pictures;
 using Logic.UI.ViewModels;
+using Microsoft.Web.WebView2.Core;
 
 namespace UI.Desktop.WPF
 {
@@ -29,7 +31,38 @@ namespace UI.Desktop.WPF
         _mainViewModel = vm;
         _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
         ReloadWebViewTheme(_mainViewModel.CurrentTheme);
+        UpdatePictureHostMapping(_mainViewModel.PictureDirectoryPath);
       }
+    }
+
+    /// <summary>
+    /// Publishes the picture directory under BookmarkPictures.VirtualHost so
+    /// that the bookmark content can reference its pictures by URL.
+    /// </summary>
+    private void UpdatePictureHostMapping(string pictureDirectory)
+    {
+      if (wv.CoreWebView2 is null || pictureDirectory == _mappedPictureDirectory)
+      {
+        return;
+      }
+
+      if (_mappedPictureDirectory is not null)
+      {
+        wv.CoreWebView2.ClearVirtualHostNameToFolderMapping(BookmarkPictures.VirtualHost);
+        _mappedPictureDirectory = null;
+      }
+
+      if (string.IsNullOrEmpty(pictureDirectory))
+      {
+        return;
+      }
+
+      wv.CoreWebView2.SetVirtualHostNameToFolderMapping(
+        BookmarkPictures.VirtualHost,
+        pictureDirectory,
+        CoreWebView2HostResourceAccessKind.Allow);
+
+      _mappedPictureDirectory = pictureDirectory;
     }
 
     private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -54,9 +87,14 @@ namespace UI.Desktop.WPF
       {
         ReloadWebViewTheme(_mainViewModel.CurrentTheme);
       }
+      else if (e.PropertyName == nameof(MainViewModel.PictureDirectoryPath))
+      {
+        UpdatePictureHostMapping(_mainViewModel.PictureDirectoryPath);
+      }
     }
 
     private MainViewModel _mainViewModel;
+    private string _mappedPictureDirectory;
 
     private async void WebView2_Loaded(object sender, RoutedEventArgs e)
     {

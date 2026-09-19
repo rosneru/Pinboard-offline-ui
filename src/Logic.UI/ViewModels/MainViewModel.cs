@@ -27,7 +27,7 @@ namespace Logic.UI.ViewModels
     [ObservableProperty] private IBookmarkService _bookmarkService;
     [ObservableProperty] private Bookmark _selectedBookmark;
     [ObservableProperty] private string _selectedBookmarkHtml;
-    [ObservableProperty] private string _selectedBookmarkHash;
+    [ObservableProperty] private string _pictureDirectoryPath;
     [ObservableProperty] private string _statusBarText;
     [ObservableProperty] private ThemeType _currentTheme;
 
@@ -42,8 +42,14 @@ namespace Logic.UI.ViewModels
       }
 
       var bookmarkContent = newValue!.Extended;
+      var pictureUrl = BookmarkPictures.FindUrl(PictureDirectoryPath, newValue.Hash);
+
+      if (pictureUrl is not null)
+      {
+        bookmarkContent = $"![]({pictureUrl})\n\n{bookmarkContent}";
+      }
+
       SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContent, _markdownPipeline);
-      SelectedBookmarkHash = newValue.Hash;
     }
 
     public MainViewModel(
@@ -65,6 +71,7 @@ namespace Logic.UI.ViewModels
 
       // Initialize current theme
       CurrentTheme = _settingsService.AppSettings.ReaderTheme;
+      PictureDirectoryPath = _settingsService.AppSettings.PictureDirectoryPath;
 
       BookmarkService.DisplayedBookmarksChanged += (sender, e) =>
       {
@@ -102,6 +109,7 @@ namespace Logic.UI.ViewModels
       {
         // Update theme if it changed
         CurrentTheme = _settingsService.AppSettings.ReaderTheme;
+        PictureDirectoryPath = _settingsService.AppSettings.PictureDirectoryPath;
       }
     }
 
