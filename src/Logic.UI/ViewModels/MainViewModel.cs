@@ -27,6 +27,7 @@ namespace Logic.UI.ViewModels
     [ObservableProperty] private IBookmarkService _bookmarkService;
     [ObservableProperty] private Bookmark _selectedBookmark;
     [ObservableProperty] private string _selectedBookmarkHtml;
+    [ObservableProperty] private string _selectedBookmarkHash;
     [ObservableProperty] private string _statusBarText;
     [ObservableProperty] private ThemeType _currentTheme;
 
@@ -42,6 +43,7 @@ namespace Logic.UI.ViewModels
 
       var bookmarkContent = newValue!.Extended;
       SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContent, _markdownPipeline);
+      SelectedBookmarkHash = newValue.Hash;
     }
 
     public MainViewModel(
