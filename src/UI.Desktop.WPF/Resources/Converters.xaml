@@ -7,4 +7,6 @@
   <Converters:IntToStringConverter x:Key="IntToStringConverter" />
   <Converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
   <Converters:StringNullOrEmptyVisibilityConverter x:Key="StringNullOrEmptyVisibilityConverter" />
+  <Converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+  <Converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
 </ResourceDictionary>

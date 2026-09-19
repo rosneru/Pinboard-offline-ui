@@ -116,7 +116,7 @@
 
         <StatusBar Grid.ColumnSpan="3"
                    Grid.Row="3"
-                   AllowDrop="True">
+                   AllowDrop="{Binding SelectedBookmark, Converter={StaticResource NullToBooleanConverter}}">
             <Interactivity:Interaction.Triggers>
                 <Interactivity:EventTrigger EventName="Drop">
                     <Interactivity:InvokeCommandAction Command="{Binding ImportDroppedFilesCommand}"
@@ -129,7 +129,8 @@
             <StatusBarItem>
                 <TextBlock Text="{Binding LatestBookmarkDateInfo}" />
             </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Right">
+            <StatusBarItem HorizontalAlignment="Right"
+                           Visibility="{Binding SelectedBookmark, Converter={StaticResource NullToVisibilityConverter}}">
                 <TextBlock FontStyle="Italic"
                            Foreground="IndianRed"
                            Text="Drop the picture for selected bookmark here" />
