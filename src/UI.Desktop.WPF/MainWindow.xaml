@@ -116,6 +116,7 @@
 
         <StatusBar Grid.ColumnSpan="3"
                    Grid.Row="3"
+                   FontSize="15"
                    AllowDrop="{Binding SelectedBookmark, Converter={StaticResource NullToBooleanConverter}}">
             <Interactivity:Interaction.Triggers>
                 <Interactivity:EventTrigger EventName="Drop">
@@ -131,8 +132,7 @@
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right"
                            Visibility="{Binding SelectedBookmark, Converter={StaticResource NullToVisibilityConverter}}">
-                <TextBlock FontStyle="Italic"
-                           Foreground="IndianRed"
+                <TextBlock Foreground="IndianRed"
                            Text="Drop the picture for selected bookmark here" />
             </StatusBarItem>
         </StatusBar>
