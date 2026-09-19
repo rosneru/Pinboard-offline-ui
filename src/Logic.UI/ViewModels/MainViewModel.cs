@@ -41,8 +41,14 @@ namespace Logic.UI.ViewModels
         return;
       }
 
-      var bookmarkContent = newValue!.Extended;
-      var pictureUrl = BookmarkPictures.FindUrl(PictureDirectoryPath, newValue.Hash);
+      UpdateSelectedBookmarkHtml();
+    }
+
+    private void UpdateSelectedBookmarkHtml()
+    {
+      var bookmarkContent = SelectedBookmark.Extended;
+      var pictureUrl = BookmarkPictures.FindUrl(PictureDirectoryPath,
+                                                SelectedBookmark.Hash);
 
       if (pictureUrl is not null)
       {
@@ -248,6 +254,8 @@ namespace Logic.UI.ViewModels
           StatusBarText = $"Cannot store the picture in {pictureDirectory}.";
           return;
         }
+
+        UpdateSelectedBookmarkHtml();
 
         StatusBarText = $"Saved {picture.FileName} as {Path.GetFileName(picturePath)} " +
                         $"({picture.Bytes.Length / 1024} KB).";
