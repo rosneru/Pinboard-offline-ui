@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Logic.UI.Content;
 using Logic.UI.DialogViewModels;
 using Logic.UI.Model;
 using Logic.UI.Pictures;
@@ -52,7 +53,7 @@ namespace Logic.UI.ViewModels
 
       if (pictureUrl is not null)
       {
-        bookmarkContent = $"![]({pictureUrl}){{.bookmark-picture}}\n\n{bookmarkContent}";
+        bookmarkContent = BookmarkMarkdown.InsertPicture(bookmarkContent, pictureUrl);
       }
 
       SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContent, _markdownPipeline);
