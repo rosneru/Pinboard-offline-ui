@@ -132,7 +132,7 @@
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right"
                            Visibility="{Binding SelectedBookmark, Converter={StaticResource NullToVisibilityConverter}}">
-                <TextBlock Foreground="IndianRed"
+                <TextBlock Foreground="#ff53b3db"
                            Text="Drop the picture for selected bookmark here" />
             </StatusBarItem>
         </StatusBar>
