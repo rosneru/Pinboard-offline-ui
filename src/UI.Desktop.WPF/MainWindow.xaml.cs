@@ -169,6 +169,11 @@ namespace UI.Desktop.WPF
               a:active {{
                   color: rgb({colors.LinkActiveColor.R}, {colors.LinkActiveColor.G}, {colors.LinkActiveColor.B});
               }}
+              .bookmark-picture {{
+                  display: block;
+                  margin: 0 auto 1em auto;
+                  max-width: 100%;
+              }}
               table {{
                   border-collapse: collapse;
                   margin: 0.75em 0;

@@ -52,7 +52,7 @@ namespace Logic.UI.ViewModels
 
       if (pictureUrl is not null)
       {
-        bookmarkContent = $"![]({pictureUrl})\n\n{bookmarkContent}";
+        bookmarkContent = $"![]({pictureUrl}){{.bookmark-picture}}\n\n{bookmarkContent}";
       }
 
       SelectedBookmarkHtml = Markdown.ToHtml(bookmarkContent, _markdownPipeline);
