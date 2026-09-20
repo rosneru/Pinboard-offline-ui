@@ -117,6 +117,8 @@ namespace Logic.UI.ViewModels
         // Update theme if it changed
         CurrentTheme = _settingsService.AppSettings.ReaderTheme;
         PictureDirectoryPath = _settingsService.AppSettings.PictureDirectoryPath;
+
+        ReportMissingPictureDirectory();
       }
     }
 
@@ -143,7 +145,22 @@ namespace Logic.UI.ViewModels
       BookmarkFileDateInfo = BookmarkService.BookmarkFileDateInfo;
       LatestBookmarkDateInfo = BookmarkService.LatestBookmarkDateInfo;
 
+      ReportMissingPictureDirectory();
+
       Mouse.OverrideCursor = null;
+    }
+
+    /// <summary>
+    /// A configured but missing directory means the bookmarks render without
+    /// their pictures, which would otherwise happen without any explanation.
+    /// </summary>
+    private void ReportMissingPictureDirectory()
+    {
+      if (!string.IsNullOrEmpty(PictureDirectoryPath)
+          && !Directory.Exists(PictureDirectoryPath))
+      {
+        StatusBarText = "Picture directory not found.";
+      }
     }
 
     private bool CanExecuteExit()

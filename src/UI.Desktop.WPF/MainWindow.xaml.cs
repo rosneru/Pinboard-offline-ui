@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using Logic.UI.Model;
 using Logic.UI.Pictures;
@@ -52,7 +53,9 @@ namespace UI.Desktop.WPF
         _mappedPictureDirectory = null;
       }
 
-      if (string.IsNullOrEmpty(pictureDirectory))
+      // Mapping a folder that is not there throws. Until the setting points
+      // to an existing one the bookmarks simply render without pictures.
+      if (!Directory.Exists(pictureDirectory))
       {
         return;
       }
